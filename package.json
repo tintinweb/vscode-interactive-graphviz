@@ -1,0 +1,40 @@
+{
+    "name": "graphviz-interactive-preview",
+    "displayName": "Graphviz Interactive Preview",
+    "description": "Graphviz (dot) Interactive Preview",
+    "version": "0.0.2",
+    "keywords": [
+        "dot",
+        "graphviz",
+        "preview",
+        "interactive"
+    ],
+    "publisher": "tintinweb",
+    "engines": {
+        "vscode": "^1.20.2"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "bugs": {
+        "url": "https://github.com/tintinweb/vscode-interactive-graphviz/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tintinweb/vscode-interactive-graphviz"
+    },
+    "main": "./src/extension.js",
+    "activationEvents": [
+        "onCommand:interactive-graphviz.preview.beside"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "interactive-graphviz.preview.beside",
+                "title": "preview (beside)",
+                "category": "Graphviz Interactive"
+            }
+        ]
+    },
+    "dependencies": {}
+}

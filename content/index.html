@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<style>
+    html, body { margin:0; padding:0; overflow:hidden }
+    svg { position:fixed; top:40; left:0; height:100%; width:100% }
+    body.vscode-light {
+        color: white;;
+    }
+
+    body.vscode-dark {
+        color: black;
+    }
+
+    body.vscode-high-contrast {
+        color: red;
+    }
+
+    #f1 input[type=submit] {
+        display: none;
+    }
+    .t1 {
+        border: 2px solid orange;
+        padding: 1px 5px;
+    }
+</style>
+
+<script src="graphvizSvg/jquery-2.1.3.min.js"></script>
+<script src="graphvizSvg/jquery.mousewheel.min.js"></script>
+<script src="graphvizSvg/jquery.color.js"></script>
+<script src="graphvizSvg/bootstrap.min.js"></script>
+<script src="graphvizSvg/jquery.graphviz.svg.js"></script>
+
+<script src="d3graphviz/viz.js"></script>
+<script src="d3graphviz/d3.min.js"></script>
+<script src="d3graphviz/d3-graphviz.min.js"></script>
+<script src="commands.js"></script>
+
+<form name="f1" id="f1" action="">
+    <input type="text" class="t1" name="t1" value="" placeholder="search..."/>
+    <input type="submit" name="b1" value="Find" />
+</form>
+<div id="graph" style="text-align: center;"></div>
+
+
+<script>
+var graphviz = d3.select("#graph").graphviz();
+
+function render(dotSrc) {
+    var dotSrcLines = dotSrc.split('\n');
+
+    transition = d3.transition("startTransition")
+        .ease(d3.easeLinear)
+        .delay(100)
+        .duration(1000);
+
+    graphviz
+        .transition(transition)
+        .zoomScaleExtent([0,Infinity])
+        .zoom(true)
+        .renderDot(dotSrc)
+        .on("end", function() { 
+            $('#graph').data('graphviz.svg').setup()  //resetup
+
+            postMessage({
+                    command:'onRenderFinished', value:{
+                        dotSrc:dotSrc,
+                    }
+                })
+        });
+
+    nodes = d3.selectAll('.node,.edge,.cluster');
+}
+
+
+window.addEventListener('message', event => {
+
+    const message = event.data; // The JSON data our extension sent
+    console.log(message)
+    switch (message.command) {
+        case 'renderDot':
+            render(message.value);
+            break;
+    }
+}, false);
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#graph").graphviz({
+            //svg: "demo.svg", 
+            ready: function() {
+                var gv = this
+
+                gv.nodes().click(function () {	
+                    var $set = $()
+                    $set.push(this)
+                    $set = $set.add(gv.linkedFrom(this, true))
+                    $set = $set.add(gv.linkedTo(this, true))
+                    gv.highlight($set, true)
+                    gv.bringToFront($set)
+
+                    postMessage({
+                        command:'onClick', value:{
+                            node:"this",
+                        }
+                    })
+                })
+                gv.nodes().dblclick(function () {
+                    postMessage({
+                        command:'onDblClick', value:{
+                            node:"this",
+                        }
+                    })
+                })
+                $(document).keydown(function (evt) {
+                    if (evt.keyCode == 27) {
+                        gv.highlight()
+                    }
+                })
+                
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    var TRange = null;
+
+    function findString(str) {
+        if (parseInt(navigator.appVersion) < 4) return;
+        var strFound;
+        if (window.find) {
+            // CODE FOR BROWSERS THAT SUPPORT window.find
+            strFound = self.find(str);
+            if (strFound && self.getSelection && !self.getSelection().anchorNode) {
+                strFound = self.find(str)
+            }
+            if (!strFound) {
+                strFound = self.find(str, 0, 1)
+                while (self.find(str, 0, 1)) continue
+            }
+        } else if (navigator.appName.indexOf("Microsoft") != -1) {
+            // EXPLORER-SPECIFIC CODE        
+            if (TRange != null) {
+                TRange.collapse(false)
+                strFound = TRange.findText(str)
+                if (strFound) TRange.select()
+            }
+            if (TRange == null || strFound == 0) {
+                TRange = self.document.body.createTextRange()
+                strFound = TRange.findText(str)
+                if (strFound) TRange.select()
+            }
+        }
+        if (!strFound) { // flash box
+        }
+            return;
+    };
+
+    document.getElementById('f1').onsubmit = function() {
+        findString(this.t1.value);
+        return false;
+    };
+    
+</script>
