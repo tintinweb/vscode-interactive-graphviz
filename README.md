@@ -54,7 +54,5 @@ vscode.commands.executeCommand("interactive-graphviz.preview.beside", args)
 
 see [CHANGELOG](./CHANGELOG.md)
 
-### 0.0.2
-
 
 -----------------------------------------------------------------------------------------------------------
