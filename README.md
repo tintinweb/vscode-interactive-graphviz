@@ -48,7 +48,7 @@ vscode.commands.executeCommand("interactive-graphviz.preview.beside", args)
 
 * graph engine: [d3-graphviz](https://github.com/magjac/d3-graphviz)
 * edge tracking: [jquery.graphviz.svg](https://github.com/mountainstorm/jquery.graphviz.svg/)
-* webview handling: (vscode-graphviz)[https://github.com/joaompinto/vscode-graphviz/tree/master/src]
+* webview handling: [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/)
 
 ## Release Notes
 
