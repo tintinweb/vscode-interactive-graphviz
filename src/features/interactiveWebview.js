@@ -85,6 +85,32 @@ class InteractiveWebviewGenerator {
             case 'onDblClick':
                 console.log("dblclick --> navigate to code location")
                 break
+            case 'saveAs':
+                let filter;
+
+                if(message.value.type=="dot"){
+                    filter = {'Graphviz Dot Files':['dot']};
+                } else if(message.value.type=="svg"){
+                    filter = {'Images':['svg']};
+                } else {
+                    return;
+                }
+                vscode.window.showSaveDialog({
+                    saveLabel:"export",
+                    filters: filter
+                })
+                .then((fileUri) => {
+                    if(fileUri){
+                        fs.writeFile(fileUri.path, message.value.data, function(err) {
+                            if(err) {
+                                return console.log(err);
+                            }
+                            previewPanel.webview.postMessage({ command: 'saveSvgSuccess' });
+                            console.log("File Saved");
+                        }); 
+                    }
+                })
+                break
             default:
                 previewPanel.handleMessage(message);
                 //forward unhandled messages to previewpanel
@@ -136,6 +162,11 @@ class InteractiveWebviewGenerator {
                 path.join(this.context.extensionPath, this.content_folder, srcPath))
                     .with({scheme: "vscode-resource"});
             return `<script src="${resource}">`;
+        }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
+            let resource=vscode.Uri.file(
+                path.join(this.context.extensionPath, this.content_folder, srcPath))
+                    .with({scheme: "vscode-resource"});
+            return `<link rel="stylesheet" href="${resource}"/>`;
         })
         return templateHtml;
     }

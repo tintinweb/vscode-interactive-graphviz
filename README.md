@@ -14,6 +14,7 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 * preview dot/Graphviz source.
 * updates preview as you type.
 * interactive edge tracking.
+* export the graph as `svg` or `dot`.
 * developers: you can pass a callback function that receives the webPanel when executing this extensions command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
 
 
