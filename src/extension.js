@@ -61,6 +61,12 @@ function onActivate(context) {
 
             graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document)
                 .then(webpanel => {
+                    //trigger dot render on page load success
+                    //just in case webpanel takes longer to load, wait for page to ping back and perform action
+                    webpanel.onPageLoaded = function (){
+                        webpanel.renderDot(options.content);
+                    }
+                    //trigger dot render
                     webpanel.renderDot(options.content);
                     //handle messages?
                     //webpanel.handleMessages = function (message) {} 

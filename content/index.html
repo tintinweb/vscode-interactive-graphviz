@@ -63,6 +63,7 @@
 
 var graphviz = d3.select("#graph").graphviz();
 
+postMessage({command:'onPageLoaded', value:{}})
 
 function render(dotSrc) {
     var dotSrcLines = dotSrc.split('\n');
