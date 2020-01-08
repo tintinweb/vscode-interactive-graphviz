@@ -164,13 +164,12 @@ class InteractiveWebviewGenerator {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, path.join(...(srcPath.split("/")))))
                     .with({scheme: "vscode-resource"});
-            return `<script src="${resource}">`.replace("%3A",":");
+            return `<script src="${resource}">`;
         }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, path.join(...(srcPath.split("/")))))
                     .with({scheme: "vscode-resource"});
-            console.log(resource)
-            return `<link rel="stylesheet" href="${resource}"/>`.replace("%3A",":");
+            return `<link rel="stylesheet" href="${resource}"/>`;
         });
         return templateHtml;
     }
