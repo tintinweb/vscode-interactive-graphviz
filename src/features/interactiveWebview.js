@@ -79,6 +79,9 @@ class InteractiveWebviewGenerator {
         console.log(`Message received from the webview: ${message.command}`);
 
         switch(message.command){
+            case 'onPageLoaded':
+                previewPanel.onPageLoaded(message.value);
+                break;
             case 'onClick':
                 previewPanel.onClick(message.value);
                 break;
@@ -101,7 +104,7 @@ class InteractiveWebviewGenerator {
                 })
                 .then((fileUri) => {
                     if(fileUri){
-                        fs.writeFile(fileUri.path, message.value.data, function(err) {
+                        fs.writeFile(fileUri.fsPath, message.value.data, function(err) {
                             if(err) {
                                 return console.log(err);
                             }
@@ -127,7 +130,7 @@ class InteractiveWebviewGenerator {
             localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "content"))]
         });
 
-        webViewPanel.iconPath = vscode.Uri.file(this.context.asAbsolutePath("content/icon.png"));
+        webViewPanel.iconPath = vscode.Uri.file(this.context.asAbsolutePath(path.join("content","icon.png")));
 
         return new PreviewPanel(this, doc.uri, webViewPanel);
     }
@@ -159,12 +162,12 @@ class InteractiveWebviewGenerator {
 
         templateHtml = templateHtml.replace(/<script .*?src="(.+)">/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
-                path.join(this.context.extensionPath, this.content_folder, srcPath))
+                path.join(this.context.extensionPath, this.content_folder, path.join(...(srcPath.split("/")))))
                     .with({scheme: "vscode-resource"});
             return `<script src="${resource}">`;
         }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
-                path.join(this.context.extensionPath, this.content_folder, srcPath))
+                path.join(this.context.extensionPath, this.content_folder, path.join(...(srcPath.split("/")))))
                     .with({scheme: "vscode-resource"});
             return `<link rel="stylesheet" href="${resource}"/>`;
         });
@@ -203,6 +206,9 @@ class PreviewPanel {
 
     handleMessage(message){
         console.warn('Unexpected command: ' + message.command);
+    }
+
+    onPageLoaded(message){
     }
 
     onClick(message){
