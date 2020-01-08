@@ -104,7 +104,7 @@ class InteractiveWebviewGenerator {
                 })
                 .then((fileUri) => {
                     if(fileUri){
-                        fs.writeFile(fileUri.path, message.value.data, function(err) {
+                        fs.writeFile(fileUri.fsPath, message.value.data, function(err) {
                             if(err) {
                                 return console.log(err);
                             }
