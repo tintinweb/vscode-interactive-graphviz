@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.0.5
+
 ## 0.0.4
 - allow to export the current graph as `svg` or `dot`
 

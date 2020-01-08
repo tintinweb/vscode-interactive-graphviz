@@ -13,7 +13,7 @@ function postMessage(message) {
 
 function receiveMessage(event)
 {
-    console.log(event)
+    console.log(event);
 }
 window.addEventListener("message", receiveMessage, false);
 

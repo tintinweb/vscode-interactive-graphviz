@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 /** 
  * @author github.com/tintinweb
  * @license MIT
@@ -7,7 +7,7 @@
 
 
 /** imports */
-const vscode = require("vscode")
+const vscode = require("vscode");
 const path =  require("path");
 const fs = require("fs");
 
@@ -19,7 +19,7 @@ const fs = require("fs");
 class InteractiveWebviewGenerator {
 
     constructor(context, content_folder) {
-        this.context = context
+        this.context = context;
         this.webviewPanels = new Map();
         this.timeout = null;
         this.content_folder = content_folder;
@@ -71,7 +71,7 @@ class InteractiveWebviewGenerator {
             that.updateContent(previewPanel, doc)
                 .then(previewPanel => {
                     resolve(previewPanel);
-                })
+                });
         });
     }
 
@@ -81,10 +81,10 @@ class InteractiveWebviewGenerator {
         switch(message.command){
             case 'onClick':
                 previewPanel.onClick(message.value);
-                break
+                break;
             case 'onDblClick':
-                console.log("dblclick --> navigate to code location")
-                break
+                console.log("dblclick --> navigate to code location");
+                break;
             case 'saveAs':
                 let filter;
 
@@ -109,8 +109,8 @@ class InteractiveWebviewGenerator {
                             console.log("File Saved");
                         }); 
                     }
-                })
-                break
+                });
+                break;
             default:
                 previewPanel.handleMessage(message);
                 //forward unhandled messages to previewpanel
@@ -139,7 +139,7 @@ class InteractiveWebviewGenerator {
             }
             previewPanel.setNeedsRebuild(false);
             previewPanel.getPanel().webview.html = await this.getPreviewHtml(previewPanel, doc);
-            return resolve(previewPanel)
+            return resolve(previewPanel);
         });
     }
 
@@ -167,7 +167,7 @@ class InteractiveWebviewGenerator {
                 path.join(this.context.extensionPath, this.content_folder, srcPath))
                     .with({scheme: "vscode-resource"});
             return `<link rel="stylesheet" href="${resource}"/>`;
-        })
+        });
         return templateHtml;
     }
 }
@@ -176,7 +176,7 @@ class PreviewPanel {
 
     constructor( parent, uri,  panel) {
         this.parent = parent;
-        this.needsRebuild;
+        this.needsRebuild = false;
         this.uri = uri;
         this.panel = panel;
     }
@@ -206,11 +206,11 @@ class PreviewPanel {
     }
 
     onClick(message){
-        console.debug(message)
+        console.debug(message);
     }
 }
 
 
 module.exports = {
     InteractiveWebviewGenerator:InteractiveWebviewGenerator
-}
+};
