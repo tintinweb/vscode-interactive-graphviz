@@ -79,11 +79,14 @@ class InteractiveWebviewGenerator {
         console.log(`Message received from the webview: ${message.command}`);
 
         switch(message.command){
+            case 'onRenderFinished':
+                previewPanel.onRenderFinished(message);
+                break;
             case 'onPageLoaded':
-                previewPanel.onPageLoaded(message.value);
+                previewPanel.onPageLoaded(message);
                 break;
             case 'onClick':
-                previewPanel.onClick(message.value);
+                previewPanel.onClick(message);
                 break;
             case 'onDblClick':
                 console.log("dblclick --> navigate to code location");
@@ -182,6 +185,8 @@ class PreviewPanel {
         this.needsRebuild = false;
         this.uri = uri;
         this.panel = panel;
+
+        this.lockRender = false;
     }
 
     reveal(displayColumn) {
@@ -201,11 +206,17 @@ class PreviewPanel {
     }
 
     renderDot(dotSrc) {
+        if(this.lockRender) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
+        this.lockRender = true;
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
     handleMessage(message){
         console.warn('Unexpected command: ' + message.command);
+    }
+
+    onRenderFinished(message){
+        this.lockRender = false;
     }
 
     onPageLoaded(message){
