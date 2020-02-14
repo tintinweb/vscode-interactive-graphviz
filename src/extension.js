@@ -24,7 +24,7 @@ function onActivate(context) {
     const graphvizView = new InteractiveWebviewGenerator(context, "content");
 
     vscode.workspace.onDidChangeTextDocument(event => {
-        if (event.document.languageId==DOT) {
+        if (event.document.languageId==DOT || event.document.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(event.document.uri);
             if(panel){
                 panel.renderDot(event.document.getText());
@@ -33,7 +33,7 @@ function onActivate(context) {
     }, null, context.subscriptions);
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(doc => {
-        if (doc.languageId==DOT) {
+        if (doc.languageId==DOT || doc.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(doc.uri);
             if(panel){
                 panel.renderDot(doc.getText());
