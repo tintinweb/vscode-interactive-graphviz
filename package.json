@@ -35,7 +35,22 @@
                 "title": "preview (beside)",
                 "category": "Graphviz Interactive"
             }
-        ]
+        ],
+        "configuration": {
+          "title": "Graphviz Interactive Preview",
+          "properties": {
+            "interactive-graphviz.minRenderInterval": {
+              "type": "number",
+              "default": 0,
+              "description": "Minimal delay between attempts to auto-render"
+            },
+            "interactive-graphviz.renderLock": {
+              "type": "boolean",
+              "default": true,
+              "description": "Prevent another rendering to start while rendering is already in process."
+            }
+          }
+        }
     },
     "dependencies": {}
 }

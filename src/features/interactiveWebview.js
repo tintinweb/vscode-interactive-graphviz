@@ -187,6 +187,9 @@ class PreviewPanel {
         this.panel = panel;
 
         this.lockRender = false;
+        this.lastRender = Date.now();
+        this.enableRenderLock = vscode.workspace.getConfiguration('interactive-graphviz').get("renderLock");
+        this.minRenderInterval = vscode.workspace.getConfiguration('interactive-graphviz').get("minRenderInterval");
     }
 
     reveal(displayColumn) {
@@ -206,8 +209,11 @@ class PreviewPanel {
     }
 
     renderDot(dotSrc) {
-        if(this.lockRender) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
+        if(this.enableRenderLock && this.lockRender) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
+        let now = Date.now();
+        if(now - this.lastRender < this.minRenderInterval) return;        
         this.lockRender = true;
+        this.lastRender = now;
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
