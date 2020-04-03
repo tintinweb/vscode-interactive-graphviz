@@ -186,7 +186,7 @@ class PreviewPanel {
         this.uri = uri;
         this.panel = panel;
 
-        this.lastRender = null;
+        this.lockRender = false;
     }
 
     reveal(displayColumn) {
@@ -206,8 +206,8 @@ class PreviewPanel {
     }
 
     renderDot(dotSrc) {
-        if(this.lastRender && Date.now() - this.lastRender <= 5000) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
-        this.lastRender = Date.now();
+        if(this.lockRender) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
+        this.lockRender = true;
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
