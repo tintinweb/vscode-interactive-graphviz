@@ -42,7 +42,7 @@ let args = {
     callback: <function (webpanel){}>
 }
             
-vscode.commands.executeCommand("interactive-graphviz.preview.beside", args)
+vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", args)
 ```
 
 ## Credits

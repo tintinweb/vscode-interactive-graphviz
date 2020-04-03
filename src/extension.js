@@ -42,7 +42,7 @@ function onActivate(context) {
     }));
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('interactive-graphviz.preview.beside', (args) => {
+        vscode.commands.registerCommand('graphviz-interactive-preview.preview.beside', (args) => {
             // take document or string; default active editor if
             args = args || {};
             let options = {

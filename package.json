@@ -26,12 +26,12 @@
     },
     "main": "./src/extension.js",
     "activationEvents": [
-        "onCommand:interactive-graphviz.preview.beside"
+        "onCommand:graphviz-interactive-preview.preview.beside"
     ],
     "contributes": {
         "commands": [
             {
-                "command": "interactive-graphviz.preview.beside",
+                "command": "graphviz-interactive-preview.preview.beside",
                 "title": "preview (beside)",
                 "category": "Graphviz Interactive"
             }
@@ -39,12 +39,12 @@
         "configuration": {
           "title": "Graphviz Interactive Preview",
           "properties": {
-            "interactive-graphviz.minRenderInterval": {
+            "graphviz-interactive-preview.minRenderInterval": {
               "type": "number",
               "default": 0,
               "description": "Minimal delay between attempts to auto-render"
             },
-            "interactive-graphviz.renderLock": {
+            "graphviz-interactive-preview.renderLock": {
               "type": "boolean",
               "default": true,
               "description": "Prevent another rendering to start while rendering is already in process."

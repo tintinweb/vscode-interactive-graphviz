@@ -188,8 +188,8 @@ class PreviewPanel {
 
         this.lockRender = false;
         this.lastRender = Date.now();
-        this.enableRenderLock = vscode.workspace.getConfiguration('interactive-graphviz').get("renderLock");
-        this.minRenderInterval = vscode.workspace.getConfiguration('interactive-graphviz').get("minRenderInterval");
+        this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
+        this.minRenderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("minRenderInterval");
     }
 
     reveal(displayColumn) {
