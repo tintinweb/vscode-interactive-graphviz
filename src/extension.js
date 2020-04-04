@@ -63,7 +63,7 @@ function onActivate(context) {
                 .then(webpanel => {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
-                    webpanel.onPageLoadedRenderData = options.content
+                    webpanel.waitingForRendering = options.content
                     
                     //handle messages?
                     // //webpanel.handleMessages = function (message) {} 
