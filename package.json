@@ -49,12 +49,12 @@
                     "default": true,
                     "description": "Prevent another rendering to start while rendering is already in process."
                 },
-                "graphviz-interactive-preview.view.transitionaDelay": {
+                "graphviz-interactive-preview.view.transitionDelay": {
                     "type": "number",
                     "default": 0,
                     "description": "The delay before the graph change is rendered."
                 },
-                "graphviz-interactive-preview.view.transitionaDuration": {
+                "graphviz-interactive-preview.view.transitionDuration": {
                     "type": "number",
                     "default": 500,
                     "description": "The duration of the graph change transition."

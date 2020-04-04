@@ -1,8 +1,8 @@
 'use strict';
-/** 
+/**
  * @author github.com/tintinweb
  * @license MIT
- * 
+ *
 * */
 
 
@@ -113,7 +113,7 @@ class InteractiveWebviewGenerator {
                             }
                             previewPanel.webview.postMessage({ command: 'saveSvgSuccess' });
                             console.log("File Saved");
-                        }); 
+                        });
                     }
                 });
                 break;
@@ -151,7 +151,7 @@ class InteractiveWebviewGenerator {
 
     async getPreviewTemplate(context, templateName){
         let previewPath = context.asAbsolutePath(path.join(this.content_folder, templateName));
-    
+
         return new Promise((resolve, reject) => {
             fs.readFile(previewPath, "utf8", function (err, data) {
                 if (err) reject(err);
@@ -227,13 +227,13 @@ class PreviewPanel {
     }
 
     onPageLoaded(message){
-        this.panel.webview.postMessage({ 
+        this.panel.webview.postMessage({
             command: 'setConfig',
             value : {
-                transitionDelay : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionaDelay"),
-                transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionaDuration")
+                transitionDelay : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay"),
+                transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration")
             }
-            });
+        });
         this.onPageLoadedRenderData && this.renderDot(this.onPageLoadedRenderData);
         this.onPageLoadedRenderData = null;
     }
