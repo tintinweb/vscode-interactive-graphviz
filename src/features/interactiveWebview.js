@@ -210,9 +210,20 @@ class PreviewPanel {
     }
 
     renderDot(dotSrc) {
-        if(this.enableRenderLock && this.lockRender) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
         let now = Date.now();
-        if(now - this.lastRender < this.minRenderInterval) return;        
+        // filter out any sub-5ms changes, those are probably just events double-bouncing
+        if(now - this.lastRender < 5) {
+            return;
+        }
+        // schedule the last time- or lock- blocked request for the time after the current rednering finishes
+        if(now - this.lastRender < this.minRenderInterval) {
+            this.waitingForRendering = dotSrc;
+            return;
+        }
+        if(this.enableRenderLock && this.lockRender) {
+            this.waitingForRendering = dotSrc;
+            return;
+        }
         this.lockRender = true;
         this.lastRender = now;
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
@@ -224,6 +235,11 @@ class PreviewPanel {
 
     onRenderFinished(message){
         this.lockRender = false;
+        if (this.waitingForRendering) {
+            let dotSrc = this.waitingForRendering;
+            this.waitingForRendering = null;
+            this.renderDot(dotSrc);
+        }
     }
 
     onPageLoaded(message){

@@ -42,12 +42,12 @@
                 "graphviz-interactive-preview.minRenderInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "Minimal delay between allowed attempts to auto-render the preview."
+                    "description": "0: disabled; Minimal delay between allowed attempts to auto-render the preview. Note that setting this value too low might brake tracing in the graph, if an overlapping rendering occurs. After the  on-going rendering is finished, the last blocked rendering request is rendered."
                 },
                 "graphviz-interactive-preview.renderLock": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Prevent another rendering to start while rendering is already in process."
+                    "description": "Prevent another rendering to start while rendering is already in process. After the on-going rendering is finished, the last blocked rendering request is rendered."
                 },
                 "graphviz-interactive-preview.view.transitionDelay": {
                     "type": "number",
