@@ -190,6 +190,7 @@ class PreviewPanel {
         this.lastRender = Date.now();
         this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
         this.minRenderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("minRenderInterval");
+        this.onPageLoadedRenderData = null;
     }
 
     reveal(displayColumn) {
@@ -226,6 +227,15 @@ class PreviewPanel {
     }
 
     onPageLoaded(message){
+        this.panel.webview.postMessage({ 
+            command: 'setConfig',
+            value : {
+                transitionDelay : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionaDelay"),
+                transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionaDuration")
+            }
+            });
+        this.onPageLoadedRenderData && this.renderDot(this.onPageLoadedRenderData);
+        this.onPageLoadedRenderData = null;
     }
 
     onClick(message){

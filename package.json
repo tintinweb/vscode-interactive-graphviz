@@ -37,19 +37,29 @@
             }
         ],
         "configuration": {
-          "title": "Graphviz Interactive Preview",
-          "properties": {
-            "graphviz-interactive-preview.minRenderInterval": {
-              "type": "number",
-              "default": 0,
-              "description": "Minimal delay between attempts to auto-render"
-            },
-            "graphviz-interactive-preview.renderLock": {
-              "type": "boolean",
-              "default": true,
-              "description": "Prevent another rendering to start while rendering is already in process."
+            "title": "Graphviz Interactive Preview",
+            "properties": {
+                "graphviz-interactive-preview.minRenderInterval": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Minimal delay between allowed attempts to auto-render the preview."
+                },
+                "graphviz-interactive-preview.renderLock": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Prevent another rendering to start while rendering is already in process."
+                },
+                "graphviz-interactive-preview.view.transitionaDelay": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "The delay before the graph change is rendered."
+                },
+                "graphviz-interactive-preview.view.transitionaDuration": {
+                    "type": "number",
+                    "default": 500,
+                    "description": "The duration of the graph change transition."
+                }
             }
-          }
         }
     },
     "dependencies": {}
