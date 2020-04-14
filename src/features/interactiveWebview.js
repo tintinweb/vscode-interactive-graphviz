@@ -188,9 +188,13 @@ class PreviewPanel {
 
         this.lockRender = false;
         this.lastRender = Date.now();
+        this.lastRequest = Date.now();
         this.waitingForRendering = null;
+        this.timeoutForWaiting = null;
         this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
-        this.minRenderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("minRenderInterval");
+        this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval");
+        this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval");
+        this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval");
     }
 
     reveal(displayColumn) {
@@ -209,23 +213,79 @@ class PreviewPanel {
         return this.panel;
     }
 
-    renderDot(dotSrc) {
+    // the following functions do not use any locking/synchronization mechanisms, so it may behave weirdly in edge cases
+
+    requestRender(dotSrc) {
         let now = Date.now();
-        // filter out any sub-5ms changes, those are probably just events double-bouncing
-        if(now - this.lastRender < 5) {
+        let sinceLastRequest = now - this.lastRequest;
+        let sinceLastRender = now - this.lastRender;
+        this.lastRequest = now;
+
+        // save the latest content
+        this.waitingForRendering = dotSrc;
+
+        // hardcoded:
+        // why: to filter out double-events on-save on-change etc, while preserving the ability to monitor fast-changing files etc.
+        // what: it delays first render after a period of inactivity (this.guardInterval) has passed
+        // how: this is effectively an anti-debounce, it will only pass-through events that come fast enough after the last one,
+        //      and delays all others
+        let waitFilterFirst = this.guardInterval < sinceLastRequest ? this.guardInterval : 0;
+        // will be >0 if there if debouncing is enabled
+        let waitDebounce = this.debouncingInterval;
+        // will be >0 if there is need to wait bcs. of inter-renderding interval settings
+        let waitRenderInterval = this.renderInterval - sinceLastRender;
+
+        let waitBeforeRendering = Math.max(waitFilterFirst, waitDebounce, waitRenderInterval);
+
+        // schedule the last blocked request after the current rendering is finished or when the interval elapses
+        if(waitBeforeRendering > 0) {
+            // schedule a timeout to render that content later            
+            // if timeout is already set, we might need to reset it, 
+            // because we are sharing one timeout for 
+            // 1) debouncing (**needs** to be delayed everytime), 
+            // 2) inter-rednering (does not need to be delayed)
+            if (waitDebounce > 0 || !this.timeoutForWaiting) {
+                clearTimeout(this.timeoutForWaiting);
+                this.timeoutForWaiting = setTimeout(
+                    () => this.renderWaitingContent(), 
+                    waitBeforeRendering
+                    );
+            } 
+            // scheduled, now return
+            console.log("requestRender() scheduling bcs interval, wait: " + waitBeforeRendering);
             return;
         }
-        // schedule the last time- or lock- blocked request for the time after the current rednering finishes
-        if(now - this.lastRender < this.minRenderInterval) {
-            this.waitingForRendering = dotSrc;
-            return;
+
+        console.log("requestRender() calling renderWaitingContent");
+        this.renderWaitingContent();
+    }
+
+    renderWaitingContent() {
+        // clear the timeout and null it's handle, we are rendering any waiting content now!
+        if (!!this.timeoutForWaiting) {
+            console.log("renderWaitingContent() clearing existing timeout");
+            clearTimeout(this.timeoutForWaiting);
+            this.timeoutForWaiting = null;
         }
-        if(this.enableRenderLock && this.lockRender) {
-            this.waitingForRendering = dotSrc;
-            return;
+
+        if (this.waitingForRendering) {
+            // if lock-on-active-rendering is enabled, and it is "locked", return and wait to be called from onRenderFinished
+            if(this.enableRenderLock && this.lockRender) {
+                console.log("renderWaitingContent() with content, now is locked");
+                return;
+            }
+            let dotSrc = this.waitingForRendering;
+            this.waitingForRendering = null;
+            console.log("renderWaitingContent() with content, calling renderNow");
+            this.renderNow(dotSrc);
         }
+        else console.log("renderWaitingContent() no content");
+    }
+
+    renderNow(dotSrc){
+        console.log("renderNow()");
         this.lockRender = true;
-        this.lastRender = now;
+        this.lastRender = Date.now();
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
@@ -235,11 +295,7 @@ class PreviewPanel {
 
     onRenderFinished(message){
         this.lockRender = false;
-        if (this.waitingForRendering) {
-            let dotSrc = this.waitingForRendering;
-            this.waitingForRendering = null;
-            this.renderDot(dotSrc);
-        }
+        this.renderWaitingContent();
     }
 
     onPageLoaded(message){
@@ -250,11 +306,7 @@ class PreviewPanel {
                 transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration")
             }
         });
-        if (this.waitingForRendering) {
-            let dotSrc = this.waitingForRendering;
-            this.waitingForRendering = null;
-            this.renderDot(dotSrc);
-        }
+        this.renderWaitingContent();
     }
 
     onClick(message){

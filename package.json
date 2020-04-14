@@ -39,15 +39,25 @@
         "configuration": {
             "title": "Graphviz Interactive Preview",
             "properties": {
-                "graphviz-interactive-preview.minRenderInterval": {
+                "graphviz-interactive-preview.guardInterval": {
+                    "type": "number",
+                    "default": 10,
+                    "description": "In miliseconds; First render request after a period of inactivity specified by guardInterval is delayed by guardInterval. Fixes old-content/new-content double-events with on-save and on-change events while preserving the ability to monitor fast-changing files. This is effectively an anti-debounce and thus has no effect when debouncingInterval is set."
+                },
+                "graphviz-interactive-preview.debouncingInterval": {
                     "type": "number",
                     "default": 0,
-                    "description": "0: disabled; Minimal delay between allowed attempts to auto-render the preview. Note that setting this value too low might brake tracing in the graph, if an overlapping rendering occurs. After the  on-going rendering is finished, the last blocked rendering request is rendered."
+                    "description": "0: disabled; The debouncing interval in miliseconds. A time interval interval without any rendering requests, that must elapse for the rendering to kick in. The last requested content is rendered."
+                },
+                "graphviz-interactive-preview.renderInterval": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "0: disabled; Guard interval in miliseconds between allowed attempts to auto-render the preview. After the on-going rendering is finished or when the interval elapses, the last blocked rendering request if rendered."
                 },
                 "graphviz-interactive-preview.renderLock": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Prevent another rendering to start while rendering is already in process. After the on-going rendering is finished, the last blocked rendering request is rendered."
+                    "description": "Prevent another rendering to start while rendering is already in process. After the on-going rendering is finished, the last pending rendering request is rendered. Prevents breaking of the click-and-trace feature in the graph."
                 },
                 "graphviz-interactive-preview.view.transitionDelay": {
                     "type": "number",

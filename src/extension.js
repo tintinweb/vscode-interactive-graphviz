@@ -27,7 +27,7 @@ function onActivate(context) {
         if (event.document.languageId==DOT || event.document.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(event.document.uri);
             if(panel){
-                panel.renderDot(event.document.getText());
+                panel.requestRender(event.document.getText());
             }
         }
     }, null, context.subscriptions);
@@ -36,7 +36,7 @@ function onActivate(context) {
         if (doc.languageId==DOT || doc.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(doc.uri);
             if(panel){
-                panel.renderDot(doc.getText());
+                panel.requestRender(doc.getText());
             }
         }
     }));
