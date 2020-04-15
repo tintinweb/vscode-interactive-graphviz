@@ -86,10 +86,12 @@ class InteractiveWebviewGenerator {
                 previewPanel.onPageLoaded(message);
                 break;
             case 'onClick':
-                previewPanel.onClick(message);
+                // not implemented
+                //console.debug(message);
                 break;
             case 'onDblClick':
-                console.log("dblclick --> navigate to code location");
+                // not implemented
+                //console.log("dblclick --> navigate to code location");
                 break;
             case 'saveAs':
                 let filter;
@@ -307,10 +309,6 @@ class PreviewPanel {
             }
         });
         this.renderWaitingContent();
-    }
-
-    onClick(message){
-        console.debug(message);
     }
 }
 
