@@ -20,6 +20,10 @@
  * SOFTWARE.
  */
 
+/*
+ * Edited by michkot 2020: fixed behaviour of colorElement() and restoreElement() when fill/stroke is "none"
+ * Edited by edejong 2018: https://github.com/mountainstorm/jquery.graphviz.svg/pull/18
+ */
 
 +function ($) {
     'use strict'
@@ -59,7 +63,7 @@
           var $a = $(this)
           $a.tooltip({
             container: $graph,
-            placement: 'auto left',
+            placement: 'left',
             animation: false,
             viewport: null
           }).on('hide.bs.tooltip', function() {
@@ -232,7 +236,7 @@
       }
   
       // remove namespace from a[xlink:title]
-      $el.children('a').filter(function () { return $(this).attr('xlink:title') }).each(function () {
+      $el.find('a').filter(function () { return $(this).attr('xlink:title') }).each(function () {
         var $a = $(this)
         $a.attr('title', $a.attr('xlink:title'))
         $a.removeAttr('xlink:title')
@@ -367,10 +371,10 @@
       $el.find('polygon, ellipse, path').each(function() {
         var $this = $(this)
         var color = $this.data('graphviz.svg.color')
-        if (color.fill && $this.prop('tagName') != 'path') {
+        if (color.fill && color.fill != "none" && $this.prop('tagName') != 'path') {
           $this.attr('fill', getColor(color.fill, bg)) // don't set  fill if it's a path
         }
-        if (color.stroke) {
+        if (color.stroke && color.stroke != "none") {
           $this.attr('stroke', getColor(color.stroke, bg))
         }
       })
@@ -380,10 +384,10 @@
       $el.find('polygon, ellipse, path').each(function() {
         var $this = $(this)
         var color = $this.data('graphviz.svg.color')
-        if (color.fill) {
+        if (color.fill && color.fill != "none") {
           $this.attr('fill', color.fill) // don't set  fill if it's a path
         }
-        if (color.stroke) {
+        if (color.stroke && color.stroke != "none") {
           $this.attr('stroke', color.stroke)
         }
       })
@@ -448,7 +452,7 @@
       var that = this
       var options = this.options
       $elements.each(function () {
-        $(this).children('a[title]').each(function () {
+        $(this).find('a[title]').each(function () {
           if (show) {
             options.tooltips.show.call(this)
           } else {
