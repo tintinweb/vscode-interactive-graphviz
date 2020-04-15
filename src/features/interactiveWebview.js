@@ -198,11 +198,11 @@ class PreviewPanel {
         this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval");
         this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval");
         this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval");
-        
+
         let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout");
         let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay");
         let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration");
-        this.renderLockTimeout = 
+        this.renderLockTimeout =
             (this.enableRenderLock && renderLockAdditionalTimeout >= 0) ?
             renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration :
             0;
@@ -250,18 +250,18 @@ class PreviewPanel {
 
         // schedule the last blocked request after the current rendering is finished or when the interval elapses
         if(waitBeforeRendering > 0) {
-            // schedule a timeout to render that content later            
-            // if timeout is already set, we might need to reset it, 
-            // because we are sharing one timeout for 
-            // 1) debouncing (**needs** to be delayed everytime), 
+            // schedule a timeout to render that content later
+            // if timeout is already set, we might need to reset it,
+            // because we are sharing one timeout for
+            // 1) debouncing (**needs** to be delayed everytime),
             // 2) inter-rednering (does not need to be delayed)
             if (waitDebounce > 0 || !this.timeoutForWaiting) {
                 clearTimeout(this.timeoutForWaiting);
                 this.timeoutForWaiting = setTimeout(
-                    () => this.renderWaitingContent(), 
+                    () => this.renderWaitingContent(),
                     waitBeforeRendering
                     );
-            } 
+            }
             // scheduled, now return
             console.log("requestRender() scheduling bcs interval, wait: " + waitBeforeRendering);
             return;
@@ -300,7 +300,7 @@ class PreviewPanel {
         if (this.renderLockTimeout > 0)
         {
             this.timeoutForRendering = setTimeout(
-                () => {console.log("unlocking rendering bcs. of timeout"); this.onRenderFinished();}, 
+                () => {console.log("unlocking rendering bcs. of timeout"); this.onRenderFinished();},
                 this.renderLockTimeout
                 );
         }

@@ -1,8 +1,8 @@
 'use strict';
-/** 
+/**
  * @author github.com/tintinweb
  * @license MIT
- * 
+ *
   * */
 
 
@@ -64,14 +64,14 @@ function onActivate(context) {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
                     webpanel.waitingForRendering = options.content
-                    
+
                     //handle messages?
-                    // //webpanel.handleMessages = function (message) {} 
+                    // //webpanel.handleMessages = function (message) {}
                     if(options.callback) {
                         options.callback(webpanel);
                     }
                 });
-            
+
         })
     );
 }
