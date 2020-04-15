@@ -57,7 +57,12 @@
                 "graphviz-interactive-preview.renderLock": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Prevent another rendering to start while rendering is already in process. After the on-going rendering is finished, the last pending rendering request is rendered. Prevents breaking of the click-and-trace feature in the graph."
+                    "description": "Prevent another rendering to start while rendering is already in process. After the on-going rendering is finished, the last pending rendering request is rendered. Prevents breaking of the click-and-trace feature in the graph. If the rendering fails for some reasons, the lock is released automatically after timeout, unless disabled via renderLockAdditionalTimeout = -1 ."
+                },
+                "graphviz-interactive-preview.renderLockAdditionalTimeout": {
+                    "type": "number",
+                    "default": 1000,
+                    "description": "-1: disables renderLock rendering timeout; renderLockTimeout + view.transitionDelay + transitionDuration = max time to finish rendering, then release lock."
                 },
                 "graphviz-interactive-preview.view.transitionDelay": {
                     "type": "number",

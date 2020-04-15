@@ -80,10 +80,10 @@ class InteractiveWebviewGenerator {
 
         switch(message.command){
             case 'onRenderFinished':
-                previewPanel.onRenderFinished(message);
+                previewPanel.onRenderFinished();
                 break;
             case 'onPageLoaded':
-                previewPanel.onPageLoaded(message);
+                previewPanel.onPageLoaded();
                 break;
             case 'onClick':
                 // not implemented
@@ -193,10 +193,19 @@ class PreviewPanel {
         this.lastRequest = Date.now();
         this.waitingForRendering = null;
         this.timeoutForWaiting = null;
+        this.timeoutForRendering = null;
         this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
         this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval");
         this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval");
         this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval");
+        
+        let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout");
+        let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay");
+        let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration");
+        this.renderLockTimeout = 
+            (this.enableRenderLock && renderLockAdditionalTimeout >= 0) ?
+            renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration :
+            0;
     }
 
     reveal(displayColumn) {
@@ -288,6 +297,13 @@ class PreviewPanel {
         console.log("renderNow()");
         this.lockRender = true;
         this.lastRender = Date.now();
+        if (this.renderLockTimeout > 0)
+        {
+            this.timeoutForRendering = setTimeout(
+                () => {console.log("unlocking rendering bcs. of timeout"); this.onRenderFinished();}, 
+                this.renderLockTimeout
+                );
+        }
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
@@ -295,12 +311,16 @@ class PreviewPanel {
         console.warn('Unexpected command: ' + message.command);
     }
 
-    onRenderFinished(message){
+    onRenderFinished(){
+        if (!!this.timeoutForRendering) {
+            clearTimeout(this.timeoutForRendering);
+            this.timeoutForRendering = null;
+        }
         this.lockRender = false;
         this.renderWaitingContent();
     }
 
-    onPageLoaded(message){
+    onPageLoaded(){
         this.panel.webview.postMessage({
             command: 'setConfig',
             value : {
