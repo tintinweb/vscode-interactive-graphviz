@@ -67,8 +67,6 @@ var viewConfig;
 postMessage({command:'onPageLoaded', value:{}})
 
 function render(dotSrc) {
-    var dotSrcLines = dotSrc.split('\n');
-
     transition = d3.transition("startTransition")
         .ease(d3.easeLinear)
         .delay(viewConfig.transitionDelay)
@@ -91,8 +89,6 @@ function render(dotSrc) {
         });
 
     $('#graph').data('graphviz.dot', dotSrc); //keep the dotfile accessible
-
-    nodes = d3.selectAll('.node,.edge,.cluster');
 }
 
 
@@ -113,7 +109,6 @@ window.addEventListener('message', event => {
 <script type="text/javascript">
     $(document).ready(function(){
         $("#graph").graphviz({
-            //svg: "demo.svg", 
             ready: function() {
                 var gv = this
 
