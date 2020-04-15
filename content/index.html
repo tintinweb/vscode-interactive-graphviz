@@ -83,6 +83,12 @@ function render(dotSrc) {
         .tweenShapes(true) // default
         .zoomScaleExtent([0,Infinity])
         .zoom(true)
+        .onerror(function (err) {            
+            postMessage({
+                command:'onRenderFinished', 
+                value:{ err }
+            });
+        })
         .renderDot(dotSrc)
         .on("end", function() { 
             // this calls the jquery.graphviz.svg setup() directly, 

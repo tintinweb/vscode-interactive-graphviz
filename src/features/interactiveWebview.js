@@ -80,7 +80,7 @@ class InteractiveWebviewGenerator {
 
         switch(message.command){
             case 'onRenderFinished':
-                previewPanel.onRenderFinished();
+                previewPanel.onRenderFinished(message.value.err);
                 break;
             case 'onPageLoaded':
                 previewPanel.onPageLoaded();
@@ -311,7 +311,10 @@ class PreviewPanel {
         console.warn('Unexpected command: ' + message.command);
     }
 
-    onRenderFinished(){
+    onRenderFinished(err){
+        if (err)
+            console.log("rendering failed: " + err);
+
         if (!!this.timeoutForRendering) {
             clearTimeout(this.timeoutForRendering);
             this.timeoutForRendering = null;
