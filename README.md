@@ -29,12 +29,12 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 ```json
 {
     "name": "your-extension",
-    //...
+    
     "extensionDependencies": ["tintinweb.graphviz-interactive-preview"],
 }
 ```
 
-* Create a new panel displaying the rendered dot graph. Either provide a document or both the document and the graphviz dot source. The callback function receives the newly created [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/master/src/features/interactiveWebview.js#L312-L328). Overload `webPanel.handleMessage((message)` from your callback function to receive message events like `onClick` and `onDblClick` emitted from inside the dot render window. 
+* Create a new panel displaying the rendered dot graph. Either provide a document or both the document and the graphviz dot source. The callback function receives the newly created [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/be9c496/src/features/interactiveWebview.js#L312-L328). Overload `webPanel.handleMessage((message)` from your callback function to receive message events like `onClick` and `onDblClick` emitted from inside the dot render window. 
 
 
 ```javascript
