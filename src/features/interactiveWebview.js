@@ -1,8 +1,8 @@
 'use strict';
-/** 
+/**
  * @author github.com/tintinweb
  * @license MIT
- * 
+ *
 * */
 
 
@@ -80,16 +80,18 @@ class InteractiveWebviewGenerator {
 
         switch(message.command){
             case 'onRenderFinished':
-                previewPanel.onRenderFinished(message);
+                previewPanel.onRenderFinished(message.value.err);
                 break;
             case 'onPageLoaded':
-                previewPanel.onPageLoaded(message);
+                previewPanel.onPageLoaded();
                 break;
             case 'onClick':
-                previewPanel.onClick(message);
+                // not implemented
+                //console.debug(message);
                 break;
             case 'onDblClick':
-                console.log("dblclick --> navigate to code location");
+                // not implemented
+                //console.log("dblclick --> navigate to code location");
                 break;
             case 'saveAs':
                 let filter;
@@ -113,7 +115,7 @@ class InteractiveWebviewGenerator {
                             }
                             previewPanel.webview.postMessage({ command: 'saveSvgSuccess' });
                             console.log("File Saved");
-                        }); 
+                        });
                     }
                 });
                 break;
@@ -151,7 +153,7 @@ class InteractiveWebviewGenerator {
 
     async getPreviewTemplate(context, templateName){
         let previewPath = context.asAbsolutePath(path.join(this.content_folder, templateName));
-    
+
         return new Promise((resolve, reject) => {
             fs.readFile(previewPath, "utf8", function (err, data) {
                 if (err) reject(err);
@@ -186,7 +188,24 @@ class PreviewPanel {
         this.uri = uri;
         this.panel = panel;
 
-        this.lastRender = null;
+        this.lockRender = false;
+        this.lastRender = Date.now();
+        this.lastRequest = Date.now();
+        this.waitingForRendering = null;
+        this.timeoutForWaiting = null;
+        this.timeoutForRendering = null;
+        this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
+        this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval");
+        this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval");
+        this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval");
+
+        let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout");
+        let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay");
+        let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration");
+        this.renderLockTimeout =
+            (this.enableRenderLock && renderLockAdditionalTimeout >= 0) ?
+            renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration :
+            0;
     }
 
     reveal(displayColumn) {
@@ -205,9 +224,86 @@ class PreviewPanel {
         return this.panel;
     }
 
-    renderDot(dotSrc) {
-        if(this.lastRender && Date.now() - this.lastRender <= 5000) return;  //naive approach: do not call render if it is already rendering (onDidSave fires a lot of events)
+    // the following functions do not use any locking/synchronization mechanisms, so it may behave weirdly in edge cases
+
+    requestRender(dotSrc) {
+        let now = Date.now();
+        let sinceLastRequest = now - this.lastRequest;
+        let sinceLastRender = now - this.lastRender;
+        this.lastRequest = now;
+
+        // save the latest content
+        this.waitingForRendering = dotSrc;
+
+        // hardcoded:
+        // why: to filter out double-events on-save on-change etc, while preserving the ability to monitor fast-changing files etc.
+        // what: it delays first render after a period of inactivity (this.guardInterval) has passed
+        // how: this is effectively an anti-debounce, it will only pass-through events that come fast enough after the last one,
+        //      and delays all others
+        let waitFilterFirst = this.guardInterval < sinceLastRequest ? this.guardInterval : 0;
+        // will be >0 if there if debouncing is enabled
+        let waitDebounce = this.debouncingInterval;
+        // will be >0 if there is need to wait bcs. of inter-renderding interval settings
+        let waitRenderInterval = this.renderInterval - sinceLastRender;
+
+        let waitBeforeRendering = Math.max(waitFilterFirst, waitDebounce, waitRenderInterval);
+
+        // schedule the last blocked request after the current rendering is finished or when the interval elapses
+        if(waitBeforeRendering > 0) {
+            // schedule a timeout to render that content later
+            // if timeout is already set, we might need to reset it,
+            // because we are sharing one timeout for
+            // 1) debouncing (**needs** to be delayed everytime),
+            // 2) inter-rednering (does not need to be delayed)
+            if (waitDebounce > 0 || !this.timeoutForWaiting) {
+                clearTimeout(this.timeoutForWaiting);
+                this.timeoutForWaiting = setTimeout(
+                    () => this.renderWaitingContent(),
+                    waitBeforeRendering
+                    );
+            }
+            // scheduled, now return
+            console.log("requestRender() scheduling bcs interval, wait: " + waitBeforeRendering);
+            return;
+        }
+
+        console.log("requestRender() calling renderWaitingContent");
+        this.renderWaitingContent();
+    }
+
+    renderWaitingContent() {
+        // clear the timeout and null it's handle, we are rendering any waiting content now!
+        if (!!this.timeoutForWaiting) {
+            console.log("renderWaitingContent() clearing existing timeout");
+            clearTimeout(this.timeoutForWaiting);
+            this.timeoutForWaiting = null;
+        }
+
+        if (this.waitingForRendering) {
+            // if lock-on-active-rendering is enabled, and it is "locked", return and wait to be called from onRenderFinished
+            if(this.enableRenderLock && this.lockRender) {
+                console.log("renderWaitingContent() with content, now is locked");
+                return;
+            }
+            let dotSrc = this.waitingForRendering;
+            this.waitingForRendering = null;
+            console.log("renderWaitingContent() with content, calling renderNow");
+            this.renderNow(dotSrc);
+        }
+        else console.log("renderWaitingContent() no content");
+    }
+
+    renderNow(dotSrc){
+        console.log("renderNow()");
+        this.lockRender = true;
         this.lastRender = Date.now();
+        if (this.renderLockTimeout > 0)
+        {
+            this.timeoutForRendering = setTimeout(
+                () => {console.log("unlocking rendering bcs. of timeout"); this.onRenderFinished();},
+                this.renderLockTimeout
+                );
+        }
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
     }
 
@@ -215,15 +311,27 @@ class PreviewPanel {
         console.warn('Unexpected command: ' + message.command);
     }
 
-    onRenderFinished(message){
+    onRenderFinished(err){
+        if (err)
+            console.log("rendering failed: " + err);
+
+        if (!!this.timeoutForRendering) {
+            clearTimeout(this.timeoutForRendering);
+            this.timeoutForRendering = null;
+        }
         this.lockRender = false;
+        this.renderWaitingContent();
     }
 
-    onPageLoaded(message){
-    }
-
-    onClick(message){
-        console.debug(message);
+    onPageLoaded(){
+        this.panel.webview.postMessage({
+            command: 'setConfig',
+            value : {
+                transitionDelay : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay"),
+                transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration")
+            }
+        });
+        this.renderWaitingContent();
     }
 }
 

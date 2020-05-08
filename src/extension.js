@@ -1,8 +1,8 @@
 'use strict';
-/** 
+/**
  * @author github.com/tintinweb
  * @license MIT
- * 
+ *
   * */
 
 
@@ -27,7 +27,7 @@ function onActivate(context) {
         if (event.document.languageId==DOT || event.document.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(event.document.uri);
             if(panel){
-                panel.renderDot(event.document.getText());
+                panel.requestRender(event.document.getText());
             }
         }
     }, null, context.subscriptions);
@@ -36,13 +36,13 @@ function onActivate(context) {
         if (doc.languageId==DOT || doc.fileName.trim().toLowerCase().endsWith(".dot")) {
             let panel = graphvizView.getPanel(doc.uri);
             if(panel){
-                panel.renderDot(doc.getText());
+                panel.requestRender(doc.getText());
             }
         }
     }));
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('interactive-graphviz.preview.beside', (args) => {
+        vscode.commands.registerCommand('graphviz-interactive-preview.preview.beside', (args) => {
             // take document or string; default active editor if
             args = args || {};
             let options = {
@@ -63,18 +63,15 @@ function onActivate(context) {
                 .then(webpanel => {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
-                    webpanel.onPageLoaded = function (){
-                        webpanel.renderDot(options.content);
-                    };
-                    //trigger dot render
-                    //webpanel.renderDot(options.content);
+                    webpanel.waitingForRendering = options.content
+
                     //handle messages?
-                    //webpanel.handleMessages = function (message) {} 
+                    // //webpanel.handleMessages = function (message) {}
                     if(options.callback) {
                         options.callback(webpanel);
                     }
                 });
-            
+
         })
     );
 }
