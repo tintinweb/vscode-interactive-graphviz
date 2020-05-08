@@ -15,6 +15,7 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 * Updates preview as you type.
 * Interactive edge tracking. click on a node to highlight incoming and outgoing edges.
 * Export the graph as `svg` or `dot`.
+* Configurable graph options: e.g. `transitionDelay`, `transitionDuration`.
 * Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
 
 
@@ -29,7 +30,6 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 ```json
 {
     "name": "your-extension",
-    
     "extensionDependencies": ["tintinweb.graphviz-interactive-preview"],
 }
 ```
