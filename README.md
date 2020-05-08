@@ -20,7 +20,7 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 
 ## Developer Notes
 
-**Note**:❗v0.0.7 introduced a breaking change: the render command was renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
+**Note**:❗v0.0.8 introduced a breaking change: the render command was renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
 
 ### Interact with this extension
 

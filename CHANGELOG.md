@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.7
+## 0.0.7 - 0.0.8
 - ❗breaking change:
   - render command renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
 - More control of behavior; Various fixes; Support for: render-lock, debouncing, inter-render interval; More in-code docs. #6 - thanks @michkot
