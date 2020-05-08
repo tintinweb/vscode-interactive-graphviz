@@ -11,14 +11,16 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 ![vscode-graphviz-interactive-cmd](https://user-images.githubusercontent.com/2865694/57646538-17cd9e00-75c1-11e9-8aee-08c13394a32c.gif)
 
 
-* preview dot/Graphviz source.
-* updates preview as you type.
-* interactive edge tracking.
-* export the graph as `svg` or `dot`.
-* developers: you can pass a callback function that receives the webPanel when executing this extensions command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
+* Preview dot/Graphviz source.
+* Updates preview as you type.
+* Interactive edge tracking. click on a node to highlight incoming and outgoing edges.
+* Export the graph as `svg` or `dot`.
+* Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
 
 
 ## Developer Notes
+
+**Note**:❗v0.0.7 introduced a breaking change: the render command was renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
 
 ### Interact with this extension
 
@@ -32,7 +34,7 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 }
 ```
 
-* create a new panel displaying the rendered dot graph. either provide a document or both the document and the graphviz dot source. The callback function receives the [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/master/src/features/interactiveWebview.js#L144-L180). Overload `onClick(message)` to manually handle click events inside the dot graph or override the message handling routine `handleMessage(message)` to get access to all message events triggered inside the dot render window. 
+* Create a new panel displaying the rendered dot graph. Either provide a document or both the document and the graphviz dot source. The callback function receives the newly created [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/master/src/features/interactiveWebview.js#L312-L328). Overload `webPanel.handleMessage((message)` from your callback function to receive message events like `onClick` and `onDblClick` emitted from inside the dot render window. 
 
 
 ```javascript

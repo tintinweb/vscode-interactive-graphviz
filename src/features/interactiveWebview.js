@@ -88,10 +88,12 @@ class InteractiveWebviewGenerator {
             case 'onClick':
                 // not implemented
                 //console.debug(message);
+                previewPanel.handleMessage(message);  //just forward the event for now
                 break;
             case 'onDblClick':
                 // not implemented
                 //console.log("dblclick --> navigate to code location");
+                previewPanel.handleMessage(message);  //just forward the event for now
                 break;
             case 'saveAs':
                 let filter;
@@ -308,7 +310,21 @@ class PreviewPanel {
     }
 
     handleMessage(message){
-        console.warn('Unexpected command: ' + message.command);
+        /** 
+         * Dev: handle messages emitted by the graphviz view
+         */
+        switch(message.command){
+            /*
+            case 'onClick':
+               //do something
+                break;
+            case 'onDblClick':
+                //do something
+                break;
+            */
+            default:
+                console.warn('Unexpected command: ' + message.command);
+        }
     }
 
     onRenderFinished(err){

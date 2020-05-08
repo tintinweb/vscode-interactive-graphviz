@@ -65,8 +65,8 @@ function onActivate(context) {
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
                     webpanel.waitingForRendering = options.content
 
-                    //handle messages?
-                    // //webpanel.handleMessages = function (message) {}
+                    // allow caller to handle messages by providing them with the newly created webpanel
+                    // e.g. caller can override webpanel.handleMessage = function(message){};
                     if(options.callback) {
                         options.callback(webpanel);
                     }
