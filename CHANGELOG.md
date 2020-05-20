@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.9
+- Adopt VS Code's 'asWebviewUri' API #7
+
 ## 0.0.7 - 0.0.8
 - ❗breaking change:
   - render command renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
