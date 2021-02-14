@@ -49,12 +49,13 @@ class InteractiveWebviewGenerator {
         });
     }
 
-    async revealOrCreatePreview(displayColumn, doc) {
+    async revealOrCreatePreview(displayColumn, doc, allowMultiplePanels) {
         let that = this;
+        
         return new Promise(function(resolve, reject) {
             let previewPanel = that.webviewPanels.get(doc.uri);
 
-            if (previewPanel) {
+            if (previewPanel && !allowMultiplePanels) {
                 previewPanel.reveal(displayColumn);
             }
             else {
