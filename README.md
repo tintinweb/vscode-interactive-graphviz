@@ -40,9 +40,10 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 ```javascript
 let args = {
     document: <vscode.document>,
-    content: <string:dotSrc>,
+    content: <string: dotSrc>,
     callback: <function (webpanel){}>,
-    allowMultiplePanels: <true|false>
+    allowMultiplePanels: <bool: false|[true]>,
+    title: <string: WindowTitle>
 }
             
 vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", args)

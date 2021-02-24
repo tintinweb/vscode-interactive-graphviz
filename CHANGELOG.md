@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.10
+- optionally allow multiple graph windows per document - fixes #13 (thanks @kaftejiman)
+- allow to customize the graph views title
+ 
 ## 0.0.9
 - Adopt VS Code's 'asWebviewUri' API #7
 

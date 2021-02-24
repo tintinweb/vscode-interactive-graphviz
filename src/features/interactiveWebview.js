@@ -49,17 +49,17 @@ class InteractiveWebviewGenerator {
         });
     }
 
-    async revealOrCreatePreview(displayColumn, doc, allowMultiplePanels) {
+    async revealOrCreatePreview(displayColumn, doc, options) {
         let that = this;
         
         return new Promise(function(resolve, reject) {
             let previewPanel = that.webviewPanels.get(doc.uri);
 
-            if (previewPanel && !allowMultiplePanels) {
+            if (previewPanel && !options.allowMultiplePanels) {
                 previewPanel.reveal(displayColumn);
             }
             else {
-                previewPanel = that.createPreviewPanel(doc, displayColumn);
+                previewPanel = that.createPreviewPanel(doc, displayColumn, options.title);
                 that.webviewPanels.set(doc.uri, previewPanel);
                 // when the user closes the tab, remove the panel
                 previewPanel.getPanel().onDidDispose(() => that.webviewPanels.delete(doc.uri), undefined, that.context.subscriptions);
@@ -128,8 +128,8 @@ class InteractiveWebviewGenerator {
         }
     }
 
-    createPreviewPanel(doc, displayColumn ) {
-        let previewTitle = `Preview: '${path.basename(vscode.window.activeTextEditor.document.fileName)}'`;
+    createPreviewPanel(doc, displayColumn, title) {
+        let previewTitle = title || `Preview: '${path.basename(doc.fileName)}'`;
 
         let webViewPanel = vscode.window.createWebviewPanel('graphvizPreview', previewTitle, displayColumn, {
             enableFindWidget: false,
