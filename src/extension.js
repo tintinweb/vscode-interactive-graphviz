@@ -48,7 +48,8 @@ function onActivate(context) {
             let options = {
                 document: args.document,
                 content: args.content,
-                callback: args.callback
+                callback: args.callback,
+                allowMultiplePanels: args.allowMultiplePanels
             };
 
             if(!options.content && !options.document){
@@ -59,11 +60,11 @@ function onActivate(context) {
                 options.content = options.document.getText();
             }
 
-            graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document)
+            graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options.allowMultiplePanels)
                 .then(webpanel => {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
-                    webpanel.waitingForRendering = options.content
+                    webpanel.waitingForRendering = options.content;
 
                     // allow caller to handle messages by providing them with the newly created webpanel
                     // e.g. caller can override webpanel.handleMessage = function(message){};
