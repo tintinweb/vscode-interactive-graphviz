@@ -43,7 +43,7 @@ let args = {
     content: <string: dotSrc>,
     callback: <function (webpanel){}>,
     allowMultiplePanels: <bool: false|[true]>,
-    title: <string: WindowTitle>
+    title: <string: RenderWindowTitle>
 }
             
 vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", args)
