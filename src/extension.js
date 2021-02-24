@@ -49,7 +49,8 @@ function onActivate(context) {
                 document: args.document,
                 content: args.content,
                 callback: args.callback,
-                allowMultiplePanels: args.allowMultiplePanels
+                allowMultiplePanels: args.allowMultiplePanels,
+                title: args.title
             };
 
             if(!options.content && !options.document){
@@ -60,7 +61,7 @@ function onActivate(context) {
                 options.content = options.document.getText();
             }
 
-            graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options.allowMultiplePanels)
+            graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options)
                 .then(webpanel => {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
