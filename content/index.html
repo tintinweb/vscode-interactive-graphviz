@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Graph Preview</title>
     <style>
         html, body { margin:0; padding:0; overflow:hidden }
-        svg { position:fixed; top:40; left:0; height:100%; width:100% }
+        svg { position:fixed; top:40px; left:0px; height:100%; width:100% }
         body.vscode-light {
             color: white;;
         }
@@ -46,7 +47,7 @@
     <link rel="stylesheet" href="toolbar/jquery.toolbar.css"/>
 </head>
 <body>
-    <form name="f1" id="f1" action="">
+    <form name="f1" id="f1">
         <span id="toolbar">&nbsp;&#x2699;&#xFE0F;&nbsp;</span>
         <input type="text" class="t1" name="t1" value="" placeholder="search..."/>
         <input type="submit" name="b1" value="Find" />
@@ -60,8 +61,10 @@
     <div id="graph" style="text-align: center;"></div>
 
     <script>
+    /** vscode ref **/
     const vscode = acquireVsCodeApi();
-
+    
+    /** graphviz globals **/
     // creates a d3-graphviz renderer instance, not to be confused with jquery.graphviz.svg
     var graphviz = d3.select("#graph").graphviz();
     // dot source code stored in case it is needed for the SaveAs -> DOT functionality
@@ -69,7 +72,7 @@
     // object for saving configuration from the extension
     var viewConfig;
 
-
+    /** main render funcs **/
     function render(dotSrc) {
         transition = d3.transition("startTransition")
             .ease(d3.easeLinear)
@@ -105,7 +108,7 @@
         dotForSaveAs = dotSrc; //keep the dotfile accessible
     }
     
-
+    /** events **/
     window.addEventListener('message', event => {
 
         const message = event.data; // The JSON data our extension sent
@@ -124,7 +127,7 @@
         vscode.postMessage({command:'onPageLoaded', value:{}});  
     };
     </script>
-    <script type="text/javascript">
+    <script>
         $(document).ready(function(){
             // this inits the graphviz object from jquery.grapviz.svg.js
             $("#graph").graphviz({
@@ -170,7 +173,7 @@
             });
         });
     </script>
-    <script type="text/javascript">
+    <script>
         var TRange = null;
 
         function findString(str) {
@@ -211,7 +214,7 @@
         };
 
     </script>
-    <script type="text/javascript">
+    <script>
     $('#toolbar').toolbar({
         content: '#toolbar-options',
         position: 'bottom',
