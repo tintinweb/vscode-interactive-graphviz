@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.11
+- fix: graph not rendering after vscode update 1.56.0 - #15
+
 ## 0.0.10
 - optionally allow multiple graph windows per document - fixes #13 (thanks @kaftejiman)
 - optionally allow customizing the render window title (default: filename of the document that's been passed in)
