@@ -322,7 +322,7 @@ class PreviewPanel {
                 break;
             */
             default:
-                console.warn('Unexpected command: ' + message.command);
+                console.warn('Unexpected command: ' + JSON.stringify(message));
         }
     }
 

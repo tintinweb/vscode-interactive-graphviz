@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.12
+- new: (API callback consumer) provide svg node attribs to callback for `onClick`, `onDblClick` events - #18
+
 ## 0.0.11
 - fix: graph not rendering after vscode update 1.56.0 - #15
 
