@@ -62,5 +62,3 @@ typings/
 
 .vscode-test-web
 .vscode
-
-package-lock.json
