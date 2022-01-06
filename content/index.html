@@ -56,6 +56,7 @@
     <div id="toolbar-options" class="hidden">
             <a href="#" id="menu-save-dot" class="toolbar-item">DOT</a>
             <a href="#" id="menu-save-svg" class="toolbar-item">SVG</a>
+            <a href="#" id="menu-reset-zoom" class="toolbar-item">↺</a>
     </div>
 
     <div id="graph" style="text-align: center;"></div>
@@ -245,8 +246,8 @@
                     vscode.postMessage({
                         command:'saveAs',
                         value:{
-                            type:"svg",
-                            data:doctype_html_entities + document.getElementById("graph").innerHTML.replace(/<(Constructor|Fallback)>/g,"&lt;$1&gt;"),
+                            type: "svg",
+                            data: doctype_html_entities + document.getElementById("graph").innerHTML.replace(/<(Constructor|Fallback)>/g,"&lt;$1&gt;"),
                         }
                     })
                     break;
@@ -254,10 +255,13 @@
                     vscode.postMessage({
                         command:'saveAs',
                         value:{
-                            type:"dot",
-                            data:dotForSaveAs,
+                            type: "dot",
+                            data: dotForSaveAs,
                         }
                     })
+                    break;
+                case 'menu-reset-zoom':
+                    graphviz.resetZoom();
                     break;
             }
         });

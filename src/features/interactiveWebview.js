@@ -116,7 +116,7 @@ class InteractiveWebviewGenerator {
                             if(err) {
                                 return console.log(err);
                             }
-                            previewPanel.webview.postMessage({ command: 'saveSvgSuccess' });
+                            previewPanel.panel.webview.postMessage({ command: 'saveSvgSuccess' });
                             console.log("File Saved");
                         });
                     }
