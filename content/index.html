@@ -53,6 +53,11 @@
         <input type="submit" name="b1" value="Find" />
     </form>
 
+    <div id="faulttoolbar" class="toolbar-danger">
+        <span id="faultmessage" class="toolbar-item">
+        </span>
+    </div>
+
     <div id="toolbar-options" class="hidden">
             <a href="#" id="menu-save-dot" class="toolbar-item">DOT</a>
             <a href="#" id="menu-save-svg" class="toolbar-item">SVG</a>
@@ -73,8 +78,11 @@
     // object for saving configuration from the extension
     var viewConfig;
 
+    $("#faulttoolbar").hide();
+
     /** main render funcs **/
     function render(dotSrc) {
+        $("#faulttoolbar").hide();
         transition = d3.transition("startTransition")
             .ease(d3.easeLinear)
             .delay(viewConfig.transitionDelay)
@@ -88,6 +96,8 @@
             .zoomScaleExtent([0,Infinity])
             .zoom(true)
             .onerror(function (err) {
+                $('#faultmessage').html(err);
+                $("#faulttoolbar").show();
                 vscode.postMessage({
                     command:'onRenderFinished',
                     value:{ err }
