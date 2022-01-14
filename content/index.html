@@ -51,6 +51,11 @@
         <span id="toolbar">&nbsp;&#x2699;&#xFE0F;&nbsp;</span>
         <input type="text" class="t1" name="t1" value="" placeholder="search..."/>
         <input type="submit" name="b1" value="Find" />
+        <select id="streamdirection">
+            <option value="bidirectional">Bidirectional</option>
+            <option value="downstream">Downstream</option>
+            <option value="upstream">Upstream</option>
+        </select>
     </form>
 
     <div id="toolbar-options" class="hidden">
@@ -153,8 +158,13 @@
                     gv.nodes().click(function () {
                         var $set = $()
                         $set.push(this)
-                        $set = $set.add(gv.linkedFrom(this, true))
-                        $set = $set.add(gv.linkedTo(this, true))
+                        var $direction = $('#streamdirection').val();
+                        if ($direction==="bidirectional" || $direction==="downstream") {
+                            $set = $set.add(gv.linkedFrom(this, true))
+                        }
+                        if ($direction==="bidirectional" || $direction==="upstream") {
+                            $set = $set.add(gv.linkedTo(this, true))
+                        }
                         gv.highlight($set, true)
                         gv.bringToFront($set)
 
