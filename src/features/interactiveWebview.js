@@ -168,10 +168,10 @@ class InteractiveWebviewGenerator {
     async getPreviewHtml(previewPanel, doc){
         let templateHtml = await this.getPreviewTemplate(this.context, "index.html");
 
-        templateHtml = templateHtml.replace(/<script .*?src="(.+)">/g, (scriptTag, srcPath) => {
+        templateHtml = templateHtml.replace(/<script(.*)src="(.+)">/g, (scriptTag, middle, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<script src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
+            return `<script${middle}src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
         }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));

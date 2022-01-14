@@ -77,5 +77,8 @@
             }
         }
     },
-    "dependencies": {}
+    "dependencies": {
+        "@vscode/codicons": "^0.0.27",
+        "@vscode/webview-ui-toolkit": "^0.8.5"
+    }
 }
