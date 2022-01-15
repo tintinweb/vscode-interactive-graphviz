@@ -39,9 +39,9 @@
     <script src="graphvizSvg/bootstrap.min.js"></script>
     <script src="graphvizSvg/jquery.graphviz.svg.js"></script>
 
-    <script src="d3graphviz/viz.js"></script>
-    <script src="d3graphviz/d3.min.js"></script>
-    <script src="d3graphviz/d3-graphviz.min.js"></script>
+    <script src="../node_modules/d3/dist/d3.min.js"></script>
+    <script src="../node_modules/@hpcc-js/wasm/dist/index.min.js"></script>
+    <script src="../node_modules/d3-graphviz/build/d3-graphviz.min.js"></script>
 
     <script src="toolbar/jquery.toolbar.min.js"></script>
     <link rel="stylesheet" href="toolbar/jquery.toolbar.css"/>
@@ -72,7 +72,7 @@
     
     /** graphviz globals **/
     // creates a d3-graphviz renderer instance, not to be confused with jquery.graphviz.svg
-    var graphviz = d3.select("#graph").graphviz();
+    var graphviz = d3.select("#graph").graphviz({useWorker: false});
     // dot source code stored in case it is needed for the SaveAs -> DOT functionality
     var dotForSaveAs;
     // object for saving configuration from the extension
