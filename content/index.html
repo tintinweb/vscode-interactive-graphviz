@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Graph Preview</title>
     <style>
-        html, body { margin:0; padding:0; overflow:hidden }
+        html, body { margin:0; padding:0; }
         svg { position:fixed; top:40px; left:0px; height:100%; width:100% }
         .toolbar-item {
             color: white;
@@ -50,10 +50,10 @@
             </vscode-button>-->
             <!--<span slot="end" class="codicon codicon-regex"></span>-->
         </vscode-text-field>
-        <vscode-dropdown>
-            <vscode-option>Bidirectional</vscode-option>
-            <vscode-option>Downstream</vscode-option>
-            <vscode-option>Upstream</vscode-option>
+        <vscode-dropdown style="margin-left: 5px;">
+            <vscode-option onclick="changeDirection('bidirectional')">Bidirectional</vscode-option>
+            <vscode-option onclick="changeDirection('downstream')">Downstream</vscode-option>
+            <vscode-option onclick="changeDirection('upstream')">Upstream</vscode-option>
         </vscode-dropdown>
     </div>
 
@@ -73,7 +73,7 @@
     /** vscode ref **/
     const vscode = acquireVsCodeApi();
 
-    const direction = "bidirectional"
+    var direction = "bidirectional";
     
     /** graphviz globals **/
     // creates a d3-graphviz renderer instance, not to be confused with jquery.graphviz.svg
@@ -92,6 +92,10 @@
     function reset() {
         graphviz.resetZoom();
         //gv.highlight(); // reset node selection on reset
+    }
+
+    function changeDirection(newDirection) {
+        direction = newDirection;
     }
 
     function toggleRegex() {
@@ -190,7 +194,7 @@
                     gv.nodes().click(function () {
                         var $set = $()
                         $set.push(this)
-                        var $direction = $('#streamdirection').val();
+                        var $direction = direction;
                         if ($direction==="bidirectional" || $direction==="downstream") {
                             $set = $set.add(gv.linkedFrom(this, true))
                         }
