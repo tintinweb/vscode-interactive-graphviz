@@ -207,6 +207,36 @@
     <script>
         var TRange = null;
 
+        function findEdges(text) {
+            var $set = $();
+            gv.edges().each((index, edge) => {
+                if(edge.textContent && edge.textContent.indexOf(text)!==-1) {
+                    $set.push(edge);
+                } 
+            })
+            return $set;
+        }
+
+        function findNodes(text) {
+            var $set = $()
+
+            const nodes = gv.nodesByName();
+            for (let [nodeName, node] of Object.entries(nodes)) {
+                if (nodeName.indexOf(text)===-1) {
+                    continue;
+                }
+                $set.push(node)
+            }
+            return $set;
+        }
+
+        function findGlobal(text) {
+            var $set = findEdges(text);
+            $set = $set.add(findNodes(text));
+            gv.highlight($set, true)
+            gv.bringToFront($set)
+        }
+
         function findString(str) {
             if (parseInt(navigator.appVersion) < 4) return;
             var strFound;
