@@ -41,6 +41,14 @@
         </div>
         <vscode-text-field placeholder="Search ..." id="searchInput">
             <span slot="start" class="codicon codicon-search"></span>
+            <vscode-option slot="end" onclick="toggleRegex()" id="search_regexbutton">
+                <span class="codicon codicon-regex"></span>
+            </vscode-option>
+            <span slot="end" class="codicon codicon-settings"></span>
+            <!--<vscode-button slot="end" appearance="icon" aria-label="Confirm" selected>
+                <span class="codicon codicon-regex"></span>
+            </vscode-button>-->
+            <!--<span slot="end" class="codicon codicon-regex"></span>-->
         </vscode-text-field>
         <vscode-dropdown>
             <vscode-option>Bidirectional</vscode-option>
@@ -75,11 +83,26 @@
     // object for saving configuration from the extension
     var viewConfig;
 
+    const searchObject = {
+        type: "included",
+    }
+
     $("#faulttoolbar").hide();
 
     function reset() {
         graphviz.resetZoom();
         //gv.highlight(); // reset node selection on reset
+    }
+
+    function toggleRegex() {
+        searchObject.type = searchObject.type==="regex" ? "included" : "regex";
+        if(searchObject.type === "regex") {
+            $("#search_regexbutton").attr("selected", "selected");
+            $("#search_regexbutton").attr("aria-selected", "true");
+        } else {
+            $("#search_regexbutton").removeAttr("selected");
+            $("#search_regexbutton").removeAttr("aria-selected");
+        }
     }
 
     /** main render funcs **/
