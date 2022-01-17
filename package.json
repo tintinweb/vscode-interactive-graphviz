@@ -78,6 +78,8 @@
         }
     },
     "dependencies": {
+        "@vscode/codicons": "^0.0.27",
+        "@vscode/webview-ui-toolkit": "^0.8.5",
         "@hpcc-js/wasm": "^1.4.1",
         "d3": "^7.3.0",
         "d3-graphviz": "^4.0.0",

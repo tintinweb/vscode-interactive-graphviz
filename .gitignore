@@ -63,5 +63,6 @@ typings/
 .vscode-test-web
 .vscode
 
+# exclude built extension packages
 content/dist/
 *.vsix
