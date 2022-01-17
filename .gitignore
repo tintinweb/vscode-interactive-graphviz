@@ -64,4 +64,5 @@ typings/
 .vscode
 
 # exclude built extension packages
+content/dist/
 *.vsix

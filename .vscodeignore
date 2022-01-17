@@ -5,6 +5,8 @@
 *.gitignore
 *.py
 *.vsix
-**/test/*
-**/.vscode/*
+**/.vscode/**
 **/tmp/**
+node_modules
+.vscode
+updateDependencies.js
