@@ -484,13 +484,21 @@
             }
             const $result = search(searchString, "highlight", searchObject);
             let results = [];
+
             if(searchObject.nodeLabel || searchObject.nodeName) {
                 results.push($result.nodes.length + " node" +($result.nodes.length===1 ? "" : "s"));
             }
             if(searchObject.edgeLabel) {
                 results.push($result.edges.length + " edge" +($result.edges.length===1 ? "" : "s"));
             }
-            $("#searchtoolbar").html("found " + results.join(", "));
+
+            if(!searchObject.nodeLabel && !searchObject.nodeName && !searchObject.edgeLabel) {
+                $("#searchtoolbar").html("Neither nodes nor edges are selected for searching! Please check your settings.");
+            } else {
+                $("#searchtoolbar").html("found " + results.join(", "));
+            }
+
+            
             $("#searchtoolbar").show();
             return $result;
         }
