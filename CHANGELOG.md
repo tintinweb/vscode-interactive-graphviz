@@ -6,6 +6,8 @@
 - new: support port-based highlighting - #25 (thanks @bigbug)
 - fix: inconsistent clicking behavior when highlighting node - fixes #21 #33 with changes of #34 (thanks @bigbug)
 - fix: highlighting of multiple edges with same label - fixes #12, changeset of #30 (thanks @bigbug)
+- new: show rendering progress in vscode - #36, #37 (thanks @bigbug)
+- new: updated dependencies and switched to WASM - #32 (thanks @bigbug)
 
 ## 0.0.12
 - new: (API callback consumer) provide svg node attribs to callback for `onClick`, `onDblClick` events - #18
