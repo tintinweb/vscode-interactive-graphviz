@@ -15,7 +15,7 @@
 
     <script src="dist/jquery.min.js"></script>
     <script src="dist/jquery.mousewheel.js"></script>
-    <script src="../node_modules/jquery-color/dist/jquery.color.min.js"></script>
+    <script src="dist/jquery.color.min.js"></script>
     <!--<script src="graphvizSvg/bootstrap.min.js"></script>-->
     <script src="graphvizSvg/jquery.graphviz.svg.js"></script>
 
@@ -26,8 +26,8 @@
     <script src="toolbar/jquery.toolbar.min.js"></script>
     <link rel="stylesheet" href="toolbar/jquery.toolbar.css"/>
 
-    <script type="module" src="../node_modules/@vscode/webview-ui-toolkit/dist/toolkit.min.js"></script>
-    <link rel="stylesheet" href="../node_modules/@vscode/codicons/dist/codicon.css"/>
+    <script type="module" src="dist/webviewuitoolkit.min.js"></script>
+    <link rel="stylesheet" href="dist/codicon.css"/>
 </head>
 <body>
     <div style="display: flex; margin-left: 3px; margin-top: 3px;">
@@ -73,7 +73,7 @@
     /** vscode ref **/
     const vscode = acquireVsCodeApi();
 
-    var direction = "bidirectional";
+    const currentHighlight = $();
     
     /** graphviz globals **/
     // creates a d3-graphviz renderer instance, not to be confused with jquery.graphviz.svg
@@ -86,17 +86,21 @@
 
     const searchObject = {
         type: "included",
+        direction: "bidirectional",
+        nodeName: true,
+        nodeLabel: true,
+        edgeLabel: true,
     }
 
     $("#faulttoolbar").hide();
 
     function reset() {
         graphviz.resetZoom();
-        //gv.highlight(); // reset node selection on reset
+        gv.highlight(); // reset node selection on reset
     }
 
     function changeDirection(newDirection) {
-        direction = newDirection;
+        searchObject.direction = newDirection;
     }
 
     function toggleRegex() {
@@ -192,6 +196,7 @@
         }
 
         function highlight($set, $mode="bidirectional") {
+            $currentHighlight = $set;
             $result = $().add($set);
             if ($mode==="bidirectional" || $mode==="downstream") {
                 $set.each((i, el) => {
@@ -238,12 +243,17 @@
                 ready: function() {
                     gv = this
 
-                    gv.nodes().click(function () {
-                        var $set = $()
-                        $set.push(this)
-                        var $direction = $('#streamdirection').val();
-                        
-                        highlight($set, $direction);
+                    gv.nodes().click(function (event) {
+                        var obj;
+
+                        if(event.ctrlKey||event.metaKey) {
+                            obj = $();
+                        } else {
+                            obj = $();
+                        }
+                        obj.push(this)
+
+                        highlight(obj, searchObject.direction);
 
                         vscode.postMessage({
                             command:'onClick', value:{
@@ -298,6 +308,7 @@
             return $set;
         }
 
+        // Send an error or info message to VS Code
         function sendMessage(message, type="error") {
             vscode.postMessage({
                 command:'message',
@@ -308,6 +319,7 @@
             })
         }
 
+        // main search function (is also used by API call)
         function search(text, mode="highlight", options = {}) {
             if(!text || text === "") {
                 gv.highlight();
@@ -317,9 +329,9 @@
             const opt = {
                 type: options.type || "exact",
                 direction: options.direction || "bidirectional",
-                nodeName: options.nodeName || true,
-                nodeLabel: options.nodeLabel || true,
-                edgeLabel: options.edgeLabel || true,
+                nodeName: options.nodeName,
+                nodeLabel: options.nodeLabel,
+                edgeLabel: options.edgeLabel
             }
 
             if(mode==="search") {
@@ -401,8 +413,11 @@
       
         document.getElementById('searchInput').onkeydown = (ev) => {
             if(ev.key === "Enter") {
-                search(this.t1.value, "search");
-                findString(document.getElementById('searchInput').value);
+                const searchString = $('#searchInput').val();
+                console.log("enter!: " + searchString);
+
+                search(searchString, "highlight", searchObject);
+                //findString(document.getElementById('searchInput').value);
                 return false;
             }
         }
