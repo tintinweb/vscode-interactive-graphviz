@@ -166,7 +166,12 @@
   
       // setup all the nodes and edges
       var that = this
-      this.$nodes.each(function () { that.setupNodesEdges($(this), true) })
+      this.$nodes.each(function () {
+        $(this).attr({
+          "pointer-events": "visible"
+        })
+        that.setupNodesEdges($(this), true)
+      })
       this.$edges.each(function () { that.setupNodesEdges($(this), false) })
   
       // remove the graph title element
@@ -214,7 +219,10 @@
         if (isNode) {
           this._nodesByName[title] = $el[0]
         } else {
-          this._edgesByName[title] = $el[0]
+          if (!this._edgesByName[title]) {
+            this._edgesByName[title] = [];
+          }
+          this._edgesByName[title].push($el[0]);
         }
         // without a title we can't tell if its a user comment or not
         var previousSibling = $el[0].previousSibling
@@ -341,7 +349,9 @@
         var match = testEdge(nodeName, name)
         if (match) {
           if ($retval) {
-            $retval.push(this._edgesByName[name])
+            this._edgesByName[name].forEach(edge => {
+              $retval.push(edge)
+            });
           }
           retval.push(match)
         }
@@ -415,10 +425,12 @@
       var $retval = $()
       this.findLinked(node, includeEdges, function (nodeName, edgeName) {
         var other = null;
-        var match = '->' + nodeName
-        if (edgeName.endsWith(match)) {
-          other = edgeName.substring(0, edgeName.length - match.length);
+
+        const connection = edgeName.split("->");
+        if(connection.length>1 && (connection[1] === nodeName || connection[1].startsWith(nodeName+":"))) {
+          return connection[0].split(":")[0];
         }
+
         return other;
       }, $retval)
       return $retval
@@ -428,9 +440,10 @@
       var $retval = $()
       this.findLinked(node, includeEdges, function (nodeName, edgeName) {
         var other = null;
-        var match = nodeName + '->'
-        if (edgeName.startsWith(match)) {
-          other = edgeName.substring(match.length);
+        
+        const connection = edgeName.split("->");
+        if(connection.length>1 && (connection[0] === nodeName || connection[0].startsWith(nodeName+":"))) {
+          return connection[1].split(":")[0];
         }
         return other;
       }, $retval)

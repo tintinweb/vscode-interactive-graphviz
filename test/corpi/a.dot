@@ -1,0 +1,12 @@
+digraph D { a [shape="none" label="Node a"; image="actor.png"]; bf; sffa->b; 
+
+
+ssdfsfd -> fasdf;sf
+
+aa -> b;
+b -> c;
+c -> d;
+
+
+
+}

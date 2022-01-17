@@ -143,7 +143,10 @@ class InteractiveWebviewGenerator {
             enableFindWidget: false,
             enableScripts: true,
             retainContextWhenHidden: true,
-            localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, "content"))]
+            localResourceRoots: [
+                vscode.Uri.file(path.join(this.context.extensionPath, "content")),
+                vscode.Uri.file(path.join(this.context.extensionPath, "node_modules"))
+            ]
         });
 
         webViewPanel.iconPath = vscode.Uri.file(this.context.asAbsolutePath(path.join("content","icon.png")));
@@ -196,6 +199,8 @@ class PreviewPanel {
         this.needsRebuild = false;
         this.uri = uri;
         this.panel = panel;
+        this.progressResolve = null;
+        this.startedRenders = 0;
 
         this.lockRender = false;
         this.lastRender = Date.now();
@@ -309,11 +314,32 @@ class PreviewPanel {
         if (this.renderLockTimeout > 0)
         {
             this.timeoutForRendering = setTimeout(
-                () => {console.log("unlocking rendering bcs. of timeout"); this.onRenderFinished();},
+                () => {
+                    console.log("unlocking rendering bcs. of timeout");
+                    this.restartRender();
+                    vscode.window.showWarningMessage("Graphviz render lock timed out! Maybe change the settings.", "Settings").then((answer) => {
+                        if(answer === "Settings") {
+                            vscode.commands.executeCommand('workbench.action.openSettings', 'graphviz-interactive-preview.renderLockAdditionalTimeout');
+                        }
+                    });
+                },
                 this.renderLockTimeout
-                );
+                )
         }
-        this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc, search: this.search});
+
+        this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
+        this.startedRenders++;
+        if(!this.progressResolve) {
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: "Rendering Graphviz View",
+                cancellable: false
+            }, () => {
+                return new Promise(resolve => {
+                    this.progressResolve = resolve;
+                })
+            })
+        }
     }
 
     handleMessage(message){
@@ -334,16 +360,28 @@ class PreviewPanel {
         }
     }
 
-    onRenderFinished(err){
-        if (err)
-            console.log("rendering failed: " + err);
-
+    restartRender() {
         if (!!this.timeoutForRendering) {
             clearTimeout(this.timeoutForRendering);
             this.timeoutForRendering = null;
         }
         this.lockRender = false;
         this.renderWaitingContent();
+    }
+
+    onRenderFinished(err){
+        if (err)
+            console.log("rendering failed: " + err);
+
+        console.log("Render duration: " + (Date.now()-this.lastRender));
+
+        this.startedRenders--;
+        console.log("started renders:" + this.startedRenders);
+        if(this.progressResolve && this.startedRenders===0) {
+            this.progressResolve();
+            this.progressResolve = null;
+        }
+        this.restartRender();
     }
 
     onPageLoaded(){

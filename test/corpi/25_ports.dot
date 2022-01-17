@@ -1,0 +1,7 @@
+digraph { 
+    
+    node [shape=box style=filled] graph [rankdir="LR"] 
+    n2 [ label="<f0> + | <f1> +" shape="record" ] 
+    n1 -> n2:f0 n2:f1 -> n3 
+    n5 -> n2:f0
+}
