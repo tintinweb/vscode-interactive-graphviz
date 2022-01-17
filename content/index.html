@@ -45,10 +45,6 @@
                 <span class="codicon codicon-regex"></span>
             </vscode-option>
             <span slot="end" class="codicon codicon-settings"></span>
-            <!--<vscode-button slot="end" appearance="icon" aria-label="Confirm" selected>
-                <span class="codicon codicon-regex"></span>
-            </vscode-button>-->
-            <!--<span slot="end" class="codicon codicon-regex"></span>-->
         </vscode-text-field>
         <vscode-dropdown style="margin-left: 5px;">
             <vscode-option onclick="changeDirection('bidirectional')">Bidirectional</vscode-option>
@@ -82,8 +78,11 @@
     var vsCodeMessage;
     // object for saving configuration from the extension
     var viewConfig;
+    
+    // Object for saving the current GraphVizSVG Object
     var gv;
 
+    // SearchObject which holds the current Search Settings
     const searchObject = {
         type: "included",
         direction: "bidirectional",
