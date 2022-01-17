@@ -23,6 +23,7 @@ class InteractiveWebviewGenerator {
         this.webviewPanels = new Map();
         this.timeout = null;
         this.content_folder = content_folder;
+        this.search = null;
     }
 
     setNeedsRebuild(uri, needsRebuild) {
@@ -85,6 +86,13 @@ class InteractiveWebviewGenerator {
                 break;
             case 'onPageLoaded':
                 previewPanel.onPageLoaded();
+                break;
+            case 'message':
+                if(message.value.type === "error") {
+                    vscode.window.showErrorMessage(message.value.data);
+                } else {
+                    vscode.window.showInformationMessage(message.value.data);
+                }
                 break;
             case 'onClick':
                 // not implemented
@@ -318,6 +326,7 @@ class PreviewPanel {
                 this.renderLockTimeout
                 )
         }
+
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
         this.startedRenders++;
         if(!this.progressResolve) {
