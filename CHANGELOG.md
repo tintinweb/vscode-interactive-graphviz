@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.0.13
+- new: show graphviz/dot error messages in preview - #26 (thanks @bigbug)
+- new: configurable node highlight mode (Upstream/Downstream/Bidirectional) - #29 (thanks @bigbug)
+- new: support port-based highlighting - #25 (thanks @bigbug)
+- fix: inconsistent clicking behavior when highlighting node - fixes #21 #33 with changes of #34 (thanks @bigbug)
+- fix: highlighting of multiple edges with same label - fixes #12, changeset of #30 (thanks @bigbug)
+
 ## 0.0.12
 - new: (API callback consumer) provide svg node attribs to callback for `onClick`, `onDblClick` events - #18
 
