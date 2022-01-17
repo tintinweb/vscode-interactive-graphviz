@@ -166,7 +166,12 @@
   
       // setup all the nodes and edges
       var that = this
-      this.$nodes.each(function () { that.setupNodesEdges($(this), true) })
+      this.$nodes.each(function () {
+        $(this).attr({
+          "pointer-events": "visible"
+        })
+        that.setupNodesEdges($(this), true)
+      })
       this.$edges.each(function () { that.setupNodesEdges($(this), false) })
   
       // remove the graph title element
