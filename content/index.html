@@ -64,7 +64,13 @@
             <vscode-option onclick="changeDirection('bidirectional')">Bidirectional</vscode-option>
             <vscode-option onclick="changeDirection('downstream')">Downstream</vscode-option>
             <vscode-option onclick="changeDirection('upstream')">Upstream</vscode-option>
+            <vscode-option onclick="changeDirection('single')">Single</vscode-option>
         </vscode-dropdown>
+    </div>
+
+    <div id="searchtoolbar" class="toolbar-dark">
+        <span id="searchresult" class="toolbar-item">
+        </span>
     </div>
 
     <div id="faulttoolbar" class="toolbar-danger">
@@ -109,10 +115,12 @@
         var currentSelection = [];
 
         $("#faulttoolbar").hide();
+        $("#searchtoolbar").hide();
 
         function reset() {
             graphviz.resetZoom();
             gv.highlight(); // reset node selection on reset
+            currentSelection = [];
         }
 
         function changeDirection(newDirection) {
@@ -128,11 +136,13 @@
                 $("#search_regexbutton").removeAttr("selected");
                 $("#search_regexbutton").removeAttr("aria-selected");
             }
+            updateSearchResults();
         }
 
         /** main render funcs **/
         function render(dotSrc) {
             $("#faulttoolbar").hide();
+            $("#searchtoolbar").hide();
             transition = d3.transition("startTransition")
                 .ease(d3.easeLinear)
                 .delay(viewConfig.transitionDelay)
@@ -211,8 +221,18 @@
             return result;
         }
 
-        function highlight($set, $mode = "bidirectional") {
-            $currentHighlight = $set;
+        function highlight() {
+            let highlightedNodes = $();
+            for(let selection of currentSelection) {
+                const nodes = getAffectedNodes(selection.set, selection.direction);
+                highlightedNodes = highlightedNodes.add(nodes);
+            }
+
+            gv.highlight(highlightedNodes, true)
+            gv.bringToFront(highlightedNodes)
+        }
+
+        function getAffectedNodes($set, $mode = "bidirectional") {
             $result = $().add($set);
             if ($mode === "bidirectional" || $mode === "downstream") {
                 $set.each((i, el) => {
@@ -244,8 +264,7 @@
                     }
                 })
             }
-            gv.highlight($result, true)
-            gv.bringToFront($result)
+            return $result;
         }
 
         $(document).ready(function () {
@@ -260,16 +279,22 @@
                     gv = this
 
                     gv.nodes().click(function (event) {
-                        var obj;
+                        const set = $();
+                        set.push(this);
 
-                        if (event.ctrlKey || event.metaKey) {
-                            obj = $();
+                        var obj = {
+                            set: set,
+                            direction: searchObject.direction
+                        };
+
+                        // If CMD or CTRL is pressed, then add this to the selection
+                        if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                            currentSelection.push(obj);
                         } else {
-                            obj = $();
+                            currentSelection = [obj];
                         }
-                        obj.push(this)
-
-                        highlight(obj, searchObject.direction);
+                        
+                        highlight();
 
                         vscode.postMessage({
                             command: 'onClick', value: {
@@ -336,11 +361,6 @@
 
         // main search function (is also used by API call)
         function search(text, mode = "highlight", options = {}) {
-            if (!text || text === "") {
-                gv.highlight();
-                return;
-            }
-
             const opt = {
                 type: options.type || "exact",
                 direction: options.direction || "bidirectional",
@@ -372,23 +392,24 @@
             }
 
             if (mode === "highlight") {
-                var $set = $();
-
+                var $edges = $();
                 if (opt.edgeLabel) {
-                    $set = $set.add(findEdges(text, searchFunction));
+                    $edges = findEdges(text, searchFunction);
                 }
 
+                var $nodes = $();
                 if (opt.nodeLabel || opt.nodeName) {
-                    $set = $set.add(findNodes(text, searchFunction, opt.nodeName, opt.nodeLabel));
+                    $nodes = findNodes(text, searchFunction, opt.nodeName, opt.nodeLabel);
                 }
 
                 if (!opt.edgeLabel && !opt.nodeLabel && !opt.nodeName) {
                     sendMessage("No search option chosen!");
-                } else if ($set.length === 0) {
-                    sendMessage("Search input \"" + text + "\" not found", "info");
                 }
-                highlight($set, opt.direction);
-                return;
+
+                return {
+                    nodes: $nodes,
+                    edges: $edges,
+                }
             }
 
             sendMessage("Invalid search Mode!");
@@ -426,12 +447,49 @@
             return;
         };
 
+        function updateSearchResults() {
+            const searchString = $('#searchInput').val();
+            if (!searchString || searchString === "") {
+                $("#searchtoolbar").hide();
+                return;
+            }
+            const $result = search(searchString, "highlight", searchObject);
+            let resstring = "found ";
+            resstring += $result.nodes.length + " node" +($result.nodes.length===1 ? "" : "s");
+            resstring += ", ";
+            resstring += $result.edges.length + " edge" +($result.edges.length===1 ? "" : "s");
+            $("#searchtoolbar").html(resstring);
+            $("#searchtoolbar").show();
+            return $result;
+        }
+
+        document.getElementById('searchInput').onkeyup = (ev) => {
+            updateSearchResults();
+        }
+
         document.getElementById('searchInput').onkeydown = (ev) => {
             if (ev.key === "Enter") {
-                const searchString = $('#searchInput').val();
-                console.log("enter!: " + searchString);
+                const $result = updateSearchResults();
+                if(!$result) {
+                    gv.highlight();
+                    return;
+                }
 
-                search(searchString, "highlight", searchObject);
+                const obj = {
+                    set: $result.edges.add($result.nodes),
+                    direction: searchObject.direction
+                };
+                
+                if(obj.set.length>0) {
+                    if(ev.ctrlKey || ev.metaKey || ev.shiftKey) {
+                        currentSelection.push(obj);
+                    } else {
+                        currentSelection = [obj];    
+                    }
+                    highlight();
+                } else {
+                    sendMessage("Search input \"" + searchString + "\" not found", "info");
+                }
                 //findString(document.getElementById('searchInput').value);
                 return false;
             }

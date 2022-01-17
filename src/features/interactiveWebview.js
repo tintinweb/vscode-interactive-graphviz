@@ -144,8 +144,7 @@ class InteractiveWebviewGenerator {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-                vscode.Uri.file(path.join(this.context.extensionPath, "content")),
-                vscode.Uri.file(path.join(this.context.extensionPath, "node_modules"))
+                vscode.Uri.file(path.join(this.context.extensionPath, "content"))
             ]
         });
 
@@ -183,10 +182,10 @@ class InteractiveWebviewGenerator {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
             return `<script${middle}src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
-        }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
+        }).replace(/<link rel="stylesheet" href="(.+)" \/>/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<link rel="stylesheet" href="${previewPanel.getPanel().webview.asWebviewUri(resource)}"/>`;
+            return `<link rel="stylesheet" href="${previewPanel.getPanel().webview.asWebviewUri(resource)}" />`;
         });
         return templateHtml;
     }
