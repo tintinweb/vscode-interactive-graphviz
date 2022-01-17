@@ -5,7 +5,6 @@
 *.gitignore
 *.py
 *.vsix
-**/test/*
-**/.vscode/*
+**/.vscode/**
 **/tmp/**
 **/test/**
