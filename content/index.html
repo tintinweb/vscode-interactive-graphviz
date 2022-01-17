@@ -58,9 +58,11 @@
             <vscode-option slot="end" onclick="toggleRegex()" id="search_regexbutton">
                 <span class="codicon codicon-regex"></span>
             </vscode-option>
-            <span slot="end" class="codicon codicon-settings"></span>
+            <vscode-option slot="end" id="searchOptionButton">
+                <span class="codicon codicon-settings"></span>
+            </vscode-option>
         </vscode-text-field>
-        <vscode-dropdown style="margin-left: 5px;">
+        <vscode-dropdown style="margin-left: 5px; margin-bottom: 2px;">
             <vscode-option onclick="changeDirection('bidirectional')">Bidirectional</vscode-option>
             <vscode-option onclick="changeDirection('downstream')">Downstream</vscode-option>
             <vscode-option onclick="changeDirection('upstream')">Upstream</vscode-option>
@@ -81,6 +83,11 @@
     <div id="toolbar-options" class="hidden">
         <a href="#" id="menu-save-dot" class="toolbar-item" onclick="saveDot()">DOT</a>
         <a href="#" id="menu-save-svg" class="toolbar-item" onclick="saveSVG()">SVG</a>
+    </div>
+
+    <div id="search-options" class="hidden">
+        <a href="#" class="toolbar-item search-options-nodes selected" onclick="toggleSearchOption('node')">Nodes</a>
+        <a href="#" class="toolbar-item search-options-edges selected" onclick="toggleSearchOption('edge')">Edges</a>
     </div>
 
     <div id="graph" style="text-align: center;"></div>
@@ -135,6 +142,28 @@
             } else {
                 $("#search_regexbutton").removeAttr("selected");
                 $("#search_regexbutton").removeAttr("aria-selected");
+            }
+            updateSearchResults();
+        }
+
+        function toggleSearchOption(option) {
+            console.log(option);
+            if(option==="node") {
+                searchObject.nodeLabel = !searchObject.nodeLabel;
+                searchObject.nodeName = !searchObject.nodeName;
+            }
+            if(option==="edge") {
+                searchObject.edgeLabel = !searchObject.edgeLabel;
+            }
+            if(searchObject.nodeLabel) {
+                $(".search-options-nodes").addClass("selected");
+            } else {
+                $(".search-options-nodes").removeClass("selected");
+            }
+            if(searchObject.edgeLabel) {
+                $(".search-options-edges").addClass("selected");
+            } else {
+                $(".search-options-edges").removeClass("selected");
             }
             updateSearchResults();
         }
@@ -454,11 +483,14 @@
                 return;
             }
             const $result = search(searchString, "highlight", searchObject);
-            let resstring = "found ";
-            resstring += $result.nodes.length + " node" +($result.nodes.length===1 ? "" : "s");
-            resstring += ", ";
-            resstring += $result.edges.length + " edge" +($result.edges.length===1 ? "" : "s");
-            $("#searchtoolbar").html(resstring);
+            let results = [];
+            if(searchObject.nodeLabel || searchObject.nodeName) {
+                results.push($result.nodes.length + " node" +($result.nodes.length===1 ? "" : "s"));
+            }
+            if(searchObject.edgeLabel) {
+                results.push($result.edges.length + " edge" +($result.edges.length===1 ? "" : "s"));
+            }
+            $("#searchtoolbar").html("found " + results.join(", "));
             $("#searchtoolbar").show();
             return $result;
         }
@@ -497,6 +529,13 @@
 
         $('#toolbar').toolbar({
             content: '#toolbar-options',
+            position: 'bottom',
+            style: 'dark',
+            event: 'click'
+        });
+
+        $('#searchOptionButton').toolbar({
+            content: '#search-options',
             position: 'bottom',
             style: 'dark',
             event: 'click'

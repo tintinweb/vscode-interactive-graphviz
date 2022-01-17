@@ -18,13 +18,6 @@
   color: #02baf2;
   font-size: 16px;
 }
-.btn-toolbar:hover {
-  background: #02baf2;
-  cursor: pointer;
-}
-.btn-toolbar:hover > i {
-  color: white;
-}
 .btn-toolbar-primary {
   background-color: #009dcd;
 }
@@ -141,7 +134,6 @@
 .tool-item {
   height: 100%;
   display: block;
-  width: 20px;
   height: 20px;
   text-align: center;
   padding: 10px;
@@ -150,14 +142,7 @@
 .tool-item > .fa {
   color: #b2c6cd;
 }
-.tool-item.selected,
-.tool-item:hover {
-  background: #02baf2;
-}
-.tool-item.selected > .fa,
-.tool-item:hover > .fa {
-  color: white;
-}
+
 .tool-top .tool-item:first-child:hover,
 .tool-bottom .tool-item:first-child:hover {
   border-top-left-radius: 6px;
@@ -231,11 +216,6 @@
 .toolbar-primary .tool-item > .fa {
   color: white;
 }
-.toolbar-primary .tool-item.selected,
-.toolbar-primary .tool-item:hover {
-  background: #009dcd;
-  color: white;
-}
 .toolbar-danger {
   background-color: #f84545;
 }
@@ -252,11 +232,6 @@
   border-color: transparent #f84545 transparent transparent;
 }
 .toolbar-danger .tool-item > .fa {
-  color: white;
-}
-.toolbar-danger .tool-item.selected,
-.toolbar-danger .tool-item:hover {
-  background: #cc0000;
   color: white;
 }
 .toolbar-warning {
@@ -277,11 +252,6 @@
 .toolbar-warning .tool-item > .fa {
   color: white;
 }
-.toolbar-warning .tool-item.selected,
-.toolbar-warning .tool-item:hover {
-  background: #fad46b;
-  color: white;
-}
 .toolbar-info {
   background-color: #e96300;
 }
@@ -298,11 +268,6 @@
   border-color: transparent #e96300 transparent transparent;
 }
 .toolbar-info .tool-item > .fa {
-  color: white;
-}
-.toolbar-info .tool-item.selected,
-.toolbar-info .tool-item:hover {
-  background: #f58410;
   color: white;
 }
 .toolbar-success {
@@ -323,11 +288,6 @@
 .toolbar-success .tool-item > .fa {
   color: white;
 }
-.toolbar-success .tool-item.selected,
-.toolbar-success .tool-item:hover {
-  background: #3eb5ac;
-  color: white;
-}
 .toolbar-info-o {
   background-color: #9175bd;
 }
@@ -344,11 +304,6 @@
   border-color: transparent #9175bd transparent transparent;
 }
 .toolbar-info-o .tool-item > .fa {
-  color: white;
-}
-.toolbar-info-o .tool-item.selected,
-.toolbar-info-o .tool-item:hover {
-  background: #a88cd5;
   color: white;
 }
 .toolbar-light {
@@ -392,11 +347,12 @@
 .toolbar-dark .tool-item > .fa {
   color: white;
 }
-.toolbar-dark .tool-item.selected,
-.toolbar-dark .tool-item:hover {
-  background: #5e696d;
+
+.toolbar-dark .tool-item.selected {
+  background: rgba(0, 127, 212, 0.4);
   color: white;
 }
+
 .animate-standard {
   -webkit-animation: standardAnimate 0.3s 1 ease;
 }
