@@ -62,3 +62,6 @@ typings/
 
 .vscode-test-web
 .vscode
+
+content/dist/
+*.vsix
