@@ -219,7 +219,10 @@
         if (isNode) {
           this._nodesByName[title] = $el[0]
         } else {
-          this._edgesByName[title] = $el[0]
+          if (!this._edgesByName[title]) {
+            this._edgesByName[title] = [];
+          }
+          this._edgesByName[title].push($el[0]);
         }
         // without a title we can't tell if its a user comment or not
         var previousSibling = $el[0].previousSibling
@@ -346,7 +349,9 @@
         var match = testEdge(nodeName, name)
         if (match) {
           if ($retval) {
-            $retval.push(this._edgesByName[name])
+            this._edgesByName[name].forEach(edge => {
+              $retval.push(edge)
+            });
           }
           retval.push(match)
         }
