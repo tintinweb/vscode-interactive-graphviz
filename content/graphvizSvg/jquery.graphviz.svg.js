@@ -415,10 +415,12 @@
       var $retval = $()
       this.findLinked(node, includeEdges, function (nodeName, edgeName) {
         var other = null;
-        var match = '->' + nodeName
-        if (edgeName.endsWith(match)) {
-          other = edgeName.substring(0, edgeName.length - match.length);
+
+        const connection = edgeName.split("->");
+        if(connection.length>1 && (connection[1] === nodeName || connection[1].startsWith(nodeName+":"))) {
+          return connection[0].split(":")[0];
         }
+
         return other;
       }, $retval)
       return $retval
@@ -428,9 +430,10 @@
       var $retval = $()
       this.findLinked(node, includeEdges, function (nodeName, edgeName) {
         var other = null;
-        var match = nodeName + '->'
-        if (edgeName.startsWith(match)) {
-          other = edgeName.substring(match.length);
+        
+        const connection = edgeName.split("->");
+        if(connection.length>1 && (connection[0] === nodeName || connection[0].startsWith(nodeName+":"))) {
+          return connection[1].split(":")[0];
         }
         return other;
       }, $retval)
