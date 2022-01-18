@@ -243,4 +243,12 @@ export default class PreviewPanel {
         });
         this.renderWaitingContent();
     }
+
+    // Resolve all remaining promises on disposal
+    dispose() {
+        if(this.progressResolve) {
+            this.progressResolve();
+            this.progressResolve = undefined;
+        }
+    }
 }

@@ -75,11 +75,12 @@ export default class InteractiveWebviewGenerator {
 
                 if(!previewPanel) {
                     reject();
+                    return;
                 }
                 that.webviewPanels.set(doc.uri, previewPanel);
                 // when the user closes the tab, remove the panel
                 previewPanel.getPanel().onDidDispose(() => {
-                    //previewPanel.dispose();
+                    previewPanel?.dispose();
                     return that.webviewPanels.delete(doc.uri), undefined, that.context.subscriptions
                 });
                 // when the pane becomes visible again, refresh it
