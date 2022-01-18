@@ -8,3 +8,6 @@
 **/.vscode/**
 **/tmp/**
 **/test/**
+node_modules
+.vscode
+updateDependencies.js
