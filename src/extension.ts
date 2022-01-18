@@ -7,8 +7,9 @@
 
 
 /** imports */
-const vscode = require("vscode");
-const {InteractiveWebviewGenerator} = require('./features/interactiveWebview.js');
+import * as vscode from 'vscode';
+import InteractiveWebviewGenerator from './features/interactiveWebview';
+import PreviewPanel from './features/previewPanel';
 const DOT = 'dot';
 
 /** global vars */
@@ -20,7 +21,7 @@ const DOT = 'dot';
 
 
 /** event funcs */
-function onActivate(context) {
+function onActivate(context: vscode.ExtensionContext) {
     const graphvizView = new InteractiveWebviewGenerator(context, "content");
 
     vscode.workspace.onDidChangeTextDocument(event => {
@@ -54,7 +55,7 @@ function onActivate(context) {
                 search: args.search,
             };
 
-            if(!options.content && !options.document){
+            if(!options.content && !options.document && vscode.window.activeTextEditor?.document){
                 options.document = vscode.window.activeTextEditor.document;
             }
 
@@ -63,7 +64,7 @@ function onActivate(context) {
             }
 
             graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options)
-                .then(webpanel => {
+                .then((webpanel : PreviewPanel) => {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
                     webpanel.waitingForRendering = options.content;

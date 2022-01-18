@@ -4,46 +4,69 @@
  * @license MIT
  *
 * */
+import * as vscode from "vscode";
 
-const vscode = require("vscode");
+export default class PreviewPanel {
+    panel: vscode.WebviewPanel;
+    uri: vscode.Uri;
+    needsRebuild: boolean;
+    startedRenders: number;
+    lockRender: boolean;
+    lastRender: number;
+    lastRequest: number;
+    waitingForRendering?: string;
+    timeoutForWaiting?: NodeJS.Timeout;
+    timeoutForRendering?: NodeJS.Timeout;
+    enableRenderLock: boolean;
+    renderInterval: number;
+    debouncingInterval: number;
+    guardInterval: number;
+    renderLockTimeout: number;
+    progressResolve?: (value?:unknown) => void;
 
-class PreviewPanel {
+    search?: {
+        text: string;
+        options: {
+            type: "exact"|"included"|"regex", // used search function
+            direction: "bidirectional"|"upstream"|"downstream"|"single",
+            nodeName: boolean, // should search in node names
+            nodeLabel: boolean, // should search in node labels
+            edgeLabel: boolean, // should search in edge labels
+        }
+    };
 
-    constructor( parent, uri,  panel) {
-        this.parent = parent;
+    constructor( uri: vscode.Uri,  panel : vscode.WebviewPanel) {
         this.needsRebuild = false;
         this.uri = uri;
         this.panel = panel;
-        this.progressResolve = null;
+        this.progressResolve = undefined;
         this.startedRenders = 0;
 
         this.lockRender = false;
         this.lastRender = Date.now();
         this.lastRequest = Date.now();
-        this.waitingForRendering = null;
-        this.timeoutForWaiting = null;
-        this.timeoutForRendering = null;
-        this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock");
-        this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval");
-        this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval");
-        this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval");
+        this.waitingForRendering = undefined;
+        this.timeoutForWaiting = undefined;
+        this.timeoutForRendering = undefined;
+        this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock") as boolean;
+        this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval") as number;
+        this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval") as number;
+        this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval") as number;
 
-        let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout");
-        let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay");
-        let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration");
+        let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout") as number;
+        let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay") as number;
+        let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration") as number;
         this.renderLockTimeout =
             (this.enableRenderLock && renderLockAdditionalTimeout >= 0) ?
-            renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration :
+            renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration:
             0;
-
-        this.panel.onDidDispose()
     }
 
-    reveal(displayColumn) {
+    reveal(displayColumn: vscode.ViewColumn) {
         this.panel.reveal(displayColumn);
     }
 
-    setNeedsRebuild(needsRebuild) {
+    setNeedsRebuild(needsRebuild : boolean) {
         this.needsRebuild = needsRebuild;
     }
 
@@ -57,7 +80,7 @@ class PreviewPanel {
 
     // the following functions do not use any locking/synchronization mechanisms, so it may behave weirdly in edge cases
 
-    requestRender(dotSrc) {
+    requestRender(dotSrc: string) {
         let now = Date.now();
         let sinceLastRequest = now - this.lastRequest;
         let sinceLastRender = now - this.lastRender;
@@ -87,7 +110,9 @@ class PreviewPanel {
             // 1) debouncing (**needs** to be delayed everytime),
             // 2) inter-rednering (does not need to be delayed)
             if (waitDebounce > 0 || !this.timeoutForWaiting) {
-                clearTimeout(this.timeoutForWaiting);
+                if(this.timeoutForWaiting) {
+                    clearTimeout(this.timeoutForWaiting);
+                }
                 this.timeoutForWaiting = setTimeout(
                     () => this.renderWaitingContent(),
                     waitBeforeRendering
@@ -107,7 +132,7 @@ class PreviewPanel {
         if (!!this.timeoutForWaiting) {
             console.log("renderWaitingContent() clearing existing timeout");
             clearTimeout(this.timeoutForWaiting);
-            this.timeoutForWaiting = null;
+            this.timeoutForWaiting = undefined;
         }
 
         if (this.waitingForRendering) {
@@ -117,14 +142,14 @@ class PreviewPanel {
                 return;
             }
             let dotSrc = this.waitingForRendering;
-            this.waitingForRendering = null;
+            this.waitingForRendering = undefined;
             console.log("renderWaitingContent() with content, calling renderNow");
             this.renderNow(dotSrc);
         }
         else console.log("renderWaitingContent() no content");
     }
 
-    renderNow(dotSrc){
+    renderNow(dotSrc : string){
         console.log("renderNow()");
         this.lockRender = true;
         this.lastRender = Date.now();
@@ -159,7 +184,14 @@ class PreviewPanel {
         }
     }
 
-    handleMessage(message){
+    handleMessage(message: {
+            command: any; value?: {
+                err: any; // save the latest content
+                // save the latest content
+                type: string;
+                data: string;
+            };
+        }){
         /** 
          * Dev: handle messages emitted by the graphviz view
          */
@@ -180,13 +212,13 @@ class PreviewPanel {
     restartRender() {
         if (!!this.timeoutForRendering) {
             clearTimeout(this.timeoutForRendering);
-            this.timeoutForRendering = null;
+            this.timeoutForRendering = undefined;
         }
         this.lockRender = false;
         this.renderWaitingContent();
     }
 
-    onRenderFinished(err){
+    onRenderFinished(err?: NodeJS.ErrnoException){
         if (err)
             console.log("rendering failed: " + err);
 
@@ -196,7 +228,7 @@ class PreviewPanel {
         console.log("started renders:" + this.startedRenders);
         if(this.progressResolve && this.startedRenders===0) {
             this.progressResolve();
-            this.progressResolve = null;
+            this.progressResolve = undefined;
         }
         this.restartRender();
     }
@@ -212,5 +244,3 @@ class PreviewPanel {
         this.renderWaitingContent();
     }
 }
-
-module.exports = PreviewPanel;

@@ -10,3 +10,5 @@
 node_modules
 .vscode
 updateDependencies.js
+src/
+webpack.config.js
