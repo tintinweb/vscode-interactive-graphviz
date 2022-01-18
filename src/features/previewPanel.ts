@@ -24,6 +24,9 @@ export default class PreviewPanel {
     renderLockTimeout: number;
     progressResolve?: (value?:unknown) => void;
 
+    /**
+     * Search API types
+     */
     search?: {
         text: string;
         options: {
@@ -127,6 +130,7 @@ export default class PreviewPanel {
         this.renderWaitingContent();
     }
 
+    // Renders content which has been put in the waiting quue 
     renderWaitingContent() {
         // clear the timeout and null it's handle, we are rendering any waiting content now!
         if (!!this.timeoutForWaiting) {
@@ -149,6 +153,10 @@ export default class PreviewPanel {
         else console.log("renderWaitingContent() no content");
     }
 
+    /**
+     * Sends the DOT source to the rendering panel
+     * @param dotSrc DOT source
+     */
     renderNow(dotSrc : string){
         console.log("renderNow()");
         this.lockRender = true;
@@ -169,7 +177,11 @@ export default class PreviewPanel {
                 )
         }
 
+        // Send the message to the renderer
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
+        
+        // Increase the started renders counter so that only one progress
+        // indicator is created.
         this.startedRenders++;
         if(!this.progressResolve) {
             vscode.window.withProgress({
@@ -209,6 +221,10 @@ export default class PreviewPanel {
         }
     }
 
+    /**
+     * Restarts the renderWaiting function after the render lock has
+     * timed out.
+     */
     restartRender() {
         if (!!this.timeoutForRendering) {
             clearTimeout(this.timeoutForRendering);
@@ -218,14 +234,20 @@ export default class PreviewPanel {
         this.renderWaitingContent();
     }
 
+    /**
+     * Callback from the WebviewPanel after a render has been finished
+     * @param err 
+     */
     onRenderFinished(err?: NodeJS.ErrnoException){
         if (err)
             console.log("rendering failed: " + err);
 
         console.log("Render duration: " + (Date.now()-this.lastRender));
 
+        // Decrease startedRenders counter
         this.startedRenders--;
         console.log("started renders:" + this.startedRenders);
+        // Hide progress bar after all renders have been finished
         if(this.progressResolve && this.startedRenders===0) {
             this.progressResolve();
             this.progressResolve = undefined;
@@ -233,6 +255,9 @@ export default class PreviewPanel {
         this.restartRender();
     }
 
+    /**
+     * Called by the Webview after it has been loaded.
+     */
     onPageLoaded(){
         this.panel.webview.postMessage({
             command: 'setConfig',
@@ -244,8 +269,12 @@ export default class PreviewPanel {
         this.renderWaitingContent();
     }
 
-    // Resolve all remaining promises on disposal
+    /**
+     * Function which is called after disposing of the PreviewPanel
+     * (typically after closing the tab)
+     */
     dispose() {
+        // Resolve all remaining promises on disposal
         if(this.progressResolve) {
             this.progressResolve();
             this.progressResolve = undefined;
