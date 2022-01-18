@@ -9,8 +9,8 @@
 /** imports */
 import * as vscode from 'vscode';
 import path = require("path");
-const fs = require("fs")
 import PreviewPanel from "./previewPanel";
+import * as fs from 'fs';
 
 /** global vars */
 
@@ -187,7 +187,7 @@ export default class InteractiveWebviewGenerator {
         let previewPath = context.asAbsolutePath(path.join(this.content_folder, templateName));
 
         return new Promise((resolve, reject) => {
-            fs.readFile(previewPath, "utf8", function (err: string, data: string) {
+            fs.readFile(previewPath, "utf8", function (err: any, data: string) {
                 if (err) reject(err);
                 else resolve(data);
             });
