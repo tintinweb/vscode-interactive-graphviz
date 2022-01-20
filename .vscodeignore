@@ -12,3 +12,5 @@ node_modules
 updateDependencies.js
 src/
 webpack.config.js
+dist/*.js.map
+**/test/**

@@ -11,12 +11,12 @@ function saveSVG() {
     })
 }
 
-function saveDot() {
+function saveDOT(data) {
     vscode.postMessage({
         command: 'saveAs',
         value: {
             type: "dot",
-            data: vsCodeMessage.dotSrc,
+            data: data,
         }
     })
 }

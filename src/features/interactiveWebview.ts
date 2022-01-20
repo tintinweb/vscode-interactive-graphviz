@@ -5,12 +5,13 @@
  *
 * */
 
-
 /** imports */
 import * as vscode from 'vscode';
-import path = require("path");
 import PreviewPanel from "./previewPanel";
-import * as fs from 'fs';
+import prepareHTML from '../prepareHTML';
+import {Utils} from "vscode-uri";
+import { TextEncoder } from 'text-encoding';
+const webviewPanelContent = require("../../content/index.html").default;
 
 /** global vars */
 
@@ -18,18 +19,12 @@ import * as fs from 'fs';
 
 export default class InteractiveWebviewGenerator {
 
-    context: vscode.ExtensionContext;
-    content_folder: string;
-    webviewPanels: Map<vscode.Uri, PreviewPanel>;
-    timeout?: any;
-    search?: any;
+    private context: vscode.ExtensionContext;
+    private webviewPanels: Map<vscode.Uri, PreviewPanel>;
 
-    constructor(context: vscode.ExtensionContext, content_folder: string) {
+    constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.webviewPanels = new Map();
-        this.timeout = null;
-        this.content_folder = content_folder;
-        this.search = null;
     }
 
     setNeedsRebuild(uri: vscode.Uri, needsRebuild: boolean) {
@@ -53,10 +48,7 @@ export default class InteractiveWebviewGenerator {
             if(panel.getNeedsRebuild() && panel.getPanel().visible) {
                 const findTextDocument = vscode.workspace.textDocuments.find(doc => doc.uri == panel.uri);
                 if(!findTextDocument) return;
-                this.updateContent(
-                    panel,
-                    findTextDocument
-                );
+                this.updateContent(panel);
             }
         });
     }
@@ -89,10 +81,39 @@ export default class InteractiveWebviewGenerator {
                 previewPanel.getPanel().webview.onDidReceiveMessage((e: any) => that.handleMessage(previewPanel as PreviewPanel, e), undefined, that.context.subscriptions);
             }
 
-            that.updateContent(previewPanel, doc)
-                .then(previewPanel => {
-                    resolve(previewPanel);
-                });
+            that.updateContent(previewPanel);
+            resolve(previewPanel);
+        });
+    }
+
+    saveFile(data: string, fileType: string) {
+        let filter;
+        if(fileType==="dot"){
+            filter = {'Graphviz Dot Files':['dot']};
+        } else if(fileType==="svg"){
+            filter = {'Images':['svg']};
+        } else {
+            vscode.window.showErrorMessage("Unknown file type for saving!");
+            return;
+        }
+        vscode.window.showSaveDialog({
+            saveLabel:"export",
+            filters: filter
+        })
+        .then((fileUri) => {
+            if(fileUri){
+                try {
+                    const te = new TextEncoder();
+                    vscode.workspace.fs.writeFile(fileUri, te.encode(data))
+                    .then(() => {
+                        console.log("File Saved");
+                    }, (err : any) => {
+                        vscode.window.showErrorMessage("Error on writing file: "+err);
+                    });
+                } catch(err) {
+                    vscode.window.showErrorMessage("Error on writing file: "+err);
+                }
+            }
         });
     }
 
@@ -124,30 +145,7 @@ export default class InteractiveWebviewGenerator {
                 previewPanel.handleMessage(message);  //just forward the event for now
                 break;
             case 'saveAs':
-                let filter;
-
-                if(message.value.type=="dot"){
-                    filter = {'Graphviz Dot Files':['dot']};
-                } else if(message.value.type=="svg"){
-                    filter = {'Images':['svg']};
-                } else {
-                    return;
-                }
-                vscode.window.showSaveDialog({
-                    saveLabel:"export",
-                    filters: filter
-                })
-                .then((fileUri) => {
-                    if(fileUri){
-                        fs.writeFile(fileUri.fsPath, message.value.data, function(err: any) {
-                            if(err) {
-                                return console.log(err);
-                            }
-                            previewPanel.panel.webview.postMessage({ command: 'saveSvgSuccess' });
-                            console.log("File Saved");
-                        });
-                    }
-                });
+                this.saveFile(message.value.data, message.value.type);
                 break;
             default:
                 previewPanel.handleMessage(message);
@@ -156,56 +154,30 @@ export default class InteractiveWebviewGenerator {
     }
 
     createPreviewPanel(doc: vscode.TextDocument, displayColumn: vscode.ViewColumn | { viewColumn: vscode.ViewColumn; preserveFocus?: boolean | undefined; }, title: string) {
-        let previewTitle = title || `Preview: '${path.basename(doc.fileName)}'`;
+        let previewTitle = title || `Preview: '${Utils.basename(doc.uri)}'`;
 
         let webViewPanel = vscode.window.createWebviewPanel('graphvizPreview', previewTitle, displayColumn, {
             enableFindWidget: false,
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-                vscode.Uri.file(path.join(this.context.extensionPath, "content"))
+                Utils.joinPath(this.context.extensionUri, "content")
             ]
         });
 
-        webViewPanel.iconPath = vscode.Uri.file(this.context.asAbsolutePath(path.join("content","icon.png")));
+        webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content","icon.png");
 
         return new PreviewPanel(doc.uri, webViewPanel);
     }
 
-    async updateContent(previewPanel: PreviewPanel, doc: vscode.TextDocument) : Promise<PreviewPanel> {
-        return new Promise(async (resolve, reject) => {
-            if(!previewPanel.getPanel().webview.html) {
-                previewPanel.getPanel().webview.html = "Please wait...";
-            }
-            previewPanel.setNeedsRebuild(false);
-            previewPanel.getPanel().webview.html = await this.getPreviewHtml(previewPanel, doc);
-            return resolve(previewPanel);
-        });
+    updateContent(previewPanel: PreviewPanel) : void {
+        const webviewPanel: vscode.WebviewPanel = previewPanel.getPanel();
+        if(!webviewPanel.webview.html) {
+            webviewPanel.webview.html = "Please wait...";
+        }
+        previewPanel.setNeedsRebuild(false);
+        webviewPanel.webview.html = prepareHTML(webviewPanelContent, this.context, "content", webviewPanel);
     }
 
-    async getPreviewTemplate(context: vscode.ExtensionContext, templateName: string) : Promise<string> {
-        let previewPath = context.asAbsolutePath(path.join(this.content_folder, templateName));
-
-        return new Promise((resolve, reject) => {
-            fs.readFile(previewPath, "utf8", function (err: any, data: string) {
-                if (err) reject(err);
-                else resolve(data);
-            });
-        });
-    }
-
-    async getPreviewHtml(previewPanel: PreviewPanel, doc: vscode.TextDocument) : Promise<string> {
-        let templateHtml = await this.getPreviewTemplate(this.context, "index.html");
-
-        templateHtml = templateHtml.replace(/<script(.*)src="(.+)">/g, (scriptTag: any, middle: any, srcPath: string) => {
-            let resource=vscode.Uri.file(
-                path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<script${middle}src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
-        }).replace(/<link rel="stylesheet" href="(.+)" \/>/g, (scriptTag: any, srcPath: string) => {
-            let resource=vscode.Uri.file(
-                path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<link rel="stylesheet" href="${previewPanel.getPanel().webview.asWebviewUri(resource)}" />`;
-        });
-        return templateHtml;
-    }
+    
 }

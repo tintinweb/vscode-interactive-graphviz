@@ -25,6 +25,7 @@
         "url": "https://github.com/tintinweb/vscode-interactive-graphviz"
     },
     "main": "./dist/extension.js",
+    "browser": "./dist/extension.js",
     "activationEvents": [
         "onCommand:graphviz-interactive-preview.preview.beside"
     ],
@@ -85,23 +86,28 @@
         "@typescript-eslint/eslint-plugin": "^4.31.1",
         "@typescript-eslint/parser": "^4.31.1",
         "@vscode/test-electron": "^1.6.2",
+        "@vscode/test-web": "*",
         "eslint": "^7.32.0",
         "glob": "^7.1.7",
         "mocha": "^9.1.1",
+        "raw-loader": "^4.0.2",
         "ts-loader": "^9.2.5",
         "typescript": "^4.4.3",
         "webpack": "^5.52.1",
         "webpack-cli": "^4.8.0"
     },
     "dependencies": {
+        "@hpcc-js/wasm": "^1.4.1",
+        "@types/text-encoding": "^0.0.36",
         "@vscode/codicons": "^0.0.27",
         "@vscode/webview-ui-toolkit": "^0.8.5",
-        "@hpcc-js/wasm": "^1.4.1",
         "d3": "^7.3.0",
         "d3-graphviz": "^4.0.0",
         "jquery": "^3.6.0",
         "jquery-color": "^2.2.0",
-        "jquery-mousewheel": "^3.1.13"
+        "jquery-mousewheel": "^3.1.13",
+        "text-encoding": "^0.7.0",
+        "vscode-uri": "^3.0.3"
     },
     "scripts": {
         "vscode:prepublish": "npm run updateDependencies && npm run package",
@@ -114,6 +120,7 @@
         "pretest": "npm run test-compile && npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
-        "build": "npm run vscode:prepublish && vsce package"
+        "build": "npm run vscode:prepublish && vsce package",
+        "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
     }
 }
