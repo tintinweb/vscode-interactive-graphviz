@@ -331,6 +331,7 @@
 }
 .toolbar-dark {
   background-color: #364347;
+  color: white;
 }
 .toolbar-dark.tool-top .arrow {
   border-color: #364347 transparent transparent;
