@@ -84,8 +84,8 @@
     </div>
 
     <div id="toolbar-options" class="hidden">
-        <a href="#" id="menu-save-dot" class="toolbar-item" onclick="saveDot()">DOT</a>
-        <a href="#" id="menu-save-svg" class="toolbar-item" onclick="saveSVG()">SVG</a>
+        <a href="#" id="menu-save-dot" class="toolbar-item" onclick="save('dot')">DOT</a>
+        <a href="#" id="menu-save-svg" class="toolbar-item" onclick="save('svg')">SVG</a>
     </div>
 
     <div id="search-options" class="hidden">
@@ -131,6 +131,16 @@
             graphviz.resetZoom();
             gv.highlight(); // reset node selection on reset
             currentSelection = [];
+        }
+
+        function save(type) {
+            if(type==="svg") {
+                saveSVG();
+            } else if(type==="dot") {
+                saveDOT(vsCodeMessage.value);
+            } else {
+                console.error("save type unknown!");
+            }
         }
 
         function changeDirection(newDirection) {
@@ -384,14 +394,16 @@
             content: '#toolbar-options',
             position: 'bottom',
             style: 'dark',
-            event: 'click'
+            event: 'click',
+            hideOnClick: true
         });
 
         $('#searchOptionButton').toolbar({
             content: '#search-options',
             position: 'bottom',
             style: 'dark',
-            event: 'click'
+            event: 'click',
+            hideOnClick: true
         });
 
         

@@ -22,7 +22,7 @@ const DOT = 'dot';
 
 /** event funcs */
 function onActivate(context: vscode.ExtensionContext) {
-    const graphvizView = new InteractiveWebviewGenerator(context, "content");
+    const graphvizView = new InteractiveWebviewGenerator(context);
 
     vscode.workspace.onDidChangeTextDocument(event => {
         if (event.document.languageId==DOT || event.document.fileName.trim().toLowerCase().endsWith(".dot")) {
