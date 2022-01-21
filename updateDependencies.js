@@ -1,5 +1,9 @@
 const fs = require('fs');
 
+if (!fs.existsSync('content/dist/')){
+  fs.mkdirSync('content/dist/');
+}
+
 fs.copyFile('node_modules/@hpcc-js/wasm/dist/graphvizlib.wasm', 'content/dist/graphvizlib.wasm', (err) => {
   if (err) throw err;
   console.log('graphvizlib.wasm was copied to content/dist');
