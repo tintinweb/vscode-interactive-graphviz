@@ -91,6 +91,7 @@
     <div id="search-options" class="hidden">
         <a href="#" class="toolbar-item search-options-nodes selected" onclick="toggleSearchOption('node')">Nodes</a>
         <a href="#" class="toolbar-item search-options-edges selected" onclick="toggleSearchOption('edge')">Edges</a>
+        <a href="#" class="toolbar-item search-options-clusters selected" onclick="toggleSearchOption('cluster')">Clusters</a>
     </div>
 
     <div id="graph" style="text-align: center;"></div>
@@ -169,6 +170,10 @@
             if(option==="edge") {
                 searchObject.edgeLabel = !searchObject.edgeLabel;
             }
+            if(option==="cluster") {
+                searchObject.clusterLabel = !searchObject.clusterLabel;
+                searchObject.clusterName = !searchObject.clusterName;
+            }
             if(searchObject.nodeLabel) {
                 $(".search-options-nodes").addClass("selected");
             } else {
@@ -178,6 +183,11 @@
                 $(".search-options-edges").addClass("selected");
             } else {
                 $(".search-options-edges").removeClass("selected");
+            }
+            if(searchObject.clusterLabel) {
+                $(".search-options-clusters").addClass("selected");
+            } else {
+                $(".search-options-clusters").removeClass("selected");
             }
             updateSearchResults();
         }
