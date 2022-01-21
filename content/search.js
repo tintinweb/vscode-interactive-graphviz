@@ -12,16 +12,29 @@ function findNodes(text, searchFunction, nodeName = true, nodeLabel = true) {
     var $set = $()
 
     const nodes = gv.nodesByName();
-    for (let [nodeName, node] of Object.entries(nodes)) {
-        if ((nodeName && searchFunction(text, nodeName)) ||
+    for (let [nodeID, node] of Object.entries(nodes)) {
+        if ((nodeName && searchFunction(text, nodeID)) ||
             (nodeLabel &&
-                (node.textContent && searchFunction(text, node.textContent) || !node.textContent && !nodeName && searchFunction(text, nodeName)))) {
+                (node.textContent && searchFunction(text, node.textContent) || !node.textContent && !nodeName && searchFunction(text, nodeID)))) {
             $set.push(node)
         }
     }
     return $set;
 }
 
+function findClusters(text, searchFunction, clusterName = true, clusterLabel = true) {
+    var $set = $()
+
+    const clusters = gv.clustersByName();
+    for (let [clusterID, cluster] of Object.entries(clusters)) {
+        if ((clusterName && searchFunction(text, clusterID)) ||
+            (clusterLabel &&
+                (cluster.textContent && searchFunction(text, cluster.textContent) || !cluster.textContent && !clusterName && searchFunction(text, clusterID)))) {
+            $set.push(cluster)
+        }
+    }
+    return $set;
+}
 
 
 // main search function (is also used by API call)
@@ -31,7 +44,9 @@ function search(text, mode = "highlight", options = {}) {
         direction: options.direction || "bidirectional",
         nodeName: options.nodeName,
         nodeLabel: options.nodeLabel,
-        edgeLabel: options.edgeLabel
+        edgeLabel: options.edgeLabel,
+        clusterName: options.clusterName,
+        clusterLabel: options.clusterLabel,
     }
 
     if (mode === "search") {
@@ -67,13 +82,19 @@ function search(text, mode = "highlight", options = {}) {
             $nodes = findNodes(text, searchFunction, opt.nodeName, opt.nodeLabel);
         }
 
-        if (!opt.edgeLabel && !opt.nodeLabel && !opt.nodeName) {
+        var $clusters = $();
+        if(opt.clusterLabel || opt.clusterName) {
+            $clusters = findClusters(text, searchFunction, opt.clusterName, opt.clusterLabel);
+        }
+
+        if (!opt.edgeLabel && !opt.nodeLabel && !opt.nodeName && !opt.clusterName && !opt.clusterLabel) {
             sendMessage("No search option chosen!");
         }
 
         return {
             nodes: $nodes,
             edges: $edges,
+            clusters: $clusters,
         }
     }
 

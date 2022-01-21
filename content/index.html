@@ -119,6 +119,8 @@
             nodeName: true,
             nodeLabel: true,
             edgeLabel: true,
+            clusterName: true,
+            clusterLabel: true,
         }
 
         // Array with the current Selections
@@ -307,6 +309,33 @@
                             }
                         })
                     })
+
+                    gv.clusters().click(function (event) {
+                        const set = $();
+                        set.push(this);
+
+                        var obj = {
+                            set: set,
+                            direction: "single"
+                        };
+
+                        // If CMD or CTRL is pressed, then add this to the selection
+                        if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                            currentSelection.push(obj);
+                        } else {
+                            currentSelection = [obj];
+                        }
+                        
+                        highlight();
+
+                        vscode.postMessage({
+                            command: 'onClick', value: {
+                                // I guess: TODO: report which node was clicked
+                                node: DomToJsonAttribs(this),
+                            }
+                        })
+                    })
+
                     $(document).keydown(function (evt) {
                         // press escape to cancel highlight
                         if (evt.keyCode == 27) {
@@ -346,6 +375,9 @@
             if(searchObject.edgeLabel) {
                 results.push($result.edges.length + " edge" +($result.edges.length===1 ? "" : "s"));
             }
+            if(searchObject.clusterLabel || searchObject.clusterName) {
+                results.push($result.clusters.length + " cluster" +($result.clusters.length===1 ? "" : "s"));
+            }
 
             if(!searchObject.nodeLabel && !searchObject.nodeName && !searchObject.edgeLabel) {
                 $("#searchtoolbar").html("Neither nodes nor edges are selected for searching! Please check your settings.");
@@ -371,7 +403,7 @@
                 }
 
                 const obj = {
-                    set: $result.edges.add($result.nodes),
+                    set: $result.edges.add($result.nodes).add($result.clusters),
                     direction: searchObject.direction
                 };
                 
