@@ -5,7 +5,7 @@
 # To see the full list of contributors, see the revision history in
 # source control.
 #
-# Format: <name> [(url1), (urlN)]
+# Format: <name> [(url1) (urlN)]
 #
 tintinweb (http://github.com/tintinweb)
 bigbug (http://github.com/bigbug)
