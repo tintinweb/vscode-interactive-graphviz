@@ -50,7 +50,8 @@ function onActivate(context) {
                 content: args.content,
                 callback: args.callback,
                 allowMultiplePanels: args.allowMultiplePanels,
-                title: args.title
+                title: args.title,
+                search: args.search,
             };
 
             if(!options.content && !options.document){
@@ -66,6 +67,7 @@ function onActivate(context) {
                     //trigger dot render on page load success
                     //just in case webpanel takes longer to load, wait for page to ping back and perform action
                     webpanel.waitingForRendering = options.content;
+                    webpanel.search = options.search;
 
                     // allow caller to handle messages by providing them with the newly created webpanel
                     // e.g. caller can override webpanel.handleMessage = function(message){};

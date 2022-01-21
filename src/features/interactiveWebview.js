@@ -23,6 +23,7 @@ class InteractiveWebviewGenerator {
         this.webviewPanels = new Map();
         this.timeout = null;
         this.content_folder = content_folder;
+        this.search = null;
     }
 
     setNeedsRebuild(uri, needsRebuild) {
@@ -86,6 +87,13 @@ class InteractiveWebviewGenerator {
             case 'onPageLoaded':
                 previewPanel.onPageLoaded();
                 break;
+            case 'message':
+                if(message.value.type === "error") {
+                    vscode.window.showErrorMessage(message.value.data);
+                } else {
+                    vscode.window.showInformationMessage(message.value.data);
+                }
+                break;
             case 'onClick':
                 // not implemented
                 //console.debug(message);
@@ -136,8 +144,7 @@ class InteractiveWebviewGenerator {
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-                vscode.Uri.file(path.join(this.context.extensionPath, "content")),
-                vscode.Uri.file(path.join(this.context.extensionPath, "node_modules"))
+                vscode.Uri.file(path.join(this.context.extensionPath, "content"))
             ]
         });
 
@@ -171,14 +178,14 @@ class InteractiveWebviewGenerator {
     async getPreviewHtml(previewPanel, doc){
         let templateHtml = await this.getPreviewTemplate(this.context, "index.html");
 
-        templateHtml = templateHtml.replace(/<script .*?src="(.+)">/g, (scriptTag, srcPath) => {
+        templateHtml = templateHtml.replace(/<script(.*)src="(.+)">/g, (scriptTag, middle, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<script src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
-        }).replace(/<link rel="stylesheet" href="(.+)"\/>/g, (scriptTag, srcPath) => {
+            return `<script${middle}src="${previewPanel.getPanel().webview.asWebviewUri(resource)}">`;
+        }).replace(/<link rel="stylesheet" href="(.+)" \/>/g, (scriptTag, srcPath) => {
             let resource=vscode.Uri.file(
                 path.join(this.context.extensionPath, this.content_folder, ...(srcPath.split("/"))));
-            return `<link rel="stylesheet" href="${previewPanel.getPanel().webview.asWebviewUri(resource)}"/>`;
+            return `<link rel="stylesheet" href="${previewPanel.getPanel().webview.asWebviewUri(resource)}" />`;
         });
         return templateHtml;
     }
@@ -318,6 +325,7 @@ class PreviewPanel {
                 this.renderLockTimeout
                 )
         }
+
         this.panel.webview.postMessage({ command: 'renderDot', value: dotSrc });
         this.startedRenders++;
         if(!this.progressResolve) {

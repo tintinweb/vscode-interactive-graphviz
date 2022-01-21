@@ -55,6 +55,10 @@ vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", ar
 * edge tracking: [jquery.graphviz.svg](https://github.com/mountainstorm/jquery.graphviz.svg/)
 * webview handling: [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/)
 
+Copyright (c) Microsoft Corporation:
+* icons: [vscode-codicons](https://github.com/microsoft/vscode-codicons)
+* UI: [vscode-webview-ui-toolkit](https://github.com/microsoft/vscode-webview-ui-toolkit)
+
 ## Release Notes
 
 see [CHANGELOG](./CHANGELOG.md)
