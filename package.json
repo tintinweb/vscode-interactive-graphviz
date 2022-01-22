@@ -2,7 +2,7 @@
     "name": "graphviz-interactive-preview",
     "displayName": "Graphviz Interactive Preview",
     "description": "Graphviz (dot) Interactive Preview",
-    "version": "0.0.13",
+    "version": "0.1.0",
     "keywords": [
         "dot",
         "graphviz",
@@ -10,6 +10,7 @@
         "interactive"
     ],
     "publisher": "tintinweb",
+    "license": "GPLv3",
     "icon": "images/icon.png",
     "engines": {
         "vscode": "^1.20.2"

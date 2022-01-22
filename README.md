@@ -59,6 +59,13 @@ let args = {
 vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", args)
 ```
 
+## Maintainers
+
+* @tintinweb
+* @bigbug
+
+see [AUTHORS](AUTHORS) for a list contributors.
+
 ## Credits
 
 * graph engine: [d3-graphviz](https://github.com/magjac/d3-graphviz)
