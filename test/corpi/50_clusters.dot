@@ -1,0 +1,19 @@
+digraph {
+    subgraph cluster_1 {
+		node [style=filled];
+		b0 -> b1 -> b2 -> b3;
+		label = "process";
+		color=blue
+	}
+    a -> b
+    a -> b
+
+    a -> c
+
+    b1 -> d
+    d -> b
+    e -> d
+    b -> f
+
+    
+}
