@@ -155,8 +155,10 @@
       this.$background = $graph.children('polygon:first') // might not exist
       this.$nodes = $graph.children('.node')
       this.$edges = $graph.children('.edge')
+      this.$clusters = $graph.children('.cluster')
       this._nodesByName = {}
       this._edgesByName = {}
+      this._clustersByName = {}
   
       // add top level class and copy background color to element
       this.$element.addClass('graphviz-svg')
@@ -170,9 +172,10 @@
         $(this).attr({
           "pointer-events": "visible"
         })
-        that.setupNodesEdges($(this), true)
+        that.setupNodesEdges($(this), "node")
       })
-      this.$edges.each(function () { that.setupNodesEdges($(this), false) })
+      this.$edges.each(function () { that.setupNodesEdges($(this), "edge") })
+      this.$clusters.each(function () { that.setupNodesEdges($(this), "cluster") })
   
       // remove the graph title element
       var $title = this.$graph.children('title')
@@ -189,7 +192,7 @@
       }
     }
   
-    GraphvizSvg.prototype.setupNodesEdges = function ($el, isNode) {
+    GraphvizSvg.prototype.setupNodesEdges = function ($el, type) {
       var that = this
       var options = this.options
   
@@ -204,7 +207,7 @@
         })
   
         // shrink it if it's a node
-        if (isNode && options.shrink) {
+        if (type==="node" && options.shrink) {
           that.scaleNode($this)
         }
       })
@@ -216,13 +219,15 @@
         var title = $title.text().replace(/:[snew][ew]?/g,'')
         $el.attr('data-name', title)
         $title.remove()
-        if (isNode) {
+        if (type==="node") {
           this._nodesByName[title] = $el[0]
-        } else {
+        } else if(type==="edge") {
           if (!this._edgesByName[title]) {
             this._edgesByName[title] = [];
           }
           this._edgesByName[title].push($el[0]);
+        } else if(type==="cluster") {
+          this._clustersByName[title] = $el[0];
         }
         // without a title we can't tell if its a user comment or not
         var previousSibling = $el[0].previousSibling
@@ -412,6 +417,10 @@
     GraphvizSvg.prototype.edges = function () {
       return this.$edges
     }
+
+    GraphvizSvg.prototype.clusters = function () {
+      return this.$clusters
+    }
   
     GraphvizSvg.prototype.nodesByName = function () {
       return this._nodesByName
@@ -419,6 +428,10 @@
   
     GraphvizSvg.prototype.edgesByName = function () {
       return this._edgesByName
+    }
+
+    GraphvizSvg.prototype.clustersByName = function () {
+      return this._clustersByName
     }
   
     GraphvizSvg.prototype.linkedTo = function (node, includeEdges) {
@@ -490,7 +503,7 @@
     GraphvizSvg.prototype.highlight = function ($nodesEdges, tooltips) {
       var that = this
       var options = this.options
-      var $everything = this.$nodes.add(this.$edges)
+      var $everything = this.$nodes.add(this.$edges).add(this.$clusters)
       if ($nodesEdges && $nodesEdges.length > 0) {
         // create set of all other elements and dim them
         $everything.not($nodesEdges).each(function () {
