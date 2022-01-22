@@ -300,7 +300,7 @@
                         } else {
                             currentSelection = [obj];
                         }
-                        
+
                         highlight();
 
                         vscode.postMessage({
@@ -334,7 +334,7 @@
                         } else {
                             currentSelection = [obj];
                         }
-                        
+
                         highlight();
 
                         vscode.postMessage({
@@ -394,7 +394,7 @@
                 $("#searchtoolbar").html("found " + results.join(", "));
             }
 
-            
+
             $("#searchtoolbar").show();
             return $result;
         }
@@ -415,12 +415,12 @@
                     set: $result.edges.add($result.nodes).add($result.clusters),
                     direction: searchObject.direction
                 };
-                
+
                 if(obj.set.length>0) {
                     if(ev.ctrlKey || ev.metaKey || ev.shiftKey) {
                         currentSelection.push(obj);
                     } else {
-                        currentSelection = [obj];    
+                        currentSelection = [obj];
                     }
                     highlight();
                 } else {
@@ -447,7 +447,7 @@
             hideOnClick: true
         });
 
-        
+
     </script>
 </body>
 
