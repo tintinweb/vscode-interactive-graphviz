@@ -48,16 +48,19 @@ npm run open-in-browser
 
 
 ```javascript
-let args = {
+let options = {
     document: <vscode.document>,
     content: <string: dotSrc>,
-    callback: <function (webpanel){}>,
+    callback: <function(webpanel){}>,
     allowMultiplePanels: <bool: false|[true]>,
-    title: <string: RenderWindowTitle>
+    title: <string: RenderWindowTitle>,
+    search: <optional string: Search | object: searchOptions>
 }
             
-vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", args)
+vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", options)
 ```
+
+Please do not hesitate to reach out if you are missing specific functionality.
 
 ## Maintainers
 
