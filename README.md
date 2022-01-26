@@ -11,11 +11,13 @@ Interactive Graphviz Dot Preview for Visual Studio Code
 ![vscode-graphviz-interactive-cmd](https://user-images.githubusercontent.com/2865694/57646538-17cd9e00-75c1-11e9-8aee-08c13394a32c.gif)
 
 
-* Preview dot/Graphviz source.
+* Preview/Render dot/Graphviz source.
 * Updates preview as you type.
 * Interactive edge tracking. click on a node to highlight incoming and outgoing edges.
+* Search for nodes in the graph.
 * Export the graph as `svg` or `dot`.
 * Configurable graph options: e.g. `transitionDelay`, `transitionDuration`.
+* Available on [github.dev](https://github.dev), [vscode.dev](https://vscode.dev)
 * Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
 
 
