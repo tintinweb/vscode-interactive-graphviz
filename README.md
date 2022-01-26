@@ -5,20 +5,30 @@
 
 
 # vscode-interactive-graphviz
-Interactive Graphviz Dot Preview for Visual Studio Code
 
-![vscode-graphviz-interactive](https://user-images.githubusercontent.com/2865694/57646539-18fecb00-75c1-11e9-9042-52dccc522bba.gif)
-![vscode-graphviz-interactive-cmd](https://user-images.githubusercontent.com/2865694/57646538-17cd9e00-75c1-11e9-8aee-08c13394a32c.gif)
+A VSCode extension that provides an interactive, zoom-, pan- and searchable, live preview with edge tracing for graphs in Graphviz / dot format.
 
 
-* Preview/Render dot/Graphviz source.
+![graphviz_v01](https://user-images.githubusercontent.com/2865694/151164049-9c89e167-d0c1-43eb-ae96-0f5004847bde.gif)
+
+![graphviz_v01_open](https://user-images.githubusercontent.com/2865694/151163938-f667acf2-bc87-4555-ad93-866a4ca33822.gif)
+
+
+* Renders dot/Graphviz sources in an interactive live preview.
 * Updates preview as you type.
-* Interactive edge tracking. click on a node to highlight incoming and outgoing edges.
+* Interactive edge tracing. Click on a node to highlight incoming and outgoing edges (`ESC` to unselect).
 * Search for nodes in the graph.
 * Export the graph as `svg` or `dot`.
-* Configurable graph options: e.g. `transitionDelay`, `transitionDuration`.
+* Configurable render options & tracing preference: e.g. `transitionDelay`, `transitionDuration`.
 * Available on [github.dev](https://github.dev), [vscode.dev](https://vscode.dev)
-* Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel like handlers for click/dblClick events.
+* Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel, like handlers for click/dblClick events. 
+
+## Render Examples
+
+<a href="https://user-images.githubusercontent.com/2865694/151163516-fbb956ab-607c-45dc-8c83-db3477ceccf9.png"><img width="250" alt="semantic-arg-dark" src="https://user-images.githubusercontent.com/2865694/151163516-fbb956ab-607c-45dc-8c83-db3477ceccf9.png" ></a>
+<a href="https://user-images.githubusercontent.com/2865694/151163623-8714f717-a4ed-428c-bd87-213c8035892d.png"><img width="250" alt="semantic-arg-dark" src="https://user-images.githubusercontent.com/2865694/151163623-8714f717-a4ed-428c-bd87-213c8035892d.png" ></a>
+<a href="https://user-images.githubusercontent.com/2865694/151163732-0a0113c6-7328-4345-b71a-7df782aa0387.png"><img width="250" alt="semantic-arg-dark" src="https://user-images.githubusercontent.com/2865694/151163732-0a0113c6-7328-4345-b71a-7df782aa0387.png" ></a>
+<a href="https://user-images.githubusercontent.com/2865694/151163840-ceb6d75e-983d-4126-9169-6431d1dbfe1d.png"><img width="250" alt="semantic-arg-dark" src="https://user-images.githubusercontent.com/2865694/151163840-ceb6d75e-983d-4126-9169-6431d1dbfe1d.png" ></a>
 
 
 ## Developer Notes
