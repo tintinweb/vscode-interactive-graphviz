@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.0 🥳
+## 0.1.0 🚀
 - new: the code is now licensed as GPLv3. Feel free to reach out if you have any questions - #54
 - new: vscode style user interface for the render window - #41 (thanks @bigbug)
 - new: code refactored to typescript - #45 (thanks @bigbug)
@@ -12,7 +12,8 @@
 - new: improved search (nodes/edges); edge multi-selection - #51 (thanks @bigbug)
 - fix: overlapping toolbar - #55 #56 (thanks @bigbug)
 - fix: dev: npm install may fail on first checkout - #53
-- 
+- fix: svg export does not escape angle brackets in node labels #11, #61
+
 ## 0.0.13
 - new: show graphviz/dot error messages in preview - #26 (thanks @bigbug)
 - new: configurable node highlight mode (Upstream/Downstream/Bidirectional) - #29 (thanks @bigbug)
