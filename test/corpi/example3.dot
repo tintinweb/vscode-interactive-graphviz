@@ -1,0 +1,35 @@
+digraph UML_Class_diagram {
+	labelloc="t"
+	label="UML Class diagram demo"
+	graph [splines=false]
+
+	node [shape=record style=filled fillcolor=gray95]
+
+	edge [arrowhead=vee style=dashed]
+	Client -> Interface1 [xlabel=dependency]
+	Client -> Interface2
+
+	edge [dir=back arrowtail=empty style=""]
+	Interface1 -> Class1 [xlabel=inheritance]
+	Interface2 -> Class1 [dir=none]
+	Interface2 [label="" xlabel="Simple\ninterface" shape=circle]
+
+	Interface1[label = <{<b>«interface» I/O</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	Class1[label = <{<b>I/O class</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	edge [dir=back arrowtail=empty style=dashed]
+	Class1 -> System_1 [xlabel=implementation]
+	System_1 [label = <{<b>System</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	"Shared resource" [label = <{<b>Shared resource</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+
+	edge [dir=back arrowtail=diamond]
+	"System_1" -> Subsystem_1 [xlabel="composition"]
+	Subsystem_1[label = <{<b>Subsystem 1</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	Subsystem_2[label = <{<b>Subsystem 2</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	Subsystem_3[label = <{<b>Subsystem 3</b> | + property<br align="left"/>...<br align="left"/>|+ method<br align="left"/>...<br align="left"/>}>]
+	"System_1" -> Subsystem_2
+	"System_1" -> Subsystem_3
+
+	edge [xdir=back arrowtail=odiamond]
+	Subsystem_1 -> "Shared resource" [xlabel=aggregation]
+	{Subsystem_2 Subsystem_3 } -> "Shared resource"
+}

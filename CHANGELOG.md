@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.1.0 🥳
+- new: the code is now licensed as GPLv3. Feel free to reach out if you have any questions - #54
+- new: vscode style user interface for the render window - #41 (thanks @bigbug)
+- new: code refactored to typescript - #45 (thanks @bigbug)
+- new: the extension is now compatible with the vscode web IDE (https://github.dev / https://vscode.dev) - #49 (thanks @bigbug)
+
+  ![graphviz-web](https://user-images.githubusercontent.com/2865694/150638292-1967020e-7ad9-409d-b91f-8f7ae3598827.gif)
+
+
+- new: improved search (nodes/edges); edge multi-selection - #51 (thanks @bigbug)
+- fix: overlapping toolbar - #55 #56 (thanks @bigbug)
+- fix: dev: npm install may fail on first checkout - #53
+- 
 ## 0.0.13
 - new: show graphviz/dot error messages in preview - #26 (thanks @bigbug)
 - new: configurable node highlight mode (Upstream/Downstream/Bidirectional) - #29 (thanks @bigbug)
