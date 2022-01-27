@@ -76,8 +76,8 @@ Please do not hesitate to reach out if you are missing specific functionality.
 
 ## Maintainers
 
-* @tintinweb
-* @bigbug
+* [@tintinweb](https://github.com/tintinweb)
+* [@bigbug](https://github.com/bigbug)
 
 see [AUTHORS](AUTHORS) for a list contributors.
 
