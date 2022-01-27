@@ -1,0 +1,84 @@
+{
+    "Graph Template": {
+        "prefix": "graph",
+        "body": [
+            "digraph ${1:G} {",
+            "\tsplines=\"FALSE\";",
+            "",
+            "\t/* Entities */",
+            "\t${2:shortName} [label=\"${3:$2}\", shape=\"${4|square,rectangle,circle,ellipse,triangle,plaintext,point,diamond,pentagon,hexagon,septagon,octagon,egg,trapezium,parallelogram,house,doublecircle,doubleoctagon,tripleoctagon,invtriangle,invtrapezium,invhouse,Mdiamond,Msquare,Mcircle,none,note,tab,folder,box3d|}\"]",
+            "\t$0",
+            "\t/* Relationships */",
+            "\t${5:F1} -> $2${6:[label=\"${7:.63}\"]}",
+            "",
+            "\t/* Ranks */",
+            "\t{ rank=${8|same,min,max,# max is bottom|}; $2; };",
+            "}"
+        ],
+        "description": "Graph Template"
+    },
+    "Convert > to ->": {
+        "prefix": ">",
+        "body": [
+            "-> "
+        ],
+        "description": "-> (convert \">\" to \"->\")"
+    },
+    "New Variable": {
+        "prefix": "var",
+        "body": [
+            "${1:shortname} [label=\"${2:$1}\", shape=\"${3|square,rectangle,circle,ellipse,triangle,plaintext,point,diamond,pentagon,hexagon,septagon,octagon,egg,trapezium,parallelogram,house,doublecircle,doubleoctagon,tripleoctagon,invtriangle,invtrapezium,invhouse,Mdiamond,Msquare,Mcircle,none,note,tab,folder,box3d|}\"${4:, URL=\"${5:http://en.wikipedia.org/wiki/John de Fries}\"}]",
+            "${0}"
+        ],
+        "description": "New variable"
+    },
+    "Property [dir=both…]": {
+        "prefix": "dir",
+        "body": [
+            "[dir=${1|back,both,forward,none|}]"
+        ],
+        "description": "Property [dir=both…]"
+    },
+    "New variable [plaintext]": {
+        "prefix": "var",
+        "body": [
+            "\"${1:Machine: a}\" [ shape = plaintext ];"
+        ],
+        "description": "New variable [plaintext]"
+    },
+    "Property [shape=box]": {
+        "prefix": "prop",
+        "body": [
+            "[shape=box]"
+        ],
+        "description": "Property [shape=box]"
+    },
+    "Property [styles…]": {
+        "prefix": "prop",
+        "body": [
+            "[style=dotted; color=red; style=bold,label=\"100 times\"; weight=8]"
+        ],
+        "description": "Property [styles…]"
+    },
+    "Path from -> to [label]": {
+        "prefix": "path",
+        "body": [
+            "${1:from} -> ${2:to} [label=\"${3:.7}\";]"
+        ],
+        "description": "Path from -> to [label]"
+    },
+    "Path from -> {to list}": {
+        "prefix": "path",
+        "body": [
+            "${1:From} -> {${2:item1} ${3:item2} $0}"
+        ],
+        "description": "Path from -> {to list}"
+    },
+    "{ rank=same|min|max; x; y }": {
+        "prefix": "rank",
+        "body": [
+            "{ rank=${1|same,min,max,# max is bottom|}; ${2:space delimitted list }};"
+        ],
+        "description": "{rank=same|min|max; x; y}"
+    }
+}

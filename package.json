@@ -31,6 +31,33 @@
         "onCommand:graphviz-interactive-preview.preview.beside"
     ],
     "contributes": {
+        "languages": [
+            {
+                "id": "dot",
+                "aliases": [
+                    "Graphviz (DOT)"
+                ],
+                "extensions": [
+                    ".gv",
+                    ".dot",
+                    ".DOT"
+                ],
+                "configuration": "dot/dot.configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "dot",
+                "scopeName": "source.dot",
+                "path": "dot/syntaxes/dot.tmLanguage"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "dot",
+                "path": "dot/snippets/snippets/dot.json"
+            }
+        ],
         "commands": [
             {
                 "command": "graphviz-interactive-preview.preview.beside",
