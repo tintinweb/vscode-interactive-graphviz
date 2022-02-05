@@ -57,6 +57,9 @@
         </div>
         <vscode-text-field placeholder="Search ..." id="searchInput">
             <span slot="start" class="codicon codicon-search"></span>
+            <vscode-option slot="end" onclick="toggleCase()" id="search_case_sensitive">
+                <span class="codicon codicon-case-sensitive"></span>
+            </vscode-option>
             <vscode-option slot="end" onclick="toggleRegex()" id="search_regexbutton">
                 <span class="codicon codicon-regex"></span>
             </vscode-option>
@@ -115,6 +118,7 @@
         // SearchObject which holds the current Search Settings
         const searchObject = {
             type: "included",
+            case: "insensitive",
             direction: "bidirectional",
             nodeName: true,
             nodeLabel: true,
@@ -157,6 +161,18 @@
             } else {
                 $("#search_regexbutton").removeAttr("selected");
                 $("#search_regexbutton").removeAttr("aria-selected");
+            }
+            updateSearchResults();
+        }
+
+        function toggleCase() {
+            searchObject.case = searchObject.case === "sensitive" ? "insensitive" : "sensitive";
+            if (searchObject.case === "sensitive") {
+                $("#search_case_sensitive").attr("selected", "selected");
+                $("#search_case_sensitive").attr("aria-selected", "true");
+            } else {
+                $("#search_case_sensitive").removeAttr("selected");
+                $("#search_case_sensitive").removeAttr("aria-selected");
             }
             updateSearchResults();
         }
