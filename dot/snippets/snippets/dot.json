@@ -46,6 +46,13 @@
         ],
         "description": "New variable [plaintext]"
     },
+    "New subgraph": {
+        "prefix": "sub",
+        "body":[
+            "subgraph ${1:Identifier} {\n${2:Graph content}\n}"
+        ],
+        "description": "New subgraph"
+    },
     "Property [shape=box]": {
         "prefix": "prop",
         "body": [
