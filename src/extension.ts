@@ -84,7 +84,12 @@ function onActivate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
         ['dot'],
         new DotCompletionItemProvider(),
-        '='
+        '=',
+        '[',
+        ' ',
+        '\n',
+        '{',
+        ':'
         )
       ); 
 }
