@@ -41,6 +41,7 @@ function findClusters(text, searchFunction, clusterName = true, clusterLabel = t
 function search(text, mode = "highlight", options = {}) {
     const opt = {
         type: options.type || "exact",
+        case: options.case || "insensitive",
         direction: options.direction || "bidirectional",
         nodeName: options.nodeName,
         nodeLabel: options.nodeLabel,
@@ -63,10 +64,14 @@ function search(text, mode = "highlight", options = {}) {
             return str.trim() === search.trim()
         };
     } else if (opt.type === "included") {
-        searchFunction = (search, str) => str.trim().indexOf(search) !== -1;
+        if(opt.case === "sensitive") {
+            searchFunction = (search, str) => str.trim().indexOf(search) !== -1;
+        } else {
+            searchFunction = (search, str) => str.toUpperCase().trim().indexOf(search.toUpperCase()) !== -1;
+        }
     } else if (opt.type === "regex") {
         searchFunction = (search, str) => {
-            let regex = new RegExp(search);
+            let regex = new RegExp(search, (opt.case==="insensitive"? "i": undefined));
             return !!str.trim().match(regex);
         }
     }
