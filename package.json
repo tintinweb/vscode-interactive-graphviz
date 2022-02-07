@@ -28,7 +28,8 @@
     "main": "./dist/extension.js",
     "browser": "./dist/extension.js",
     "activationEvents": [
-        "onCommand:graphviz-interactive-preview.preview.beside"
+        "onCommand:graphviz-interactive-preview.preview.beside",
+        "onLanguage:dot"
     ],
     "contributes": {
         "languages": [

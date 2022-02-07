@@ -10,6 +10,7 @@
 import * as vscode from 'vscode';
 import InteractiveWebviewGenerator from './features/interactiveWebview';
 import PreviewPanel from './features/previewPanel';
+import DotCompletionItemProvider from './language/CompletionItemProvider';
 const DOT = 'dot';
 
 /** global vars */
@@ -79,6 +80,13 @@ function onActivate(context: vscode.ExtensionContext) {
 
         })
     );
+
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
+        ['dot'],
+        new DotCompletionItemProvider(),
+        '='
+        )
+      ); 
 }
 
 /* exports */
