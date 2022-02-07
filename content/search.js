@@ -1,40 +1,41 @@
 function findEdges(text, searchFunction) {
-    const $set = $();
+    var $set = $();
     gv.edges().each((index, edge) => {
         if (edge.textContent && searchFunction(text, edge.textContent)) {
             $set.push(edge);
         }
-    });
+    })
     return $set;
 }
 
 function findNodes(text, searchFunction, nodeName = true, nodeLabel = true) {
-    const $set = $();
+    var $set = $()
 
     const nodes = gv.nodesByName();
-    for (const [nodeID, node] of Object.entries(nodes)) {
-        if ((nodeName && searchFunction(text, nodeID))
-            || (nodeLabel
-                && (node.textContent && searchFunction(text, node.textContent) || !node.textContent && !nodeName && searchFunction(text, nodeID)))) {
-            $set.push(node);
+    for (let [nodeID, node] of Object.entries(nodes)) {
+        if ((nodeName && searchFunction(text, nodeID)) ||
+            (nodeLabel &&
+                (node.textContent && searchFunction(text, node.textContent) || !node.textContent && !nodeName && searchFunction(text, nodeID)))) {
+            $set.push(node)
         }
     }
     return $set;
 }
 
 function findClusters(text, searchFunction, clusterName = true, clusterLabel = true) {
-    const $set = $();
+    var $set = $()
 
     const clusters = gv.clustersByName();
-    for (const [clusterID, cluster] of Object.entries(clusters)) {
-        if ((clusterName && searchFunction(text, clusterID))
-            || (clusterLabel
-                && (cluster.textContent && searchFunction(text, cluster.textContent) || !cluster.textContent && !clusterName && searchFunction(text, clusterID)))) {
-            $set.push(cluster);
+    for (let [clusterID, cluster] of Object.entries(clusters)) {
+        if ((clusterName && searchFunction(text, clusterID)) ||
+            (clusterLabel &&
+                (cluster.textContent && searchFunction(text, cluster.textContent) || !cluster.textContent && !clusterName && searchFunction(text, clusterID)))) {
+            $set.push(cluster)
         }
     }
     return $set;
 }
+
 
 // main search function (is also used by API call)
 function search(text, mode = "highlight", options = {}) {
@@ -46,7 +47,7 @@ function search(text, mode = "highlight", options = {}) {
         edgeLabel: options.edgeLabel,
         clusterName: options.clusterName,
         clusterLabel: options.clusterLabel,
-    };
+    }
 
     if (mode === "search") {
         if (Object.keys(options).length > 0) {
@@ -58,29 +59,31 @@ function search(text, mode = "highlight", options = {}) {
 
     let searchFunction;
     if (opt.type === "exact") {
-        searchFunction = (search, str) => str.trim() === search.trim();
+        searchFunction = (search, str) => {
+            return str.trim() === search.trim()
+        };
     } else if (opt.type === "included") {
         searchFunction = (search, str) => str.trim().indexOf(search) !== -1;
     } else if (opt.type === "regex") {
         searchFunction = (search, str) => {
-            const regex = new RegExp(search);
+            let regex = new RegExp(search);
             return !!str.trim().match(regex);
-        };
+        }
     }
 
     if (mode === "highlight") {
-        let $edges = $();
+        var $edges = $();
         if (opt.edgeLabel) {
             $edges = findEdges(text, searchFunction);
         }
 
-        let $nodes = $();
+        var $nodes = $();
         if (opt.nodeLabel || opt.nodeName) {
             $nodes = findNodes(text, searchFunction, opt.nodeName, opt.nodeLabel);
         }
 
-        let $clusters = $();
-        if (opt.clusterLabel || opt.clusterName) {
+        var $clusters = $();
+        if(opt.clusterLabel || opt.clusterName) {
             $clusters = findClusters(text, searchFunction, opt.clusterName, opt.clusterLabel);
         }
 
@@ -92,7 +95,7 @@ function search(text, mode = "highlight", options = {}) {
             nodes: $nodes,
             edges: $edges,
             clusters: $clusters,
-        };
+        }
     }
 
     sendMessage("Invalid search Mode!");
@@ -100,31 +103,32 @@ function search(text, mode = "highlight", options = {}) {
 
 function findString(str) {
     if (parseInt(navigator.appVersion) < 4) return;
-    let strFound;
+    var strFound;
     if (window.find) {
         // CODE FOR BROWSERS THAT SUPPORT window.find
         strFound = self.find(str);
         if (strFound && self.getSelection && !self.getSelection().anchorNode) {
-            strFound = self.find(str);
+            strFound = self.find(str)
         }
         if (!strFound) {
-            strFound = self.find(str, 0, 1);
-            while (self.find(str, 0, 1)) continue;
+            strFound = self.find(str, 0, 1)
+            while (self.find(str, 0, 1)) continue
         }
     } else if (navigator.appName.indexOf("Microsoft") != -1) {
         // EXPLORER-SPECIFIC CODE
         if (TRange != null) {
-            TRange.collapse(false);
-            strFound = TRange.findText(str);
-            if (strFound) TRange.select();
+            TRange.collapse(false)
+            strFound = TRange.findText(str)
+            if (strFound) TRange.select()
         }
         if (TRange == null || strFound == 0) {
-            TRange = self.document.body.createTextRange();
-            strFound = TRange.findText(str);
-            if (strFound) TRange.select();
+            TRange = self.document.body.createTextRange()
+            strFound = TRange.findText(str)
+            if (strFound) TRange.select()
         }
     }
     if (!strFound) {
         // flash box
     }
-}
+    return;
+};
