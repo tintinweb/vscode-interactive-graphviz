@@ -6,6 +6,7 @@ import arrowType from "./arrowType";
 import {isNumber, uniq} from "lodash";
 import dirType from "./dirType";
 import nodeShapes from "./nodeShapes";
+import style from "./style";
 
 export default class DotCompletionItemProvider implements CompletionItemProvider{
     private colors: CompletionItem[] = [];
@@ -13,6 +14,10 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
     private nodeShapes: CompletionItem[] = [];
     private dirType: CompletionItem[] = [];
     private compass: CompletionItem[] = [];
+    private style: CompletionItem[] = [];
+    private primitives: CompletionItem[] = [];
+
+    
     private attributes: {'G': CompletionItem[], 'N': CompletionItem[], 'E': CompletionItem[], 'C': CompletionItem[], 'S': CompletionItem[]} = {
         'G': [],
         'N': [],
@@ -31,6 +36,13 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
             "C": "Clusters",
             "S": "Subgraphs"
         }
+
+        this.primitives = "node|edge|graph".split("|").map(type => {
+            const pack = new CompletionItem(type, CompletionItemKind.Constant);
+            pack.insertText=new SnippetString(type + " [$1]");
+            return pack;
+        })
+
         this.colors = colors.split("\n").map(color => {
             const [name, value] = color.split("#");
             const pack = new CompletionItem(name, CompletionItemKind.Color);
@@ -50,6 +62,10 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
             return pack;
         });
         this.nodeShapes=nodeShapes.split("|").map(type => {
+            const pack = new CompletionItem(type, CompletionItemKind.Constant);
+            return pack;
+        });
+        this.style=style.split("|").map(type => {
             const pack = new CompletionItem(type, CompletionItemKind.Constant);
             return pack;
         });
@@ -109,10 +125,32 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
                 }
             },
             {
-                regex: /\[\s*([a-z]+\s*=\s*((".*")|([a-zA-Z0-9.]+))\s+)*$/,
+                regex: /^\s*$/,
                 func: () => {
                     // ToDo: Filter already set attributes
+                    return this.primitives;
+                }
+            },
+            {
+                regex: /(node|[a-zA-Z0-9]+)\s*\[\s*([a-z]+\s*=\s*((".*")|([a-zA-Z0-9.]+))\s+)*$/,
+                func: (r:string[]) => {
+                    if(r[1]==="edge" || r[1]==="graph") return [];
+                    // ToDo: Filter already set attributes
                     return this.attributes.N;
+                }
+            },
+            {
+                regex: /graph\s*\[\s*([a-z]+\s*=\s*((".*")|([a-zA-Z0-9.]+))\s+)*$/,
+                func: () => {
+                    // ToDo: Filter already set attributes
+                    return this.attributes.G;
+                }
+            },
+            {
+                regex: /edge\s*\[\s*([a-z]+\s*=\s*((".*")|([a-zA-Z0-9.]+))\s+)*$/,
+                func: () => {
+                    // ToDo: Filter already set attributes
+                    return this.attributes.E;
                 }
             },
             {
@@ -134,6 +172,8 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
                         return this.dirType;
                     } else if(type==="shape") {
                         return this.nodeShapes;
+                    } else if(type==="style") {
+                        return this.style;
                     }
                     return [];
                 }
