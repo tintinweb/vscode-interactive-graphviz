@@ -16,6 +16,7 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
     private compass: CompletionItem[] = [];
     private style: CompletionItem[] = [];
     private primitives: CompletionItem[] = [];
+    private rankDir: CompletionItem[] = [];
 
     
     private attributes: {'G': CompletionItem[], 'N': CompletionItem[], 'E': CompletionItem[], 'C': CompletionItem[], 'S': CompletionItem[]} = {
@@ -66,6 +67,10 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
             return pack;
         });
         this.style=style.split("|").map(type => {
+            const pack = new CompletionItem(type, CompletionItemKind.Constant);
+            return pack;
+        });
+        this.rankDir="TB|LR|RL|BT".split("|").map(type => {
             const pack = new CompletionItem(type, CompletionItemKind.Constant);
             return pack;
         });
@@ -174,6 +179,8 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
                         return this.nodeShapes;
                     } else if(type==="style") {
                         return this.style;
+                    } else if(type==="rankDir") {
+                        return this.rankDir;
                     }
                     return [];
                 }
