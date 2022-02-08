@@ -69,6 +69,11 @@
         "configuration": {
             "title": "Graphviz Interactive Preview",
             "properties": {
+                "graphviz-interactive-preview.codeCompletion.enable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable/Disable code completion. **Note:** Takes effect after restart."
+                },
                 "graphviz-interactive-preview.guardInterval": {
                     "type": "number",
                     "default": 10,

@@ -5,6 +5,7 @@
  *
 * */
 import * as vscode from "vscode";
+import * as settings from '../settings';
 
 export default class PreviewPanel {
     panel: vscode.WebviewPanel;
@@ -51,14 +52,14 @@ export default class PreviewPanel {
         this.waitingForRendering = undefined;
         this.timeoutForWaiting = undefined;
         this.timeoutForRendering = undefined;
-        this.enableRenderLock = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLock") as boolean;
-        this.renderInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderInterval") as number;
-        this.debouncingInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("debouncingInterval") as number;
-        this.guardInterval = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("guardInterval") as number;
+        this.enableRenderLock = settings.extensionConfig().get("renderLock") as boolean;
+        this.renderInterval = settings.extensionConfig().get("renderInterval") as number;
+        this.debouncingInterval = settings.extensionConfig().get("debouncingInterval") as number;
+        this.guardInterval = settings.extensionConfig().get("guardInterval") as number;
 
-        let renderLockAdditionalTimeout = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("renderLockAdditionalTimeout") as number;
-        let view_transitionDelay = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay") as number;
-        let view_transitionaDuration = vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration") as number;
+        let renderLockAdditionalTimeout = settings.extensionConfig().get("renderLockAdditionalTimeout") as number;
+        let view_transitionDelay = settings.extensionConfig().get("view.transitionDelay") as number;
+        let view_transitionaDuration = settings.extensionConfig().get("view.transitionDuration") as number;
         this.renderLockTimeout =
             (this.enableRenderLock && renderLockAdditionalTimeout >= 0) ?
             renderLockAdditionalTimeout + view_transitionDelay + view_transitionaDuration:
@@ -262,8 +263,8 @@ export default class PreviewPanel {
         this.panel.webview.postMessage({
             command: 'setConfig',
             value : {
-                transitionDelay : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDelay"),
-                transitionaDuration : vscode.workspace.getConfiguration('graphviz-interactive-preview').get("view.transitionDuration")
+                transitionDelay : settings.extensionConfig().get("view.transitionDelay"),
+                transitionaDuration : settings.extensionConfig().get("view.transitionDuration")
             }
         });
         this.renderWaitingContent();
