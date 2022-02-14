@@ -10,12 +10,12 @@
 import * as vscode from 'vscode';
 import InteractiveWebviewGenerator from './features/interactiveWebview';
 import PreviewPanel from './features/previewPanel';
-const DOT = 'dot';
+import DotCompletionItemProvider from './language/CompletionItemProvider';
+import * as settings from './settings';
 
 /** global vars */
 
 /** classdecs */
-
 
 /** funcdecs */
 
@@ -24,8 +24,10 @@ const DOT = 'dot';
 function onActivate(context: vscode.ExtensionContext) {
     const graphvizView = new InteractiveWebviewGenerator(context);
 
+    /* Document Events */
+
     vscode.workspace.onDidChangeTextDocument(event => {
-        if (event.document.languageId==DOT || event.document.fileName.trim().toLowerCase().endsWith(".dot")) {
+        if (event.document.languageId==settings.languageId || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
             let panel = graphvizView.getPanel(event.document.uri);
             if(panel){
                 panel.requestRender(event.document.getText());
@@ -34,13 +36,15 @@ function onActivate(context: vscode.ExtensionContext) {
     }, null, context.subscriptions);
 
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(doc => {
-        if (doc.languageId==DOT || doc.fileName.trim().toLowerCase().endsWith(".dot")) {
+        if (doc.languageId==settings.languageId || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
             let panel = graphvizView.getPanel(doc.uri);
             if(panel){
                 panel.requestRender(doc.getText());
             }
         }
     }));
+
+    /* commands */
 
     context.subscriptions.push(
         vscode.commands.registerCommand('graphviz-interactive-preview.preview.beside', (args) => {
@@ -79,6 +83,22 @@ function onActivate(context: vscode.ExtensionContext) {
 
         })
     );
+
+    /* add. providers */
+
+    if (settings.extensionConfig().codeCompletion.enable as boolean) {
+        context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
+            [settings.languageId],
+            new DotCompletionItemProvider(),
+            '=',
+            '[',
+            ' ',
+            '\n',
+            '{',
+            ':'
+            )
+        );
+    }
 }
 
 /* exports */

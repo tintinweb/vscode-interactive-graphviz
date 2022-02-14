@@ -1,0 +1,9 @@
+{
+  "name": "dotSnippets",
+  "publisher": "Stephanvs",
+  "description": "Code snippets for Graphviz (DOT)",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "*"
+  }
+}
