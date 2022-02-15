@@ -62,10 +62,19 @@
         "commands": [
             {
                 "command": "graphviz-interactive-preview.preview.beside",
-                "title": "preview (beside)",
+                "title": "Preview Graphviz / Dot (beside)",
                 "category": "Graphviz Interactive"
             }
         ],
+        "menus": {
+            "editor/title/context": [
+                {
+                    "command": "graphviz-interactive-preview.preview.beside",
+                    "group": "graphviz",
+                    "when": "resourceLangId == dot"
+                }
+            ]
+        },
         "configuration": {
             "title": "Graphviz Interactive Preview",
             "properties": {
