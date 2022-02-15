@@ -2,7 +2,10 @@
 
 ## 0.1.1
 - new: the extension now bundles dot language support, syntax highlighting, snippets from [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/) with permission from the author [@joaompinto](https://github.com/joaompinto) - #62
+- new: completion provider - #62 
 - new: Allow case insensitive matching in search - #64, #65
+
+<img width="1197" alt="image" src="https://user-images.githubusercontent.com/2865694/154020180-563f189a-987c-4839-a5af-fa8ba80e9aa8.png">
 
 ## 0.1.0 🚀
 - new: the code is now licensed as GPLv3. Feel free to reach out if you have any questions - #54
