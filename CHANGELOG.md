@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1
+- new: the extension now bundles dot language support, syntax highlighting, snippets from [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/) with permission from the author [@joaompinto](https://github.com/joaompinto) - #62
+- new: Allow case insensitive matching in search - #64, #65
+
 ## 0.1.0 🚀
 - new: the code is now licensed as GPLv3. Feel free to reach out if you have any questions - #54
 - new: vscode style user interface for the render window - #41 (thanks @bigbug)
