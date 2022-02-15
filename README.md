@@ -6,14 +6,14 @@
 
 # vscode-interactive-graphviz
 
-A VSCode extension that provides an interactive, zoom-, pan- and searchable, live preview with edge tracing for graphs in Graphviz / dot format.
+A VSCode extension that provides syntax highlighting, snippets, and an interactive, zoom-, pan- and searchable, live preview with edge tracing for graphs in Graphviz / dot format.
 
 
 ![graphviz_v01](https://user-images.githubusercontent.com/2865694/151164049-9c89e167-d0c1-43eb-ae96-0f5004847bde.gif)
 
 ![graphviz_v01_open](https://user-images.githubusercontent.com/2865694/151163938-f667acf2-bc87-4555-ad93-866a4ca33822.gif)
 
-
+* Graphviz/Dot Language Support / Syntax Highlighting and Snippets (thanks [@joaompinto](https://github.com/joaompinto))
 * Renders dot/Graphviz sources in an interactive live preview.
 * Updates preview as you type.
 * Interactive edge tracing. Click on a node to highlight incoming and outgoing edges (`ESC` to unselect).
@@ -86,6 +86,7 @@ see [AUTHORS](AUTHORS) for a list contributors.
 * graph engine: [d3-graphviz](https://github.com/magjac/d3-graphviz)
 * edge tracking: [jquery.graphviz.svg](https://github.com/mountainstorm/jquery.graphviz.svg/)
 * webview handling: [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/)
+* dot language support, syntax highlighting, snippets: taken from [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/) with permission from the author [@joaompinto](https://github.com/joaompinto)
 
 Copyright (c) Microsoft Corporation:
 * icons: [vscode-codicons](https://github.com/microsoft/vscode-codicons)
