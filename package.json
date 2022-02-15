@@ -63,7 +63,11 @@
             {
                 "command": "graphviz-interactive-preview.preview.beside",
                 "title": "Preview Graphviz / Dot (beside)",
-                "category": "Graphviz Interactive"
+                "category": "Graphviz Interactive",
+                "icon": {
+                    "dark": "images/icon.png",
+                    "light": "images/icon.png"
+                }
             }
         ],
         "menus": {
@@ -71,6 +75,13 @@
                 {
                     "command": "graphviz-interactive-preview.preview.beside",
                     "group": "graphviz",
+                    "when": "resourceLangId == dot"
+                }
+            ],
+            "editor/title": [
+                {
+                    "command": "graphviz-interactive-preview.preview.beside",
+                    "group": "navigation@-99",
                     "when": "resourceLangId == dot"
                 }
             ]
