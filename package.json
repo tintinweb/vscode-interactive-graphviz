@@ -2,7 +2,7 @@
     "name": "graphviz-interactive-preview",
     "displayName": "Graphviz Interactive Preview",
     "description": "Graphviz (dot) Interactive Preview",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "keywords": [
         "dot",
         "graphviz",
@@ -28,19 +28,72 @@
     "main": "./dist/extension.js",
     "browser": "./dist/extension.js",
     "activationEvents": [
-        "onCommand:graphviz-interactive-preview.preview.beside"
+        "onCommand:graphviz-interactive-preview.preview.beside",
+        "onLanguage:dot"
     ],
     "contributes": {
+        "languages": [
+            {
+                "id": "dot",
+                "aliases": [
+                    "Graphviz (DOT)"
+                ],
+                "extensions": [
+                    ".gv",
+                    ".dot",
+                    ".DOT"
+                ],
+                "configuration": "dot/dot.configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "dot",
+                "scopeName": "source.dot",
+                "path": "dot/syntaxes/dot.tmLanguage"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "dot",
+                "path": "dot/snippets/snippets/dot.json"
+            }
+        ],
         "commands": [
             {
                 "command": "graphviz-interactive-preview.preview.beside",
-                "title": "preview (beside)",
-                "category": "Graphviz Interactive"
+                "title": "Preview Graphviz / Dot (beside)",
+                "category": "Graphviz Interactive",
+                "icon": {
+                    "dark": "images/icon.png",
+                    "light": "images/icon.png"
+                }
             }
         ],
+        "menus": {
+            "editor/title/context": [
+                {
+                    "command": "graphviz-interactive-preview.preview.beside",
+                    "group": "graphviz",
+                    "when": "resourceLangId == dot"
+                }
+            ],
+            "editor/title": [
+                {
+                    "command": "graphviz-interactive-preview.preview.beside",
+                    "group": "navigation@-99",
+                    "when": "resourceLangId == dot"
+                }
+            ]
+        },
         "configuration": {
             "title": "Graphviz Interactive Preview",
             "properties": {
+                "graphviz-interactive-preview.codeCompletion.enable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable/Disable code completion. **Note:** Takes effect after restart."
+                },
                 "graphviz-interactive-preview.guardInterval": {
                     "type": "number",
                     "default": 10,
@@ -81,6 +134,7 @@
     },
     "devDependencies": {
         "@types/glob": "^7.1.4",
+        "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.0.0",
         "@types/node": "14.x",
         "@types/vscode": "^1.20.2",
@@ -109,6 +163,7 @@
         "jquery": "^3.6.0",
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
+        "lodash": "^4.17.21",
         "text-encoding": "^0.7.0",
         "vscode-uri": "^3.0.3"
     },
