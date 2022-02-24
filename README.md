@@ -23,6 +23,18 @@ A VSCode extension that provides syntax highlighting, snippets, and an interacti
 * Available on [github.dev](https://github.dev), [vscode.dev](https://vscode.dev)
 * Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel, like handlers for click/dblClick events. 
 
+## How to preview
+
+Open a Graphviz/Dot file in the active editor and use either of the following methods to render the preview:
+
+* (a) open the command prompt (<kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>p</kbd>) and type  `> graphviz preview`
+* (b) click the <img width="35" alt="image" src="https://user-images.githubusercontent.com/2865694/155575822-720a76d0-68a8-481f-92b4-752d8c6e6242.png"> button in the editor title
+* (c) from the editor window's context menu, select `Preview Graphviz / Dot (beside)`
+
+<img width="200" alt="image" src="https://user-images.githubusercontent.com/2865694/154029863-7d7dd582-2b9a-480c-b0de-bcccb9136ae4.png">
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/2865694/155575303-8c429902-5599-47cf-855f-c9694a32b829.png">
+
+
 ## Render Examples
 
 <a href="https://user-images.githubusercontent.com/2865694/151163516-fbb956ab-607c-45dc-8c83-db3477ceccf9.png"><img width="250" alt="semantic-arg-dark" src="https://user-images.githubusercontent.com/2865694/151163516-fbb956ab-607c-45dc-8c83-db3477ceccf9.png" ></a>
