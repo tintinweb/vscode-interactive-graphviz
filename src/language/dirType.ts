@@ -1,2 +1,2 @@
-const dirType = `forward|back|both|none`;
+const dirType = "forward|back|both|none";
 export default dirType;

@@ -56,7 +56,7 @@ imagepath|G|string|""||
 imagepos|N|string|"mc"||
 imagescale|N|bool
 inputscale|G|double|<none>||neato, fdp only
-label|ENGC|string|"\N" (nodes) 
+label|ENGC|string|"\\N" (nodes) 
 label_scheme|G|int|0|0|sfdp only
 labelangle|E|double|-25.0|-180.0|
 labeldistance|E|double|1.0|0.0|
@@ -167,5 +167,5 @@ width|N|double|0.75|0.01|
 xdotversion|G|string|||xdot only
 xlabel|EN|lblString|""||
 xlp|NE|point|||write only
-z|N|double|0.0|-MAXFLOAT`
+z|N|double|0.0|-MAXFLOAT`;
 export default attributelist;
