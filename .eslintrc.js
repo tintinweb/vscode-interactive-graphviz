@@ -1,4 +1,5 @@
 module.exports = {
+  ignorePatterns: ["content/", "node_modules/", "dist/", "content/graphvizSvg/"],
   env: {
     browser: true,
     es2021: true,
