@@ -73,6 +73,15 @@
             <vscode-option onclick="changeDirection('upstream')">Upstream</vscode-option>
             <vscode-option onclick="changeDirection('single')">Single</vscode-option>
         </vscode-dropdown>
+        <vscode-dropdown style="margin-left: 5px; margin-bottom: 2px;">
+            <vscode-option onclick="changeEngine('dot')">Dot</vscode-option>
+            <vscode-option onclick="changeEngine('circo')">Circo</vscode-option>
+            <vscode-option onclick="changeEngine('fdp')">FDP</vscode-option>
+            <vscode-option onclick="changeEngine('neato')">Neato</vscode-option>
+            <vscode-option onclick="changeEngine('osage')">Osage</vscode-option>
+            <vscode-option onclick="changeEngine('patchwork')">Patchwork</vscode-option>
+            <vscode-option onclick="changeEngine('twopi')">Twopi</vscode-option>
+        </vscode-dropdown>
     </div>
 
     <div id="searchtoolbar" class="toolbar-dark">
@@ -111,6 +120,9 @@
         var vsCodeMessage;
         // object for saving configuration from the extension
         var viewConfig;
+        
+        // currently selected graphviz render engine
+        var selectedEngine = "dot";
 
         // Object for saving the current GraphVizSVG Object
         var gv;
@@ -151,6 +163,13 @@
 
         function changeDirection(newDirection) {
             searchObject.direction = newDirection;
+        }
+
+        function changeEngine(newEngine) {
+            selectedEngine = newEngine;
+            if(vsCodeMessage) {
+                render(vsCodeMessage.value);
+            }
         }
 
         function toggleRegex() {
@@ -217,6 +236,7 @@
                 .duration(viewConfig.transitionaDuration);
 
             graphviz
+                .engine(selectedEngine)
                 .fade(true)
                 .transition(transition)
                 .tweenPaths(true) // default
