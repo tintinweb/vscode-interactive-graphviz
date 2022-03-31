@@ -8,6 +8,7 @@
 import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
+import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import * as settings from "./settings";
 
@@ -99,6 +100,10 @@ function onActivate(context: vscode.ExtensionContext) {
       ":",
     ));
   }
+  context.subscriptions.push(vscode.languages.registerColorProvider(
+    [settings.languageId],
+    new ColorProvider(),
+  ));
 }
 
 /* exports */
