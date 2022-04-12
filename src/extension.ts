@@ -13,7 +13,16 @@ import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
+import WasmServer from "./WasmServer";
 
+/** global vars */
+let server: WasmServer;
+
+/** classdecs */
+
+/** funcdecs */
+
+/** event funcs */
 function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
@@ -117,6 +126,35 @@ function onActivate(context: vscode.ExtensionContext) {
     [settings.languageId],
     symProvider,
   ));
+
+  WasmServer.load("graphvizlib.wasm").then((s) => {
+    server = s;
+    server.graphvizVersion().then((a) => console.log(`Version of GraphViz:${a}`));
+  });
+
+  return {
+    extendMarkdownIt(md: any) {
+      const { highlight } = md.options;
+
+      md.options.highlight = (code:string, lang:string) => {
+        if (lang && (lang.toLowerCase() === "dot" || lang.toLowerCase() === "graphviz")) {
+          if (server) {
+            try {
+              const svg = server.renderSync(code, "dot");
+              return `<div class="graphviz">${svg}</div>`;
+            } catch (e: any) {
+              return `<div class="graphvizError">${e.message}<code>${code}</code></div>`;
+              // console.log(e);
+            }
+          }
+        }
+
+        return highlight(code, lang);
+      };
+
+      return md;
+    },
+  };
 }
 
 /* exports */

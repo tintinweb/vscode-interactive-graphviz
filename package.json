@@ -29,9 +29,33 @@
     "browser": "./dist/extension.js",
     "activationEvents": [
         "onCommand:graphviz-interactive-preview.preview.beside",
-        "onLanguage:dot"
+        "onLanguage:dot",
+        "onNotebook:*"
     ],
     "contributes": {
+        "markdown.markdownItPlugins": true,
+        "markdown.previewScripts": [
+            "./dist/markdown.js",
+            "./content/dist/jquery.min.js",
+            "./content/dist/jquery.mousewheel.js",
+            "./content/dist/jquery.color.min.js",
+            "./content/graphvizSvg/jquery.graphviz.svg.js"
+        ],
+        "notebookRenderer": [
+            {
+                "id": "graphviz-interactive-preview",
+                "entrypoint": "./dist/notebook.js",
+                "displayName": "Graphviz Notebook Renderer",
+                "requiresMessaging": "optional",
+                "mimeTypes": [
+                    "application/json",
+                    "text/plain",
+                    "text/x-json",
+                    "text/x-graphviz",
+                    "text/x-dot"
+                ]
+            }
+        ],
         "languages": [
             {
                 "id": "dot",
@@ -133,7 +157,10 @@
         }
     },
     "devDependencies": {
+        "@types/d3": "^7.1.0",
+        "@types/d3-graphviz": "^2.6.7",
         "@types/glob": "^7.1.4",
+        "@types/jquery": "^3.5.14",
         "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.0.0",
         "@types/node": "14.x",
@@ -157,7 +184,10 @@
     },
     "dependencies": {
         "@hpcc-js/wasm": "^1.4.1",
+        "@types/react": "^18.0.1",
+        "@types/react-dom": "^18.0.0",
         "@types/text-encoding": "^0.0.36",
+        "@types/vscode-notebook-renderer": "^1.60.0",
         "@vscode/codicons": "^0.0.27",
         "@vscode/webview-ui-toolkit": "^1.0.0",
         "d3": "^7.3.0",
@@ -166,6 +196,8 @@
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
         "lodash": "^4.17.21",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "text-encoding": "^0.7.0",
         "vscode-uri": "^3.0.3"
     },

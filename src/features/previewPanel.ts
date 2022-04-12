@@ -138,7 +138,7 @@ export default class PreviewPanel {
         if (this.timeoutForWaiting) {
           clearTimeout(this.timeoutForWaiting);
         }
-        this.timeoutForWaiting = setTimeout(
+        this.timeoutForWaiting = global.setTimeout(
           () => this.renderWaitingContent(),
           waitBeforeRendering,
         );
@@ -184,7 +184,7 @@ export default class PreviewPanel {
     this.lockRender = true;
     this.lastRender = Date.now();
     if (this.renderLockTimeout > 0) {
-      this.timeoutForRendering = setTimeout(
+      this.timeoutForRendering = global.setTimeout(
         () => {
           console.log("unlocking rendering bcs. of timeout");
           this.restartRender();
