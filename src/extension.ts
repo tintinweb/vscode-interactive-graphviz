@@ -93,8 +93,6 @@ function onActivate(context: vscode.ExtensionContext) {
       new DotCompletionItemProvider(),
       "=",
       "[",
-      " ",
-      "\n",
       "{",
       ":",
     ));
