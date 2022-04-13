@@ -219,7 +219,10 @@ implements
       return Promise.reject(new Error("This can not be renamed."));
     }
 
-    return renameSymbol.location.range;
+    return {
+      range: renameSymbol.location.range,
+      placeholder: renameSymbol.name[0] === "\"" && renameSymbol.name[renameSymbol.name.length - 1] === "\"" ? renameSymbol.name.substring(1, renameSymbol.name.length - 1) : renameSymbol.name,
+    };
   }
 
   public provideRenameEdits(
@@ -237,12 +240,17 @@ implements
         return Promise.reject();
       }
 
+      let newSymbolName = newName;
+      if (!newName.match(/^[\w\d]+$/) && !(newName[0] === "\"" && newName[newName.length - 1] === "\"")) {
+        newSymbolName = `"${newName.replace(/\\{0,1}"/g, "\\\"")}"`;
+      }
+
       symbols.forEach((symbol) => {
         if (renameSymbol?.name === symbol.name) {
           edit.replace(
             document.uri,
             symbol.location.range,
-            newName,
+            newSymbolName,
           );
         }
       });
