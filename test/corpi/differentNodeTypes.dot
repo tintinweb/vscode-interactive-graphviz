@@ -13,4 +13,5 @@ digraph {
     t[label="t"]
     "u" [label="u"]
     v [label="v"] "w"[label="w"]
+    "x x x"
 }

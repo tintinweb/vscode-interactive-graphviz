@@ -2,6 +2,7 @@ import {
   DocumentSymbolProvider,
   Location,
   Position,
+  ProviderResult,
   Range,
   ReferenceProvider,
   RenameProvider,
@@ -207,7 +208,20 @@ implements
     return renameSymbol;
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  public prepareRename(
+    document: TextDocument,
+    position: Position,
+    // token: CancellationToken
+  ): ProviderResult<Range | { range: Range; placeholder: string }> {
+    const symbols = this.provideSymbols(document);
+    const renameSymbol = this.containingSymbol(symbols, position);
+    if (!renameSymbol) {
+      return Promise.reject(new Error("This can not be renamed."));
+    }
+
+    return renameSymbol.location.range;
+  }
+
   public provideRenameEdits(
     document: TextDocument,
     position: Position,
