@@ -10,6 +10,7 @@ import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
+import DotHoverProvider from "./language/HoverProvider";
 import * as settings from "./settings";
 
 /** global vars */
@@ -100,9 +101,15 @@ function onActivate(context: vscode.ExtensionContext) {
       ":",
     ));
   }
+
   context.subscriptions.push(vscode.languages.registerColorProvider(
     [settings.languageId],
     new ColorProvider(),
+  ));
+  
+  context.subscriptions.push(vscode.languages.registerHoverProvider(
+    [settings.languageId],
+    new DotHoverProvider(),
   ));
 }
 

@@ -138,6 +138,7 @@
         "@types/mocha": "^9.0.0",
         "@types/node": "14.x",
         "@types/vscode": "^1.20.2",
+        "@types/xml2js": "^0.4.9",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
         "@typescript-eslint/parser": "^5.10.2",
         "@vscode/test-electron": "^1.6.2",
@@ -151,7 +152,8 @@
         "ts-loader": "^9.2.5",
         "typescript": "^4.4.3",
         "webpack": "^5.52.1",
-        "webpack-cli": "^4.8.0"
+        "webpack-cli": "^4.8.0",
+        "xml2js": "^0.4.23"
     },
     "dependencies": {
         "@hpcc-js/wasm": "^1.4.1",
@@ -170,10 +172,11 @@
     "scripts": {
         "vscode:prepublish": "npm run updateDependencies && npm run package",
         "updateDependencies": "node updateDependencies.js",
+        "generateDocumentation": "node src/language/documentation/generator.js",
         "postinstall": "npm run updateDependencies",
         "compile": "webpack",
-        "watch": "webpack --watch",
-        "package": "webpack --mode production --devtool hidden-source-map",
+        "watch": "npm run generateDocumentation && webpack --watch",
+        "package": "npm run generateDocumentation && webpack --mode production --devtool hidden-source-map",
         "test-compile": "tsc -p . --outDir out",
         "pretest": "npm run test-compile && npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
