@@ -7,13 +7,13 @@ import {
   TextDocument,
 } from "vscode";
 import { isNumber, uniq } from "lodash";
-import attributelist from "./attributelist";
-import colors from "./colors";
-import arrowType from "./arrowType";
+import attributelist from "./definitions/attributelist";
+import colors from "./definitions/colors";
+import arrowType from "./definitions/arrowType";
 
-import dirType from "./dirType";
-import nodeShapes from "./nodeShapes";
-import style from "./style";
+import dirType from "./definitions/dirType";
+import nodeShapes from "./definitions/nodeShapes";
+import style from "./definitions/style";
 
 export default class DotCompletionItemProvider implements CompletionItemProvider {
   private colors: CompletionItem[] = [];
