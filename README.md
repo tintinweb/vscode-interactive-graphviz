@@ -19,7 +19,8 @@ A VSCode extension that provides syntax highlighting, snippets, and an interacti
 * Interactive edge tracing. Click on a node to highlight incoming and outgoing edges (`ESC` to unselect).
 * Search for nodes in the graph.
 * Export the graph as `svg` or `dot`.
-* Configurable render options & tracing preference: e.g. `transitionDelay`, `transitionDuration`.
+* Hover Provider, Color Picker, Diagnostics Provider, and AutoCompletion
+* Configurable render engine, render options & tracing preference: e.g. `transitionDelay`, `transitionDuration`.
 * Available on [github.dev](https://github.dev), [vscode.dev](https://vscode.dev)
 * Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel, like handlers for click/dblClick events. 
 
