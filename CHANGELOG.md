@@ -16,7 +16,7 @@
 
 - fix: Clicking on the background brings it to foreground, covering the nodes - #90 fixes #70
 
-- new: Show Diagnostic errors in the editor's "Problem" view - #89 fixes #75
+- new: Show Diagnostic errors in the editor's "Problems" view - #89 fixes #75
 
 <img width="576" alt="image" src="https://user-images.githubusercontent.com/2865694/163143275-05f0547b-ce69-43ce-af66-ed76b1f7aa88.png">
 
