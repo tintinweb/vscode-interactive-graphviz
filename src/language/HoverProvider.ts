@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
-import { filter, isString } from "lodash";
+import { isString } from "lodash";
 import {
   // CancellationToken,
   Hover,
