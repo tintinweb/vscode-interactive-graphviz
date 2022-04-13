@@ -1,5 +1,28 @@
 # Change Log
 
+## 0.2.0
+
+- new: Implements Selection of Render Engine - #85 fixes #69
+
+<img width="576" alt="Screenshot 2022-03-31 at 22 46 36" src="https://user-images.githubusercontent.com/27259/161146471-6fb269df-5e3a-4f71-ab6e-37391b33c09c.png">
+
+- new: Provide color decorator - #86 fixes #77
+
+<img width="472" alt="image" src="https://user-images.githubusercontent.com/2865694/163130099-30227a10-e471-4fe0-9564-1d3338f09726.png">
+
+- new: Hover Information -  #88 fixes #76
+
+<img width="303" alt="Screenshot 2022-04-01 at 13 05 39" src="https://user-images.githubusercontent.com/27259/161251962-6aa3792c-70da-4f48-a9fa-5933012fede2.png">
+
+- fix: Clicking on the background brings it to foreground, covering the nodes - #90 fixes #70
+
+- new: Show Diagnostic errors in the editor's "Problem" view - #89 fixes #75
+
+<img width="576" alt="image" src="https://user-images.githubusercontent.com/2865694/163143275-05f0547b-ce69-43ce-af66-ed76b1f7aa88.png">
+
+- new: Improved CompletionProvider - #91
+- update: Webview UI toolkit updated to 1.0.0 #92
+
 ## 0.1.2
 - new: active editor window: context menu -> Preview Graphviz / DOT (beside) - #67
 
