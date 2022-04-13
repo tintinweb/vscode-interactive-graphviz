@@ -17,4 +17,8 @@
         "javascript",
         "typescript"
     ],
+    "cSpell.words": [
+        "graphviz",
+        "tintinweb"
+    ],
 }
