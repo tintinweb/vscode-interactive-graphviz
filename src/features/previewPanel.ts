@@ -4,6 +4,7 @@
  *
 * */
 import * as vscode from "vscode";
+import diagnosticCollection from "../language/diagnosticCollection";
 import * as settings from "../settings";
 
 export default class PreviewPanel {
@@ -258,8 +259,25 @@ export default class PreviewPanel {
      * @param err
      */
   // eslint-disable-next-line no-undef
-  onRenderFinished(err?: NodeJS.ErrnoException) {
-    if (err) { console.log(`rendering failed: ${err}`); }
+  onRenderFinished(err?: string) {
+    diagnosticCollection.clear();
+    if (err) {
+      console.log(`rendering failed: ${err}`);
+
+      const m = err.match(/syntax error in line (\d+)/);
+      if (m) {
+        const line = parseInt(m[1], 10) - 1;
+        diagnosticCollection.set(this.uri, [
+          new vscode.Diagnostic(
+            new vscode.Range(
+              new vscode.Position(line, 0),
+              new vscode.Position(line, 65535),
+            ),
+            err,
+          ),
+        ]);
+      }
+    }
 
     console.log(`Render duration: ${Date.now() - this.lastRender}`);
 
@@ -298,5 +316,6 @@ export default class PreviewPanel {
       this.progressResolve();
       this.progressResolve = undefined;
     }
+    diagnosticCollection.clear();
   }
 }
