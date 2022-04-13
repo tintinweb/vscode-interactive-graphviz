@@ -104,7 +104,7 @@ function onActivate(context: vscode.ExtensionContext) {
     [settings.languageId],
     new ColorProvider(),
   ));
-  
+
   context.subscriptions.push(vscode.languages.registerHoverProvider(
     [settings.languageId],
     new DotHoverProvider(),

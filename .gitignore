@@ -67,5 +67,6 @@ typings/
 content/dist/
 *.vsix
 dist/
+out/
 
 src/language/documentation/documentation.ts

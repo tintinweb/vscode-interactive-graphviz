@@ -14,3 +14,4 @@ src/
 webpack.config.js
 dist/*.js.map
 **/test/**
+out/
