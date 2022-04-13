@@ -6,7 +6,7 @@ function highlight() {
   }
 
   gv.highlight(highlightedNodes, true);
-  gv.bringToFront(highlightedNodes);
+  //gv.bringToFront(highlightedNodes);
 }
 
 function getAffectedNodes($set, $mode = "bidirectional") {
