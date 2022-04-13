@@ -125,6 +125,27 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private provideSymbols(document: TextDocument): CompletionItem[] {
+    const suggestions: CompletionItem[] = [];
+    const foundSymbols: string[] = [];
+
+    const regex = /([\w\d]+|"(?:[^"\\]|\\.)*")(\s*(->|<-|--)\s*([\w\d]+|"(?:[^"\\]|\\.)*"))+/g;
+    const matches = document.getText().match(regex);
+
+    matches?.forEach((s) => {
+      const elements = s.match(/[\w\d]+|"(?:[^"\\]|\\.)*"/g);
+      elements?.forEach((symbol) => {
+        if (!foundSymbols.includes(symbol)) {
+          suggestions.push(new CompletionItem(symbol, CompletionItemKind.Variable));
+          foundSymbols.push(symbol);
+        }
+      });
+    });
+
+    return suggestions;
+  }
+
   provideCompletionItems(
     document: TextDocument,
     position: Position,
@@ -133,9 +154,11 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
   ) : CompletionItem[] | undefined {
     const line = document.lineAt(position.line).text.substring(0, position.character);
 
+    let suggestions = this.provideSymbols(document);
+
     const reg = [
       {
-        regex: /^\s*$/,
+        regex: /^\s*([a-zA-Z])*$/,
         // ToDo: Filter already set attributes
         func: () => this.attributes.G,
       },
@@ -192,8 +215,6 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
         },
       },
     ];
-
-    let suggestions: CompletionItem[] = [];
 
     reg.forEach((el) => {
       const result = line.match(el.regex);
