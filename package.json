@@ -168,6 +168,7 @@
         "jquery-mousewheel": "^3.1.13",
         "lodash": "^4.17.21",
         "text-encoding": "^0.7.0",
+        "ts-graphviz": "^0.16.0",
         "vscode-uri": "^3.0.3"
     },
     "scripts": {
