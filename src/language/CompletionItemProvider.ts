@@ -4,6 +4,7 @@ import {
   CompletionItemProvider,
   Position,
   SnippetString,
+  SymbolKind,
   TextDocument,
 } from "vscode";
 import { isNumber, uniq } from "lodash";
@@ -15,6 +16,7 @@ import dirType from "./definitions/dirType";
 import nodeShapes from "./definitions/nodeShapes";
 import style from "./definitions/style";
 import SymbolProvider from "./SymbolProvider";
+import { DotSymbolDefinition } from "./SymbolDefinition";
 
 export default class DotCompletionItemProvider implements CompletionItemProvider {
   private colors: CompletionItem[] = [];
@@ -127,14 +129,25 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private provideSymbols(document: TextDocument): CompletionItem[] {
+  private provideSymbols(
+    document: TextDocument,
+    position: Position,
+  ): CompletionItem[] {
     const symProv = new SymbolProvider();
-    const symbols = symProv.provideSymbols(document);
+    const symbols = symProv.flatSymbols(symProv.provideSymbols(document));
 
     const suggestions: CompletionItem[] = [];
     const foundSymbols: string[] = [];
 
     symbols.forEach((symbol) => {
+      if (!((
+        ([DotSymbolDefinition.Node, DotSymbolDefinition.Graph] as unknown[] as SymbolKind[])
+      )).includes(symbol.kind)) {
+        return;
+      }
+      if (symbol.range.contains(position)) {
+        return;
+      }
       if (foundSymbols.includes(symbol.name)) {
         return;
       }
@@ -153,7 +166,7 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
   ) : CompletionItem[] | undefined {
     const line = document.lineAt(position.line).text.substring(0, position.character);
 
-    let suggestions = this.provideSymbols(document);
+    let suggestions = this.provideSymbols(document, position);
 
     const reg = [
       {
