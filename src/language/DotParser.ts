@@ -12,6 +12,7 @@ import {
 } from "vscode";
 
 import { AST } from "@ts-graphviz/parser";
+import { DotSymbolDefinition } from "./SymbolDefinition";
 
 export type DocumentSymbolInformation = {
     /**
@@ -98,28 +99,34 @@ export default class DotParser {
     throw new Error("Unknown element type!");
   }
 
+  private astLocationToRange(location: AST.FileRange): Range {
+    const range = new Range(
+      new Position(location.start.line - 1, location.start.column - 1),
+      new Position(location.end.line - 1, location.end.column - 1),
+    );
+    return range;
+  }
+
   private vsElement(
     node: AST.ASTNode,
     name: string,
     type: string,
-    kind: SymbolKind,
+    kind: DotSymbolDefinition,
     children?: DocumentSymbolInformation[],
+    location?: AST.FileRange,
   ) : DocumentSymbolInformation {
-    const loc = new Range(
-      new Position(node.location.start.line - 1, node.location.start.column - 1),
-      new Position(node.location.end.line - 1, node.location.end.column - 1),
-    );
+    const range = this.astLocationToRange(location || node.location);
     const ds = new DocumentSymbol(
       name,
       `(${type})`,
-      kind,
-      loc,
-      loc,
+      (kind as unknown) as SymbolKind,
+      range,
+      range,
     );
     if (children) {
       children.forEach((el) => ds.children.push(el));
     }
-    (ds as DocumentSymbolInformation).location = new Location(this.uri as Uri, loc);
+    (ds as DocumentSymbolInformation).location = new Location(this.uri as Uri, range);
     (ds as DocumentSymbolInformation).containerName = "";
     return ds as DocumentSymbolInformation;
   }
@@ -139,8 +146,9 @@ export default class DotParser {
       graph,
       graph.id?.value || graph.type,
       graph.type,
-      SymbolKind.Class,
+      DotSymbolDefinition.Graph,
       this.parseBody(graph),
+      graph.id?.location,
     );
   }
 
@@ -154,12 +162,12 @@ export default class DotParser {
         return target.type;
       }).join(" -> "),
       edge.type,
-      SymbolKind.Class,
+      DotSymbolDefinition.Edge,
       edge.targets.map((target): DocumentSymbolInformation => this.vsElement(
         target,
         (target.type === "node_ref") ? target.id.value : target.type,
         target.type,
-        SymbolKind.Variable,
+        DotSymbolDefinition.Node,
       )),
     );
   }
@@ -169,7 +177,9 @@ export default class DotParser {
       node,
       node.id.value,
       node.type,
-      SymbolKind.Variable,
+      DotSymbolDefinition.Node,
+      undefined,
+      node.id.location,
     );
   }
 

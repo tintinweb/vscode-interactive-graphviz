@@ -13,6 +13,7 @@ import {
 } from "vscode";
 
 import DotParser, { DocumentSymbolInformation } from "./DotParser";
+import { DotSymbolDefinition } from "./SymbolDefinition";
 
 export default class SymbolProvider
 implements
@@ -282,7 +283,10 @@ implements
   ): ProviderResult<Range | { range: Range; placeholder: string }> {
     const symbols = this.provideSymbols(document);
     const renameSymbol = this.containingSymbol(symbols, position);
-    if (!renameSymbol || renameSymbol.kind !== SymbolKind.Variable) {
+    if (!renameSymbol
+      || !((
+        ([DotSymbolDefinition.Node, DotSymbolDefinition.Graph] as unknown[] as SymbolKind[])
+      )).includes(renameSymbol.kind)) {
       return Promise.reject(new Error("This can not be renamed."));
     }
 
@@ -299,30 +303,16 @@ implements
   // token: CancellationToken,
   ):
     Promise<WorkspaceEdit> {
-    return this.provideDocumentSymbols(document).then((symbols) => {
+    return this.provideReferences(document, position).then((locations) => {
       const edit:WorkspaceEdit = new WorkspaceEdit();
-
-      const renameSymbol = this.containingSymbol(symbols, position);
-      if (!renameSymbol) {
-        return Promise.reject();
-      }
 
       let newSymbolName = newName;
       if (!newName.match(/^[\w\d]+$/) && !(newName[0] === "\"" && newName[newName.length - 1] === "\"")) {
         newSymbolName = `"${newName.replace(/\\{0,1}"/g, "\\\"")}"`;
       }
 
-      symbols.forEach((symbol) => {
-        if (renameSymbol?.name === symbol.name) {
-          edit.replace(
-            document.uri,
-            symbol.location.range,
-            newSymbolName,
-          );
-        }
-      });
-
-      return Promise.resolve(edit);
+      locations.forEach((l) => edit.replace(document.uri, l.range, newSymbolName));
+      return edit;
     });
   }
 
@@ -336,13 +326,15 @@ implements
     Promise<Location[]> {
     const symbols = this.provideSymbols(document);
     const findSymbol = this.containingSymbol(symbols, position);
-    if (!findSymbol) {
+    if (!findSymbol || !((
+      ([DotSymbolDefinition.Node, DotSymbolDefinition.Graph] as unknown[] as SymbolKind[])
+    )).includes(findSymbol.kind)) {
       return Promise.reject();
     }
     const locations : Location[] = [];
     const flatSymbols = this.flatSymbols(symbols);
     flatSymbols.forEach((symbol) => {
-      if (findSymbol.name === symbol.name && findSymbol.kind === symbol.kind) {
+      if (findSymbol.name === symbol.name) {
         locations.push(symbol.location);
       }
     });
