@@ -12,6 +12,8 @@ import {
   WorkspaceEdit,
 } from "vscode";
 
+import DotParser from "./DotParser";
+
 export default class SymbolProvider
 implements
     DocumentSymbolProvider,
@@ -179,13 +181,21 @@ implements
     );
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public provideSymbols(document: TextDocument) : SymbolInformation[] {
     let symbols : SymbolInformation[] = [];
 
+    const dotParser = new DotParser();
+    dotParser.parse(document);
+    // console.log(parser.ast);
+    symbols = dotParser.getVscodeTypedAst().children;
+    // console.log(symbols);
+    /*
     symbols = symbols.concat(this.findExplicitNodeDefinition(document));
     symbols = symbols.concat(this.findNodeDefinition(document));
     symbols = symbols.concat(this.findRegularSymbols(document));
     symbols = symbols.concat(this.findNodeDefinitionWithConfig(document));
+    */
 
     return symbols;
   }
