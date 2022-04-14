@@ -185,17 +185,16 @@ implements
   public provideSymbols(document: TextDocument) : SymbolInformation[] {
     let symbols : SymbolInformation[] = [];
 
-    const dotParser = new DotParser();
-    dotParser.parse(document);
-    // console.log(parser.ast);
-    symbols = dotParser.getVscodeTypedAst().children;
-    // console.log(symbols);
-    /*
-    symbols = symbols.concat(this.findExplicitNodeDefinition(document));
-    symbols = symbols.concat(this.findNodeDefinition(document));
-    symbols = symbols.concat(this.findRegularSymbols(document));
-    symbols = symbols.concat(this.findNodeDefinitionWithConfig(document));
-    */
+    try {
+      const dotParser = new DotParser();
+      dotParser.parse(document);
+      symbols = dotParser.getVscodeTypedAst().children;
+    } catch (e: any) {
+      symbols = symbols.concat(this.findExplicitNodeDefinition(document));
+      symbols = symbols.concat(this.findNodeDefinition(document));
+      symbols = symbols.concat(this.findRegularSymbols(document));
+      symbols = symbols.concat(this.findNodeDefinitionWithConfig(document));
+    }
 
     return symbols;
   }
