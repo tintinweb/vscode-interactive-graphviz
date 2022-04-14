@@ -1,4 +1,5 @@
 import {
+  DocumentSymbol,
   DocumentSymbolProvider,
   Location,
   Position,
@@ -6,13 +7,12 @@ import {
   Range,
   ReferenceProvider,
   RenameProvider,
-  SymbolInformation,
   SymbolKind,
   TextDocument,
   WorkspaceEdit,
 } from "vscode";
 
-import DotParser from "./DotParser";
+import DotParser, { DocumentSymbolInformation } from "./DotParser";
 
 export default class SymbolProvider
 implements
@@ -24,9 +24,16 @@ implements
     document: TextDocument,
     regex: RegExp,
     // eslint-disable-next-line no-unused-vars
-    func: (lineNumber: number, captures: RegExpExecArray, offset: number) => SymbolInformation[],
+    func: (
+      // eslint-disable-next-line no-unused-vars
+      lineNumber: number,
+      // eslint-disable-next-line no-unused-vars
+      captures: RegExpExecArray,
+      // eslint-disable-next-line no-unused-vars
+      offset: number
+      ) => DocumentSymbolInformation[],
   ) {
-    let symbols: SymbolInformation[] = [];
+    let symbols: DocumentSymbolInformation[] = [];
     for (let line = 0; line < document.lineCount; line += 1) {
       const t = document.lineAt(line).text;
       let match;
@@ -42,7 +49,7 @@ implements
 
   // find node definitions
   // /node\s*\[.*\]\s([\w\d]+|"(?:[^"\\]|\\.)*")/g
-  private findExplicitNodeDefinition(document: TextDocument): SymbolInformation[] {
+  private findExplicitNodeDefinition(document: TextDocument): DocumentSymbolInformation[] {
     const regex = /node\s*\[.*\]\s([\w\d]+|"(?:[^"\\]|\\.)*")/g;
 
     return this.lineIterator(
@@ -52,30 +59,36 @@ implements
         lineNumber: number,
         capture: RegExpExecArray,
         offset: number,
-      ): SymbolInformation[] => [new SymbolInformation(
-        capture[1],
-        SymbolKind.Variable,
-        "",
-        new Location(
-          document.uri,
-          new Range(
-            new Position(
-              lineNumber,
-              offset + capture[0].length - capture[1].length,
-            ),
-            new Position(
-              lineNumber,
-              offset + capture[0].length,
-            ),
+      ): DocumentSymbolInformation[] => {
+        const range = new Range(
+          new Position(
+            lineNumber,
+            offset + capture[0].length - capture[1].length,
           ),
-        ),
-      )],
+          new Position(
+            lineNumber,
+            offset + capture[0].length,
+          ),
+        );
+        const location = new Location(document.uri, range);
+
+        const ds = new DocumentSymbol(
+          capture[1],
+          "node",
+          SymbolKind.Variable,
+          range,
+          range,
+        );
+        (ds as DocumentSymbolInformation).location = location;
+        (ds as DocumentSymbolInformation).containerName = "";
+        return [ds as DocumentSymbolInformation];
+      },
     );
   }
 
   // find inline nodes
   // /^\s*((([\w\d]+)\s*)+)(?!.*(=|->|{|\[))/g
-  private findNodeDefinition(document: TextDocument): SymbolInformation[] {
+  private findNodeDefinition(document: TextDocument): DocumentSymbolInformation[] {
     const regex = /^\s*((([\w\d]+|"(?:[^"\\]|\\.)*")\s*)+)(?!.*(=|->|{|\[))/g;
     const regexSymbol = /([\w\d]+|"(?:[^"\\]|\\.)*")/g;
 
@@ -86,25 +99,30 @@ implements
         lineNumber: number,
         captures: RegExpExecArray,
         offset: number,
-      ): SymbolInformation[] => {
-        const symbols: SymbolInformation[] = [];
+      ): DocumentSymbolInformation[] => {
+        const symbols: DocumentSymbolInformation[] = [];
         let symbol;
         // eslint-disable-next-line no-cond-assign
         while ((symbol = regexSymbol.exec(captures[0])) != null) {
-          symbols.push(
-            new SymbolInformation(
-              symbol[0],
-              SymbolKind.Variable,
-              "",
-              new Location(
-                document.uri,
-                new Range(
-                  new Position(lineNumber, offset + symbol.index - 1),
-                  new Position(lineNumber, offset + symbol.index - 1 + symbol[0].length),
-                ),
-              ),
-            ),
+          const range = new Range(
+            new Position(lineNumber, offset + symbol.index - 1),
+            new Position(lineNumber, offset + symbol.index - 1 + symbol[0].length),
           );
+          const location = new Location(
+            document.uri,
+            range,
+          );
+          const ds = new DocumentSymbol(
+            symbol[0],
+            "node",
+            SymbolKind.Variable,
+            range,
+            range,
+          );
+          (ds as DocumentSymbolInformation).location = location;
+          (ds as DocumentSymbolInformation).containerName = "";
+          // return [ds as DocumentSymbolInformation];
+          symbols.push(ds as DocumentSymbolInformation);
         }
         return symbols;
       },
@@ -112,7 +130,7 @@ implements
   }
 
   // find Nodes with config
-  private findNodeDefinitionWithConfig(document: TextDocument) : SymbolInformation[] {
+  private findNodeDefinitionWithConfig(document: TextDocument) : DocumentSymbolInformation[] {
     const regex = /(?!\s*node)^\s*(([\w\d]+|"(?:[^"\\]|\\.)*"))\s*\[/g;
 
     return this.lineIterator(
@@ -122,30 +140,40 @@ implements
         lineNumber: number,
         capture: RegExpExecArray,
         offset: number,
-      ): SymbolInformation[] => [new SymbolInformation(
-        capture[1],
-        SymbolKind.Variable,
-        "",
-        new Location(
-          document.uri,
-          new Range(
-            new Position(
-              lineNumber,
-              offset + capture.index + (capture[0].length - capture[0].trim().length) - 1,
-            ),
-            new Position(
-              lineNumber,
-              offset + capture.index
-              + (capture[0].length - capture[0].trim().length)
-              + capture[1].length - 1,
-            ),
+      ): DocumentSymbolInformation[] => {
+        const range = new Range(
+          new Position(
+            lineNumber,
+            offset + capture.index + (capture[0].length - capture[0].trim().length) - 1,
           ),
-        ),
-      )],
+          new Position(
+            lineNumber,
+            offset + capture.index
+          + (capture[0].length - capture[0].trim().length)
+          + capture[1].length - 1,
+          ),
+        );
+        const location = new Location(
+          document.uri,
+          range,
+        );
+
+        const ds = new DocumentSymbol(
+          capture[1],
+          "node",
+          SymbolKind.Variable,
+          range,
+          range,
+        );
+        (ds as DocumentSymbolInformation).location = location;
+        (ds as DocumentSymbolInformation).containerName = "";
+
+        return [ds as DocumentSymbolInformation];
+      },
     );
   }
 
-  private findRegularSymbols(document: TextDocument) : SymbolInformation[] {
+  private findRegularSymbols(document: TextDocument) : DocumentSymbolInformation[] {
     const regex = /([\w\d]+|"(?:[^"\\]|\\.)*")(\s*(->|<-|--)\s*([\w\d]+|"(?:[^"\\]|\\.)*"))+/g;
     const regexSymbol = /[\w\d]+|"(?:[^"\\]|\\.)*"/g;
 
@@ -156,25 +184,29 @@ implements
         lineNumber: number,
         captures: RegExpExecArray,
         offset: number,
-      ) : SymbolInformation[] => {
-        const symbols: SymbolInformation[] = [];
+      ) : DocumentSymbolInformation[] => {
+        const symbols: DocumentSymbolInformation[] = [];
         let symbol;
         // eslint-disable-next-line no-cond-assign
         while ((symbol = regexSymbol.exec(captures[0])) != null) {
-          symbols.push(
-            new SymbolInformation(
-              symbol[0],
-              SymbolKind.Variable,
-              "",
-              new Location(
-                document.uri,
-                new Range(
-                  new Position(lineNumber, offset + symbol.index - 1),
-                  new Position(lineNumber, offset + symbol.index - 1 + symbol[0].length),
-                ),
-              ),
-            ),
+          const range = new Range(
+            new Position(lineNumber, offset + symbol.index - 1),
+            new Position(lineNumber, offset + symbol.index - 1 + symbol[0].length),
           );
+          const location = new Location(
+            document.uri,
+            range,
+          );
+          const ds = new DocumentSymbol(
+            symbol[0],
+            "node",
+            SymbolKind.Variable,
+            range,
+            range,
+          );
+          (ds as DocumentSymbolInformation).location = location;
+          (ds as DocumentSymbolInformation).containerName = "";
+          symbols.push(ds as DocumentSymbolInformation);
         }
         return symbols;
       },
@@ -182,13 +214,13 @@ implements
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public provideSymbols(document: TextDocument) : SymbolInformation[] {
-    let symbols : SymbolInformation[] = [];
+  public provideSymbols(document: TextDocument) : DocumentSymbolInformation[] {
+    let symbols : DocumentSymbolInformation[] = [];
 
     try {
       const dotParser = new DotParser();
       dotParser.parse(document);
-      symbols = dotParser.getVscodeTypedAst().children;
+      symbols = (dotParser.getVscodeTypedAst() as DocumentSymbolInformation).children;
     } catch (e: any) {
       symbols = symbols.concat(this.findExplicitNodeDefinition(document));
       symbols = symbols.concat(this.findNodeDefinition(document));
@@ -199,22 +231,48 @@ implements
     return symbols;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  public flatSymbols(symbols: DocumentSymbolInformation[]) : DocumentSymbolInformation[] {
+    const res : DocumentSymbolInformation[] = [];
+
+    const crawler = (syms: DocumentSymbolInformation[]) => {
+      syms.forEach((symbol) => {
+        res.push(symbol);
+        if (symbol.children && symbol.children.length > 0) {
+          crawler(symbol.children);
+        }
+      });
+    };
+    crawler(symbols);
+
+    return res;
+  }
+
   public provideDocumentSymbols(
     document: TextDocument,
     // token: CancellationToken,
-  ): Promise<SymbolInformation[]> {
+  ): Promise<DocumentSymbolInformation[]> {
     return Promise.resolve(this.provideSymbols(document));
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private containingSymbol(symbols: SymbolInformation[], position: Position) {
-    let renameSymbol: SymbolInformation|undefined;
-    symbols.forEach((symbol) => {
-      if (symbol.location.range.contains(position)) {
-        renameSymbol = symbol;
-      }
-    });
-    return renameSymbol;
+  private containingSymbol(symbols: DocumentSymbolInformation[], position: Position) {
+    let closestSymbol: DocumentSymbolInformation|undefined;
+
+    const crawler = (syms: DocumentSymbolInformation[]) => {
+      syms.forEach((symbol) => {
+        if (symbol.location.range.contains(position)
+        && (!closestSymbol || closestSymbol.range.contains(symbol.range))) {
+          closestSymbol = symbol;
+        }
+        if (symbol.children && symbol.children.length > 0) {
+          crawler(symbol.children);
+        }
+      });
+    };
+
+    crawler(symbols);
+    return closestSymbol;
   }
 
   public prepareRename(
@@ -224,7 +282,7 @@ implements
   ): ProviderResult<Range | { range: Range; placeholder: string }> {
     const symbols = this.provideSymbols(document);
     const renameSymbol = this.containingSymbol(symbols, position);
-    if (!renameSymbol) {
+    if (!renameSymbol || renameSymbol.kind !== SymbolKind.Variable) {
       return Promise.reject(new Error("This can not be renamed."));
     }
 
@@ -276,18 +334,18 @@ implements
     // token: CancellationToken,
   ):
     Promise<Location[]> {
-    return this.provideDocumentSymbols(document).then((symbols) => {
-      const findSymbol = this.containingSymbol(symbols, position);
-      if (!findSymbol) {
-        return Promise.reject();
+    const symbols = this.provideSymbols(document);
+    const findSymbol = this.containingSymbol(symbols, position);
+    if (!findSymbol) {
+      return Promise.reject();
+    }
+    const locations : Location[] = [];
+    const flatSymbols = this.flatSymbols(symbols);
+    flatSymbols.forEach((symbol) => {
+      if (findSymbol.name === symbol.name && findSymbol.kind === symbol.kind) {
+        locations.push(symbol.location);
       }
-      const locations : Location[] = [];
-      symbols.forEach((symbol) => {
-        if (findSymbol?.name === symbol.name) {
-          locations.push(symbol.location);
-        }
-      });
-      return Promise.resolve(locations);
     });
+    return Promise.resolve(locations);
   }
 }
