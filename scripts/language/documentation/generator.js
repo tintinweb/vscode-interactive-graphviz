@@ -2,7 +2,6 @@
 const { parseString } = require("xml2js");
 const fs = require("fs");
 const { isString, get } = require("lodash");
-const { ESLint } = require("eslint");
 
 const target = `${__dirname}/../../../src/language/documentation/documentation.ts`;
 
