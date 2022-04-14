@@ -8,19 +8,41 @@
 
 A VSCode extension that provides syntax highlighting, snippets, and an interactive, zoom-, pan- and searchable, live preview with edge tracing for graphs in Graphviz / dot format.
 
-
 ![graphviz_v01](https://user-images.githubusercontent.com/2865694/151164049-9c89e167-d0c1-43eb-ae96-0f5004847bde.gif)
 
-![graphviz_v01_open](https://user-images.githubusercontent.com/2865694/151163938-f667acf2-bc87-4555-ad93-866a4ca33822.gif)
+## Language Features
 
 * Graphviz/Dot Language Support / Syntax Highlighting and Snippets (thanks [@joaompinto](https://github.com/joaompinto))
+* AutoCompletion
+* Rename Symbols
+* Find References of node IDs
+* Color selection via Color decoration
+* Hover information for settings
+* Shows syntax errors (only available when the preview of the document is active)
+
+<img width="472" alt="image" src="https://user-images.githubusercontent.com/2865694/163130099-30227a10-e471-4fe0-9564-1d3338f09726.png">
+<img width="303" alt="image" src="https://user-images.githubusercontent.com/27259/161251962-6aa3792c-70da-4f48-a9fa-5933012fede2.png">
+<img width="576" alt="image" src="https://user-images.githubusercontent.com/2865694/163143275-05f0547b-ce69-43ce-af66-ed76b1f7aa88.png">
+
+
+[![Version](https://vsmarketplacebadge.apphb.com/version/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)
+
+## Interactivity Features
 * Renders dot/Graphviz sources in an interactive live preview.
 * Updates preview as you type.
-* Interactive edge tracing. Click on a node to highlight incoming and outgoing edges (`ESC` to unselect).
 * Search for nodes in the graph.
 * Export the graph as `svg` or `dot`.
-* Hover Provider, Color Picker, Diagnostics Provider, and AutoCompletion
+* Interactive edge tracing. Click on a node to highlight incoming and outgoing edges (`ESC` to unselect). The Direction of the highlighting can be changed (options: single, upstream, downstream, bidirectional)
 * Configurable render engine, render options & tracing preference: e.g. `transitionDelay`, `transitionDuration`.
+
+
+![graphviz_v01_open](https://user-images.githubusercontent.com/2865694/151163938-f667acf2-bc87-4555-ad93-866a4ca33822.gif)
+<img width="576" alt="image" src="https://user-images.githubusercontent.com/27259/161146471-6fb269df-5e3a-4f71-ab6e-37391b33c09c.png">
+
+
+## Other features
 * Available on [github.dev](https://github.dev), [vscode.dev](https://vscode.dev)
 * Developers: you can pass a callback function that receives the webPanel when executing the preview command. This allows you to override functionality that is provided by the webPanel, like handlers for click/dblClick events. 
 
