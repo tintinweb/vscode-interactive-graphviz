@@ -11,15 +11,9 @@ import PreviewPanel from "./features/previewPanel";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotHoverProvider from "./language/HoverProvider";
+import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
 
-/** global vars */
-
-/** classdecs */
-
-/** funcdecs */
-
-/** event funcs */
 function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
@@ -108,6 +102,20 @@ function onActivate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerHoverProvider(
     [settings.languageId],
     new DotHoverProvider(),
+  ));
+
+  const symProvider = new SymbolProvider();
+  context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(
+    [settings.languageId],
+    symProvider,
+  ));
+  context.subscriptions.push(vscode.languages.registerRenameProvider(
+    [settings.languageId],
+    symProvider,
+  ));
+  context.subscriptions.push(vscode.languages.registerReferenceProvider(
+    [settings.languageId],
+    symProvider,
   ));
 }
 

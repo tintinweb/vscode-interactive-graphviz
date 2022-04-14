@@ -7,13 +7,14 @@ import {
   TextDocument,
 } from "vscode";
 import { isNumber, uniq } from "lodash";
-import attributelist from "./definitions/attributelist";
+import attributeList from "./definitions/attributelist";
 import colors from "./definitions/colors";
 import arrowType from "./definitions/arrowType";
 
 import dirType from "./definitions/dirType";
 import nodeShapes from "./definitions/nodeShapes";
 import style from "./definitions/style";
+import SymbolProvider from "./SymbolProvider";
 
 export default class DotCompletionItemProvider implements CompletionItemProvider {
   private colors: CompletionItem[] = [];
@@ -88,8 +89,8 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
       return pack;
     });
 
-    attributelist.split("\n").forEach((al) => {
-      const [attribute, typelist, datatype, ...other] = al.split("|");
+    attributeList.split("\n").forEach((al) => {
+      const [attribute, typeList, datatype, ...other] = al.split("|");
       const item = new CompletionItem(attribute, CompletionItemKind.Property);
       item.insertText = `${attribute}=`;
       if (datatype) {
@@ -118,29 +119,27 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
         }
       }
       item.documentation = "Available on:";
-      for (let i = 0; i < typelist.length; i += 1) {
-        (this.attributes as any)[typelist[i] as string].push(item);
-        item.documentation += `\n${(names as any)[typelist[i]]}`;
+      for (let i = 0; i < typeList.length; i += 1) {
+        (this.attributes as any)[typeList[i] as string].push(item);
+        item.documentation += `\n${(names as any)[typeList[i]]}`;
       }
     });
   }
 
   // eslint-disable-next-line class-methods-use-this
   private provideSymbols(document: TextDocument): CompletionItem[] {
+    const symProv = new SymbolProvider();
+    const symbols = symProv.provideSymbols(document);
+
     const suggestions: CompletionItem[] = [];
     const foundSymbols: string[] = [];
 
-    const regex = /([\w\d]+|"(?:[^"\\]|\\.)*")(\s*(->|<-|--)\s*([\w\d]+|"(?:[^"\\]|\\.)*"))+/g;
-    const matches = document.getText().match(regex);
-
-    matches?.forEach((s) => {
-      const elements = s.match(/[\w\d]+|"(?:[^"\\]|\\.)*"/g);
-      elements?.forEach((symbol) => {
-        if (!foundSymbols.includes(symbol)) {
-          suggestions.push(new CompletionItem(symbol, CompletionItemKind.Variable));
-          foundSymbols.push(symbol);
-        }
-      });
+    symbols.forEach((symbol) => {
+      if (foundSymbols.includes(symbol.name)) {
+        return;
+      }
+      foundSymbols.push(symbol.name);
+      suggestions.push(new CompletionItem(symbol.name, CompletionItemKind.Variable));
     });
 
     return suggestions;

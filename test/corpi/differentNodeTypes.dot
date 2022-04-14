@@ -1,0 +1,17 @@
+digraph {
+    a;
+    node [color=black] b;
+    c d e
+    e f;
+    "g";
+    h -> i
+    j -> k -> l
+    m -> "n"
+    "o" -> "p"
+    "q" -> r
+    "s \""
+    t[label="t"]
+    "u" [label="u"]
+    v [label="v"] "w"[label="w"]
+    "x x x"
+}
