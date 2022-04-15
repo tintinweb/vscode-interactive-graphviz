@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 
-import { isString } from "lodash";
 import {
   // CancellationToken,
   Hover,
@@ -8,9 +7,8 @@ import {
   TextDocument,
   HoverProvider,
   Range,
-  MarkdownString,
 } from "vscode";
-import documentation from "./documentation/documentation";
+import getAttributeDetail from "./getAttributeDetail";
 // import { parseString } from "xml2js";
 
 export default class DotHoverProvider implements HoverProvider {
@@ -39,21 +37,13 @@ export default class DotHoverProvider implements HoverProvider {
 
     const attr = startResult[1] + endResult[1];
 
-    const filteredAttr = documentation.filter((i) => i.name === attr);
-    if (filteredAttr.length !== 1) {
+    const md = getAttributeDetail(attr);
+    if (!md) {
       return Promise.reject();
     }
 
-    const a = filteredAttr[0];
-    let md = `**${a.name}**  \n`;
-    md += `Type: \`${isString(a.type) ? a.type : a.type.name}\`  \n`;
-    md += a.desc;
-    if (!isString(a.type) && a.type.restrictions) {
-      md += `  \nAllowed values:\n${a.type.restrictions.map((i) => `- ${i}`).join("\n")}`;
-    }
-
     const ho = new Hover(
-      new MarkdownString(md),
+      md,
     );
 
     return Promise.resolve(ho);

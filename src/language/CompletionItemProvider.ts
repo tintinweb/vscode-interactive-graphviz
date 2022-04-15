@@ -15,6 +15,7 @@ import dirType from "./definitions/dirType";
 import nodeShapes from "./definitions/nodeShapes";
 import style from "./definitions/style";
 import SymbolProvider from "./SymbolProvider";
+import getAttributeDetail from "./getAttributeDetail";
 
 export default class DotCompletionItemProvider implements CompletionItemProvider {
   private colors: CompletionItem[] = [];
@@ -44,13 +45,13 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
   private specialAttributes: {[attribute: string] : string} = {};
 
   constructor() {
-    const names = {
+    /* const names = {
       G: "Root graph",
       N: "Nodes",
       E: "Edges",
       C: "Clusters",
       S: "Subgraphs",
-    };
+    }; */
 
     this.primitives = "node|edge|graph".split("|").map((type) => {
       const pack = new CompletionItem(type, CompletionItemKind.Constant);
@@ -90,6 +91,7 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
     });
 
     attributeList.split("\n").forEach((al) => {
+      // eslint-disable-next-line no-unused-vars
       const [attribute, typeList, datatype, ...other] = al.split("|");
       const item = new CompletionItem(attribute, CompletionItemKind.Property);
       item.insertText = `${attribute}=`;
@@ -118,10 +120,12 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
           this.specialAttributes[attribute] = datatype;
         }
       }
-      item.documentation = "Available on:";
+      item.documentation = getAttributeDetail(attribute) || "";
+
+      // item.documentation = "Available on:";
       for (let i = 0; i < typeList.length; i += 1) {
         (this.attributes as any)[typeList[i] as string].push(item);
-        item.documentation += `\n${(names as any)[typeList[i]]}`;
+        // item.documentation += `\n${(names as any)[typeList[i]]}`;
       }
     });
   }
