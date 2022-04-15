@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": ["vscode", "node"],
+    "lib": ["ES2019", "DOM"]
+  },
+  "exclude": ["notebook"],
+  "references": []
+}

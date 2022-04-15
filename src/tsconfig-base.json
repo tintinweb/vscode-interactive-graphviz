@@ -1,22 +1,20 @@
 {
     "typeRoots": [
-        "./node_modules/@types"
-    ],
+        "../../node_modules/@types"
+      ],
     "compilerOptions": {
         "module": "commonjs",
-        "target": "ES2020",
+        "target": "ES2019",
         "lib": [
-            "ES2020"
+            "ES2019"
         ],
-        "rootDir": "src",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "../dist",
         "strict": true /* enable all strict type-checking options */
         /* Additional Checks */
         // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
         // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         // "noUnusedParameters": true,  /* Report errors on unused parameters. */
     },
-    "exclude": [
-        "node_modules",
-        ".vscode-test"
-    ]
 }
