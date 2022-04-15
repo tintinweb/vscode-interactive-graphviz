@@ -8,5 +8,6 @@
     "module": "esnext",
     "lib": ["ES2019", "dom"],
     "types": ["webpack-env", "vscode-notebook-renderer", "node"],
+    "allowSyntheticDefaultImports": true
   }
 }

@@ -1,9 +1,10 @@
 /* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
 import errorOverlay from "vscode-notebook-error-overlay";
-import type { ActivationFunction } from "vscode-notebook-renderer";
+import type { ActivationFunction, OutputItem } from "vscode-notebook-renderer";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
+import Render2 from "./render2";
 
 // Fix the public path so that any async import()'s work as expected.
 // eslint-disable-next-line no-underscore-dangle
@@ -21,11 +22,11 @@ __webpack_public_path__ = new URL(scriptUrl.replace(/[^/]+$/, "") + __webpack_re
 // ----------------------------------------------------------------------------
 
 export const activate: ActivationFunction = (context) => ({
-  renderOutputItem(outputItem, element) {
+
+  renderOutputItem(outputItem: OutputItem, element) {
+    errorOverlay.install(element);
     const root = createRoot(element);
-    root.render(<h2>
-      Hello World
-    </h2>);
+    root.render(<Render2 output={outputItem} />);
   },
   disposeOutputItem(outputId) {
     // Do any teardown here. outputId is the cell output being deleted, or
