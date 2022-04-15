@@ -92,14 +92,12 @@ const makeConfig = (argv, {
         test: /\.css$/,
         use: [
           "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
+          "css-loader",
         ],
+      },
+      {
+        test: /\.ttf/,
+        type: "asset/inline",
       },
       {
         test: /\.html$/i,
