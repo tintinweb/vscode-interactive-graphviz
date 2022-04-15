@@ -154,6 +154,8 @@
         "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.0.0",
         "@types/node": "^14.18.13",
+        "@types/react": "^18.0.5",
+        "@types/react-dom": "^18.0.1",
         "@types/text-encoding": "^0.0.36",
         "@types/vscode": "^1.20.2",
         "@types/vscode-notebook-renderer": "^1.60.0",
@@ -187,6 +189,8 @@
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
         "lodash": "^4.17.21",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
         "text-encoding": "^0.7.0",
         "vscode-notebook-error-overlay": "^1.0.1",
         "vscode-uri": "^3.0.3"

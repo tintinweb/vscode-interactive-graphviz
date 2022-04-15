@@ -125,7 +125,7 @@ const makeConfig = (argv, {
 
 module.exports = (env, argv) => [
   makeConfig(argv, {
-    entry: "./src/notebook/index.ts",
+    entry: "./src/notebook/index.tsx",
     out: "./dist/notebook.js",
     target: "web",
     library: "module",
