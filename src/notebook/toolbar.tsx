@@ -7,6 +7,7 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
+import { Engine } from "@hpcc-js/wasm";
 
 type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -58,10 +59,12 @@ export default function Toolbar({
   disableSearch,
   disableDirectionSelection,
   disableEngineSelection,
+  onChange,
 } : {
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
+  onChange?: (engine: Engine, options: SelectionOptions) => void
 }) : JSX.Element {
   const [engine, setEngine] = React.useState<string>("Dot");
 
@@ -71,8 +74,11 @@ export default function Toolbar({
     direction: "Bidirectional",
   });
 
-  console.log(options);
-  console.log(engine);
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(engine.toLowerCase() as Engine, options);
+    }
+  }, [engine, options]);
 
   return <>
     <div style={{
