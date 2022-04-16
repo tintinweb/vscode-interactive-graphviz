@@ -29,7 +29,7 @@ export const activate: ActivationFunction = (context) => ({
   renderOutputItem(outputItem: OutputItem, element) {
     errorOverlay.install(element);
     const root = createRoot(element);
-    root.render(<View output={outputItem} />);
+    root.render(<View output={outputItem} context={context} />);
   },
   disposeOutputItem(outputId) {
     // Do any teardown here. outputId is the cell output being deleted, or

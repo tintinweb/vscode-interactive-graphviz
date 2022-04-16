@@ -5,21 +5,24 @@
   * */
 
 /** imports */
-import * as vscode from "vscode";
+import {
+  commands, ExtensionContext, languages, NotebookRendererMessaging, notebooks, ViewColumn, window, workspace,
+} from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
+import saveFile from "./features/saveFile";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
 
-function onActivate(context: vscode.ExtensionContext) {
+function onActivate(context: ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
   /* Document Events */
 
-  vscode.workspace.onDidChangeTextDocument((event) => {
+  workspace.onDidChangeTextDocument((event) => {
     if (event.document.languageId === settings.languageId
         || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(event.document.uri);
@@ -29,7 +32,7 @@ function onActivate(context: vscode.ExtensionContext) {
     }
   }, null, context.subscriptions);
 
-  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => {
+  context.subscriptions.push(workspace.onDidSaveTextDocument((doc) => {
     if (doc.languageId === settings.languageId
         || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(doc.uri);
@@ -42,7 +45,7 @@ function onActivate(context: vscode.ExtensionContext) {
   /* commands */
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
+    commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
       // take document or string; default active editor if
       const args = a || {};
       const options = {
@@ -54,15 +57,15 @@ function onActivate(context: vscode.ExtensionContext) {
         search: args.search,
       };
 
-      if (!options.content && !options.document && vscode.window.activeTextEditor?.document) {
-        options.document = vscode.window.activeTextEditor.document;
+      if (!options.content && !options.document && window.activeTextEditor?.document) {
+        options.document = window.activeTextEditor?.document;
       }
 
       if (!options.content && options.document) {
         options.content = options.document.getText();
       }
 
-      graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options)
+      graphvizView.revealOrCreatePreview(ViewColumn.Beside, options.document, options)
         .then((webpanel : PreviewPanel) => {
           // trigger dot render on page load success
           // just in case webpanel takes longer to load, wait for page
@@ -81,10 +84,19 @@ function onActivate(context: vscode.ExtensionContext) {
     }),
   );
 
+  /* notebook messaging */
+  const messageChannel: NotebookRendererMessaging = notebooks
+    .createRendererMessaging(settings.notebookRendererId);
+  messageChannel.onDidReceiveMessage((e) => {
+    if (e.message.action === "saveFile") {
+      saveFile(e.message.payload.data, e.message.payload.type);
+    }
+  });
+
   /* add. providers */
 
   if (settings.extensionConfig().codeCompletion.enable as boolean) {
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
+    context.subscriptions.push(languages.registerCompletionItemProvider(
       [settings.languageId],
       new DotCompletionItemProvider(),
       "=",
@@ -94,26 +106,26 @@ function onActivate(context: vscode.ExtensionContext) {
     ));
   }
 
-  context.subscriptions.push(vscode.languages.registerColorProvider(
+  context.subscriptions.push(languages.registerColorProvider(
     [settings.languageId],
     new ColorProvider(),
   ));
 
-  context.subscriptions.push(vscode.languages.registerHoverProvider(
+  context.subscriptions.push(languages.registerHoverProvider(
     [settings.languageId],
     new DotHoverProvider(),
   ));
 
   const symProvider = new SymbolProvider();
-  context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(
+  context.subscriptions.push(languages.registerDocumentSymbolProvider(
     [settings.languageId],
     symProvider,
   ));
-  context.subscriptions.push(vscode.languages.registerRenameProvider(
+  context.subscriptions.push(languages.registerRenameProvider(
     [settings.languageId],
     symProvider,
   ));
-  context.subscriptions.push(vscode.languages.registerReferenceProvider(
+  context.subscriptions.push(languages.registerReferenceProvider(
     [settings.languageId],
     symProvider,
   ));

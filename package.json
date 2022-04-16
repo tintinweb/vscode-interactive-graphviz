@@ -29,7 +29,8 @@
     "browser": "./dist/extension.js",
     "activationEvents": [
         "onCommand:graphviz-interactive-preview.preview.beside",
-        "onLanguage:dot"
+        "onLanguage:dot",
+        "onRenderer:graphviz-interactive-preview"
     ],
     "contributes": {
         "notebookRenderer": [
@@ -149,7 +150,6 @@
         }
     },
     "devDependencies": {
-        "@hpcc-js/wasm": "^1.4.1",
         "@types/glob": "^7.1.4",
         "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.0.0",
@@ -182,6 +182,7 @@
         "xml2js": "^0.4.23"
     },
     "dependencies": {
+        "@hpcc-js/wasm": "^1.4.1",
         "@vscode/codicons": "^0.0.27",
         "@vscode/webview-ui-toolkit": "^1.0.0",
         "d3": "^7.3.0",

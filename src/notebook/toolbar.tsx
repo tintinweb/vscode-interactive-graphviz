@@ -7,7 +7,7 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { Engine } from "@hpcc-js/wasm";
+import { Engine, Format } from "@hpcc-js/wasm";
 
 type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -60,11 +60,13 @@ export default function Toolbar({
   disableDirectionSelection,
   disableEngineSelection,
   onChange,
+  onSave,
 } : {
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
-  onChange?: (engine: Engine, options: SelectionOptions) => void
+  onChange?: (engine: Engine, options: SelectionOptions) => void,
+  onSave?: (type: Format) => void
 }) : JSX.Element {
   const [engine, setEngine] = React.useState<string>("Dot");
 
@@ -92,9 +94,9 @@ export default function Toolbar({
         alignItems: "center",
         marginRight: "3px",
       }}>
-        <VSCodeButton appearance="icon" aria-label="Save Graph">
+        {onSave && <VSCodeButton appearance="icon" onClick={() => onSave("svg")}>
           <span className="codicon codicon-save"></span>
-        </VSCodeButton>
+        </VSCodeButton>}
         <VSCodeButton appearance="icon" aria-label="Reset view">
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>
