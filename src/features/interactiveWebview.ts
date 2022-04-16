@@ -7,15 +7,11 @@
 /** imports */
 import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
-import { TextEncoder } from "text-encoding";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
+import saveFile from "./saveFile";
 
 const webviewPanelContent = require("../../content/index.html").default;
-
-/** global vars */
-
-/** classdecs */
 
 export default class InteractiveWebviewGenerator {
   private context: vscode.ExtensionContext;
@@ -98,38 +94,6 @@ export default class InteractiveWebviewGenerator {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  saveFile(data: string, fileType: string) {
-    let filter;
-    if (fileType === "dot") {
-      filter = { "Graphviz Dot Files": ["dot"] };
-    } else if (fileType === "svg") {
-      filter = { Images: ["svg"] };
-    } else {
-      vscode.window.showErrorMessage("Unknown file type for saving!");
-      return;
-    }
-    vscode.window.showSaveDialog({
-      saveLabel: "export",
-      filters: filter,
-    })
-      .then((fileUri) => {
-        if (fileUri) {
-          try {
-            const te = new TextEncoder();
-            vscode.workspace.fs.writeFile(fileUri, te.encode(data))
-              .then(() => {
-                console.log("File Saved");
-              }, (err : any) => {
-                vscode.window.showErrorMessage(`Error on writing file: ${err}`);
-              });
-          } catch (err) {
-            vscode.window.showErrorMessage(`Error on writing file: ${err}`);
-          }
-        }
-      });
-  }
-
   handleMessage(
     previewPanel: PreviewPanel,
     message: {
@@ -163,7 +127,7 @@ export default class InteractiveWebviewGenerator {
       previewPanel.handleMessage(message); // just forward the event for now
       break;
     case "saveAs":
-      this.saveFile(message.value.data, message.value.type);
+      saveFile(message.value.data, message.value.type);
       break;
     default:
       previewPanel.handleMessage(message);
