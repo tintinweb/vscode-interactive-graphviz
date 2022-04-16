@@ -17,7 +17,10 @@ export default function View(
 
 ) : JSX.Element {
   console.log(output);
+  console.log(output.text());
   const [graph, setGraph] = React.useState("");
+  const [searchResult, setSearchResult] = React.useState("");
+  const [error, setError] = React.useState("");
   const [engine, setEngine] = React.useState<Engine>("dot");
 
   React.useEffect(() => {
@@ -25,8 +28,14 @@ export default function View(
       console.log(`Graphviz Version: ${t}`);
     });
     graphvizSync(GraphvizWasm).then((syncObject) => {
-      const res = syncObject.layout("digraph {a -> b}", "svg", engine);
-      setGraph(res);
+      setError("");
+      try {
+        const source = output.text();
+        const res = syncObject.layout(source.substring(1, source.length - 1), "svg", engine);
+        setGraph(res);
+      } catch (e: any) {
+        setError(e.message);
+      }
     });
   }, [output, engine]);
 
@@ -34,10 +43,10 @@ export default function View(
     <Toolbar
       disableSearch
       disableDirectionSelection
-      onChange={(eng, options) => { setEngine(eng); }}
+      onChange={(eng/* , options */) => { setEngine(eng); }}
     />
-    <InfoToolBar type="search" text="Found x elements" />
-    <InfoToolBar type="error" text="Syntax error" />
+    <InfoToolBar type="search" text={searchResult} />
+    <InfoToolBar type="error" text={error} />
     <div dangerouslySetInnerHTML={{ __html: graph }}></div>
   </>;
 }

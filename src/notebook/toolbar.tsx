@@ -23,7 +23,7 @@ export function InfoToolBar(
         type: "search"|"error"
     },
 ) : JSX.Element {
-  if (!text) {
+  if (!text || text === "") {
     return <></>;
   }
   return <div className={`toolbar toolbar-${type}`}>
