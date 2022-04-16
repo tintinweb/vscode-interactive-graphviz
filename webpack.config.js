@@ -99,6 +99,14 @@ const makeConfig = (argv, {
         test: /\.ttf/,
         type: "asset/inline",
       },
+      /* {
+        test: /\.wasm/,
+        type: "asset/source",
+      }, */
+      {
+        test: /\.wasm$/,
+        use: "uint8array-loader",
+      },
       {
         test: /\.html$/i,
         loader: "raw-loader",

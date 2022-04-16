@@ -4,6 +4,10 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  globals: {
+    React: true,
+    JSX: true,
+  },
   extends: [
     "airbnb-base",
     "plugin:import/typescript",

@@ -163,10 +163,8 @@
         "@types/xml2js": "^0.4.9",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
         "@typescript-eslint/parser": "^5.10.2",
-        "@vscode/codicons": "^0.0.27",
         "@vscode/test-electron": "^1.6.2",
         "@vscode/test-web": "*",
-        "@vscode/webview-ui-toolkit": "^1.0.0",
         "css-loader": "^6.7.1",
         "eslint": "^8.8.0",
         "eslint-config-airbnb-base": "^15.0.0",
@@ -184,6 +182,8 @@
         "xml2js": "^0.4.23"
     },
     "dependencies": {
+        "@vscode/codicons": "^0.0.27",
+        "@vscode/webview-ui-toolkit": "^1.0.0",
         "d3": "^7.3.0",
         "d3-graphviz": "^4.0.0",
         "fork-ts-checker-webpack-plugin": "^7.2.6",
@@ -193,6 +193,7 @@
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
         "text-encoding": "^0.7.0",
+        "uint8array-loader": "^1.0.2",
         "vscode-notebook-error-overlay": "^1.0.1",
         "vscode-uri": "^3.0.3"
     },

@@ -1,10 +1,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
+
+import "@vscode/codicons/dist/codicon.css";
+
 import errorOverlay from "vscode-notebook-error-overlay";
 import type { ActivationFunction, OutputItem } from "vscode-notebook-renderer";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import Render2 from "./render2";
+import View from "./View";
 
 // Fix the public path so that any async import()'s work as expected.
 // eslint-disable-next-line no-underscore-dangle
@@ -26,7 +29,7 @@ export const activate: ActivationFunction = (context) => ({
   renderOutputItem(outputItem: OutputItem, element) {
     errorOverlay.install(element);
     const root = createRoot(element);
-    root.render(<Render2 output={outputItem} />);
+    root.render(<View output={outputItem} />);
   },
   disposeOutputItem(outputId) {
     // Do any teardown here. outputId is the cell output being deleted, or
