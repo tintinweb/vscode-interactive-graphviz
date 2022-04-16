@@ -46,6 +46,7 @@ export default function View(
         select(ref.current).html(res);
 
         const svg = select(ref.current).select("svg");
+        svg.attr("width", "100%").attr("height", "100%");
         const zoomBehavior = zoom()
           .scaleExtent([0, Infinity])
           .on("zoom", (e) => {
@@ -93,6 +94,7 @@ export default function View(
       width: "500px",
       height: "500px",
       overflow: "hidden",
+      textAlign: "center",
     }} ref={ref}></div>
   </>;
 }
