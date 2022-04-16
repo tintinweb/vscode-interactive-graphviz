@@ -5,6 +5,7 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
+import { select } from "d3";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
@@ -20,6 +21,7 @@ export default function View(
     context: RendererContext<any>
   },
 ) : JSX.Element {
+  const ref = React.useRef<HTMLDivElement>(null);
   console.log(output);
   console.log(output.text());
   const [graph, setGraph] = React.useState("");
@@ -31,6 +33,7 @@ export default function View(
   source = source.substring(1, source.length - 1);
 
   React.useEffect(() => {
+    if (!ref.current) return;
     graphvizVersion("dist", GraphvizWasm).then((t) => {
       console.log(`Graphviz Version: ${t}`);
     });
@@ -39,6 +42,7 @@ export default function View(
       try {
         const res = syncObject.layout(source, "svg", engine);
         setGraph(res);
+        select(ref.current).html(res);
       } catch (e: any) {
         setError(e.message);
       }
@@ -75,6 +79,6 @@ export default function View(
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <div dangerouslySetInnerHTML={{ __html: graph }}></div>
+    <div ref={ref}></div>
   </>;
 }
