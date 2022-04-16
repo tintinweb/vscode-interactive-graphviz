@@ -5,7 +5,7 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
-import { select } from "d3";
+import { select, zoom } from "d3";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
@@ -22,8 +22,8 @@ export default function View(
   },
 ) : JSX.Element {
   const ref = React.useRef<HTMLDivElement>(null);
-  console.log(output);
-  console.log(output.text());
+  // console.log(output);
+  // console.log(output.text());
   const [graph, setGraph] = React.useState("");
   const [searchResult, setSearchResult] = React.useState("");
   const [error, setError] = React.useState("");
@@ -40,9 +40,19 @@ export default function View(
     graphvizSync(GraphvizWasm).then((syncObject) => {
       setError("");
       try {
+        // Layout and inject svg
         const res = syncObject.layout(source, "svg", engine);
         setGraph(res);
         select(ref.current).html(res);
+
+        const svg = select(ref.current).select("svg");
+        const zoomBehavior = zoom()
+          .scaleExtent([0, Infinity])
+          .on("zoom", (e) => {
+            svg.attr("transform", e.transform);
+          });
+
+        select(ref.current).call(zoomBehavior as any);
       } catch (e: any) {
         setError(e.message);
       }
@@ -79,6 +89,10 @@ export default function View(
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <div ref={ref}></div>
+    <div style={{
+      width: "500px",
+      height: "500px",
+      overflow: "hidden",
+    }} ref={ref}></div>
   </>;
 }
