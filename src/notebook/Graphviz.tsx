@@ -1,4 +1,6 @@
-import { select, zoom, zoomIdentity } from "d3";
+import {
+  select, selectAll, zoom, zoomIdentity,
+} from "d3";
 import React, { forwardRef, useImperativeHandle } from "react";
 
 export default forwardRef(({
@@ -23,6 +25,39 @@ export default forwardRef(({
     const ar = select(ref.current).call(zoomBehave as any);
     zoomBehave.transform(ar as any, zoomIdentity);
 
+    const nodes = svg.select("g").selectAll(".node");
+
+    nodes.attr("pointer-events", "visible");
+
+    // eslint-disable-next-line func-names
+    svg.selectAll("polygon,text,path").each(function () {
+      const stroke = select(this).attr("stroke");
+      const fill = select(this).attr("fill");
+      const opacity = select(this).style("opacity");
+      select(this).attr("data-stroke", stroke);
+      select(this).attr("data-fill", fill);
+      select(this).attr("data-opacity", opacity);
+    });
+
+    // eslint-disable-next-line func-names
+    nodes.each(function () {
+      console.log(this);
+    });
+
+    // eslint-disable-next-line func-names
+    nodes.on("click", function () {
+      svg.select("g").selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon").each(function () {
+        const opacity = select(this).attr("data-opacity") || 1;
+        select(this).style("opacity", 0.2 * (opacity as number));
+      });
+      // svg.selectAll(".node text, .edge polygon").attr("fill", "#dddddd");
+
+      select(this).selectAll("ellipse, path, polygon, text").each(function () {
+        const opacity = select(this).attr("data-opacity") || 1;
+        select(this).style("opacity", opacity);
+      });
+    });
+
     return [zoomBehave, ar];
   }, [ref, ref.current, dot]);
 
@@ -30,6 +65,10 @@ export default forwardRef(({
   const resetView = () => {
     if (!zoomArea || !zoomFunc) return;
     zoomFunc.transform(zoomArea as any, zoomIdentity);
+    select(ref.current).select("svg g").selectAll("ellipse, path, polygon, text").each(function () {
+      const opacity = select(this).attr("data-opacity") || 1;
+      select(this).style("opacity", opacity);
+    });
   };
 
   useImperativeHandle(parentRef, () => ({
