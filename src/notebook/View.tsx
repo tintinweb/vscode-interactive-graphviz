@@ -5,7 +5,9 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
-import { select, zoom } from "d3";
+import {
+  select, zoom, ZoomBehavior, zoomIdentity, zoomTransform,
+} from "d3";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
@@ -32,8 +34,8 @@ export default function View(
   let source = output.text();
   source = source.substring(1, source.length - 1);
 
+  // Render/Layout
   React.useEffect(() => {
-    if (!ref.current) return;
     graphvizVersion("dist", GraphvizWasm).then((t) => {
       console.log(`Graphviz Version: ${t}`);
     });
@@ -43,22 +45,34 @@ export default function View(
         // Layout and inject svg
         const res = syncObject.layout(source, "svg", engine);
         setGraph(res);
-        select(ref.current).html(res);
-
-        const svg = select(ref.current).select("svg");
-        svg.attr("width", "100%").attr("height", "100%");
-        const zoomBehavior = zoom()
-          .scaleExtent([0, Infinity])
-          .on("zoom", (e) => {
-            svg.attr("transform", e.transform);
-          });
-
-        select(ref.current).call(zoomBehavior as any);
       } catch (e: any) {
         setError(e.message);
       }
     });
   }, [output, engine]);
+
+  // Inject SVG and setup Zoom
+  const [zoomFunc, zoomArea] = React.useMemo(() => {
+    if (!ref.current || graph === "") return [undefined, undefined];
+    select(ref.current).html(graph);
+
+    const svg = select(ref.current).select("svg");
+    svg.attr("width", "100%").attr("height", "100%");
+    const zoomBehave = zoom()
+      .scaleExtent([0, Infinity])
+      .on("zoom", (e) => {
+        svg.attr("transform", e.transform);
+      });
+    const ar = select(ref.current).call(zoomBehave as any);
+
+    return [zoomBehave, ar];
+  }, [ref, ref.current, graph]);
+
+  // Reset view on button click
+  const resetView = () => {
+    if (!zoomArea || !zoomFunc) return;
+    zoomFunc.transform(zoomArea as any, zoomIdentity);
+  };
 
   const saveFunction = (type: Format) => {
     let fileData: string;
@@ -84,6 +98,7 @@ export default function View(
   return <>
     <Toolbar
       onSave={context.postMessage && saveFunction}
+      onReset={resetView}
       disableSearch
       disableDirectionSelection
       onChange={(eng/* , options */) => { setEngine(eng); }}

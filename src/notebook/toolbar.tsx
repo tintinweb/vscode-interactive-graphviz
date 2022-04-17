@@ -61,12 +61,14 @@ export default function Toolbar({
   disableEngineSelection,
   onChange,
   onSave,
+  onReset,
 } : {
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
   onChange?: (engine: Engine, options: SelectionOptions) => void,
   onSave?: (type: Format) => void
+  onReset?: () => void,
 }) : JSX.Element {
   const [engine, setEngine] = React.useState<string>("Dot");
 
@@ -97,9 +99,9 @@ export default function Toolbar({
         {onSave && <VSCodeButton appearance="icon" onClick={() => onSave("svg")}>
           <span className="codicon codicon-save"></span>
         </VSCodeButton>}
-        <VSCodeButton appearance="icon" aria-label="Reset view">
+        {onReset && <VSCodeButton appearance="icon" aria-label="Reset view" onClick={onReset}>
           <span className="codicon codicon-refresh"></span>
-        </VSCodeButton>
+        </VSCodeButton>}
       </div>
       {!disableSearch && <VSCodeTextField placeholder="Search ..." id="searchInput">
         <span slot="start" className="codicon codicon-search"></span>
