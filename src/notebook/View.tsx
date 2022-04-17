@@ -64,6 +64,7 @@ export default function View(
         svg.attr("transform", e.transform);
       });
     const ar = select(ref.current).call(zoomBehave as any);
+    zoomBehave.transform(ar as any, zoomIdentity);
 
     return [zoomBehave, ar];
   }, [ref, ref.current, graph]);
