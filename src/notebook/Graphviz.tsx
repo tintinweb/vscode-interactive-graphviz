@@ -1,5 +1,6 @@
 import {
-  select, selectAll, zoom, zoomIdentity,
+  BaseType,
+  select, zoom, zoomIdentity,
 } from "d3";
 import React, { forwardRef, useImperativeHandle } from "react";
 
@@ -11,8 +12,12 @@ export default forwardRef(({
 }, parentRef) : JSX.Element => {
   const ref = React.useRef<HTMLDivElement>(null);
   // Inject SVG and setup Zoom
-  const [zoomFunc, zoomArea] = React.useMemo(() => {
+  const [zoomFunc, zoomArea, directory] = React.useMemo(() => {
     if (!ref.current || dot === "") return [undefined, undefined];
+
+    const nodesByName : {[name:string]:BaseType} = {};
+    const clustersByName : {[name:string]:BaseType} = {};
+    const edgesByName : {[name:string]:BaseType} = {};
 
     // Render SVG
     select(ref.current).html(dot);
@@ -44,8 +49,8 @@ export default forwardRef(({
     nodes.attr("pointer-events", "visible");
     // eslint-disable-next-line func-names
     nodes.each(function () {
-      const name = select(this).select("text").text();
-      console.log(name);
+      const name = select(this).select("title").text();
+      nodesByName[name] = this;
     });
 
     // Extract edge data
@@ -53,9 +58,18 @@ export default forwardRef(({
     // eslint-disable-next-line func-names
     edges.each(function () {
       const name = select(this).select("title").text();
-      console.log(name);
+      edgesByName[name] = this;
     });
 
+    // Extract cluster data
+    const clusters = svg.select("g").selectAll(".cluster");
+    // eslint-disable-next-line func-names
+    clusters.each(function () {
+      const name = select(this).select("title").text();
+      clustersByName[name] = this;
+    });
+
+    // Make Nodes clickable
     // eslint-disable-next-line func-names
     nodes.on("click", function () {
       svg.select("g").selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon").each(function () {
@@ -69,7 +83,7 @@ export default forwardRef(({
       });
     });
 
-    return [zoomBehave, ar];
+    return [zoomBehave, ar, { nodes: nodesByName, edges: edgesByName, clusters: clustersByName }];
   }, [ref, ref.current, dot]);
 
   // Reset view on button click
@@ -84,6 +98,7 @@ export default forwardRef(({
 
   useImperativeHandle(parentRef, () => ({
     reset: resetView,
+    directory,
   }));
 
   return <div style={{
