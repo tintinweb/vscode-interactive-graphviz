@@ -31,6 +31,7 @@ export default function View(
 
   let source = output.text();
   source = source.substring(1, source.length - 1);
+  source = source.replace(/\\"/g, "\"");
 
   // Render/Layout
   React.useEffect(() => {
