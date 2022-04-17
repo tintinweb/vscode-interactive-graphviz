@@ -5,14 +5,12 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
-import {
-  select, zoom, ZoomBehavior, zoomIdentity, zoomTransform,
-} from "d3";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
 
 import Toolbar, { InfoToolBar } from "./toolbar";
+import Graphviz from "./Graphviz";
 
 export default function View(
   {
@@ -23,7 +21,7 @@ export default function View(
     context: RendererContext<any>
   },
 ) : JSX.Element {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const graphvizView = React.useRef();
   // console.log(output);
   // console.log(output.text());
   const [graph, setGraph] = React.useState("");
@@ -51,30 +49,6 @@ export default function View(
     });
   }, [output, engine]);
 
-  // Inject SVG and setup Zoom
-  const [zoomFunc, zoomArea] = React.useMemo(() => {
-    if (!ref.current || graph === "") return [undefined, undefined];
-    select(ref.current).html(graph);
-
-    const svg = select(ref.current).select("svg");
-    svg.attr("width", "100%").attr("height", "100%");
-    const zoomBehave = zoom()
-      .scaleExtent([0, Infinity])
-      .on("zoom", (e) => {
-        svg.attr("transform", e.transform);
-      });
-    const ar = select(ref.current).call(zoomBehave as any);
-    zoomBehave.transform(ar as any, zoomIdentity);
-
-    return [zoomBehave, ar];
-  }, [ref, ref.current, graph]);
-
-  // Reset view on button click
-  const resetView = () => {
-    if (!zoomArea || !zoomFunc) return;
-    zoomFunc.transform(zoomArea as any, zoomIdentity);
-  };
-
   const saveFunction = (type: Format) => {
     let fileData: string;
     if (type === "dot") {
@@ -99,18 +73,13 @@ export default function View(
   return <>
     <Toolbar
       onSave={context.postMessage && saveFunction}
-      onReset={resetView}
+      onReset={() => graphvizView && graphvizView.current && (graphvizView.current as any).reset()}
       disableSearch
       disableDirectionSelection
       onChange={(eng/* , options */) => { setEngine(eng); }}
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <div style={{
-      width: "100%",
-      height: "500px",
-      overflow: "hidden",
-      textAlign: "center",
-    }} ref={ref}></div>
+    <Graphviz dot={graph} ref={graphvizView} />
   </>;
 }
