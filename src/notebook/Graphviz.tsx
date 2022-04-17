@@ -13,8 +13,11 @@ export default forwardRef(({
   // Inject SVG and setup Zoom
   const [zoomFunc, zoomArea] = React.useMemo(() => {
     if (!ref.current || dot === "") return [undefined, undefined];
+
+    // Render SVG
     select(ref.current).html(dot);
 
+    // Initialize zoom
     const svg = select(ref.current).select("svg");
     svg.attr("width", "100%").attr("height", "100%");
     const zoomBehave = zoom()
@@ -25,10 +28,7 @@ export default forwardRef(({
     const ar = select(ref.current).call(zoomBehave as any);
     zoomBehave.transform(ar as any, zoomIdentity);
 
-    const nodes = svg.select("g").selectAll(".node");
-
-    nodes.attr("pointer-events", "visible");
-
+    // Extract data
     // eslint-disable-next-line func-names
     svg.selectAll("polygon,text,path").each(function () {
       const stroke = select(this).attr("stroke");
@@ -39,9 +39,21 @@ export default forwardRef(({
       select(this).attr("data-opacity", opacity);
     });
 
+    // Extract node data
+    const nodes = svg.select("g").selectAll(".node");
+    nodes.attr("pointer-events", "visible");
     // eslint-disable-next-line func-names
     nodes.each(function () {
-      console.log(this);
+      const name = select(this).select("text").text();
+      console.log(name);
+    });
+
+    // Extract edge data
+    const edges = svg.select("g").selectAll(".edge");
+    // eslint-disable-next-line func-names
+    edges.each(function () {
+      const name = select(this).select("title").text();
+      console.log(name);
     });
 
     // eslint-disable-next-line func-names
@@ -50,7 +62,6 @@ export default forwardRef(({
         const opacity = select(this).attr("data-opacity") || 1;
         select(this).style("opacity", 0.2 * (opacity as number));
       });
-      // svg.selectAll(".node text, .edge polygon").attr("fill", "#dddddd");
 
       select(this).selectAll("ellipse, path, polygon, text").each(function () {
         const opacity = select(this).attr("data-opacity") || 1;
