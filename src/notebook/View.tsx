@@ -5,6 +5,7 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
+import { BaseType } from "d3";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
@@ -28,6 +29,8 @@ export default function View(
   const [searchResult, setSearchResult] = React.useState("");
   const [error, setError] = React.useState("");
   const [engine, setEngine] = React.useState<Engine>("dot");
+
+  const [highlights, setHighlights] = React.useState<BaseType[]>([]);
 
   let source = output.text();
   source = source.substring(1, source.length - 1);
@@ -71,6 +74,12 @@ export default function View(
     }
   };
 
+  React.useEffect(() => {
+    if (graphvizView && graphvizView.current) {
+      (graphvizView.current as any).highlight(highlights);
+    }
+  }, [highlights]);
+
   return <>
     <Toolbar
       onSave={context.postMessage && saveFunction}
@@ -81,6 +90,12 @@ export default function View(
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <Graphviz dot={graph} ref={graphvizView} />
+    <Graphviz
+      dot={graph}
+      ref={graphvizView}
+      onClick={(el) => {
+        setHighlights((state) => [...state, el]);
+      }}
+    />
   </>;
 }
