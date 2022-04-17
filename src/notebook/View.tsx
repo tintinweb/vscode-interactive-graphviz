@@ -107,7 +107,7 @@ export default function View(
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
     <div style={{
-      width: "500px",
+      width: "100%",
       height: "500px",
       overflow: "hidden",
       textAlign: "center",
