@@ -162,6 +162,10 @@ export default function View(
         setHighlights(h);
       }}
       onSearchType={(searchString, searchOptions) => {
+        if (searchString === "") {
+          setSearchResult("");
+          return;
+        }
         const res = search(searchString, searchOptions);
         if (!res) return;
         const results:string[] = [];
