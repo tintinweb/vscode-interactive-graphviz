@@ -6,7 +6,7 @@ import {
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
 import { BaseType } from "d3";
-import { flatten, result, uniq } from "lodash";
+import { flatten, uniq } from "lodash";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
@@ -101,9 +101,10 @@ export default function View(
   };
 
   const search = (searchString:string, searchOptions: SearchOptions) => {
-    if (!graphvizView || !graphvizView.current) return;
+    if (!graphvizView || !graphvizView.current) return undefined;
 
     const { directory } = graphvizView.current as any;
+    // eslint-disable-next-line no-unused-vars
     let searchFunction:(str: string) => boolean;
     if (!searchOptions.regex) {
       if (searchOptions.caseSensitive) {
@@ -123,15 +124,15 @@ export default function View(
       nodes: (!searchOptions.nodeName && !searchOptions.nodeLabel) ? undefined : flatten(Object
         .entries(directory.nodes)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value)) as BaseType[],
+        .map(([, value]) => value)) as BaseType[],
       edges: (!searchOptions.edgeLabel) ? undefined : flatten(Object
         .entries(directory.edges)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value)) as BaseType[],
+        .map(([, value]) => value)) as BaseType[],
       clusters: (!searchOptions.clusterName && !searchOptions.clusterLabel) ? undefined : Object
         .entries(directory.clusters)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value) as BaseType[],
+        .map(([, value]) => value) as BaseType[],
     };
 
     return searchRes;
