@@ -51,7 +51,9 @@ export default forwardRef(({
     nodes.attr("pointer-events", "visible");
     // eslint-disable-next-line func-names
     nodes.each(function () {
-      const name = select(this).select("title").text();
+      let name = select(this).select("title").text();
+      // remove any compass points:
+      name = name.replace(/:[snew][ew]?/g, "");
       nodesByName[name] = this;
     });
 
@@ -59,7 +61,9 @@ export default forwardRef(({
     const edges = svg.select("g").selectAll(".edge");
     // eslint-disable-next-line func-names
     edges.each(function () {
-      const name = select(this).select("title").text();
+      let name = select(this).select("title").text();
+      // remove any compass points:
+      name = name.replace(/:[snew][ew]?/g, "");
       edgesByName[name] = this;
     });
 
@@ -67,7 +71,9 @@ export default forwardRef(({
     const clusters = svg.select("g").selectAll(".cluster");
     // eslint-disable-next-line func-names
     clusters.each(function () {
-      const name = select(this).select("title").text();
+      let name = select(this).select("title").text();
+      // remove any compass points:
+      name = name.replace(/:[snew][ew]?/g, "");
       clustersByName[name] = this;
     });
 
@@ -75,17 +81,6 @@ export default forwardRef(({
     // eslint-disable-next-line func-names
     nodes.on("click", function () {
       onClick(this);
-      /* svg.select("g")
-      .selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon")
-      .each(function () {
-        const opacity = select(this).attr("data-opacity") || 1;
-        select(this).style("opacity", 0.2 * (opacity as number));
-      });
-
-      select(this).selectAll("ellipse, path, polygon, text").each(function () {
-        const opacity = select(this).attr("data-opacity") || 1;
-        select(this).style("opacity", opacity);
-      }); */
     });
 
     return [zoomBehave, ar, { nodes: nodesByName, edges: edgesByName, clusters: clustersByName }];
