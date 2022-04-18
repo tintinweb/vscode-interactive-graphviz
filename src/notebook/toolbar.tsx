@@ -11,10 +11,14 @@ import { Engine, Format } from "@hpcc-js/wasm";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
-export type SelectionOptions = {
-  direction: Direction,
-  caseSensitive: boolean,
+export type SearchOptions = {
   regex: boolean,
+  caseSensitive: boolean,
+  nodeLabel: boolean,
+  nodeName: boolean,
+  edgeLabel: boolean,
+  clusterLabel: boolean,
+  clusterName: boolean,
 }
 
 export function InfoToolBar(
@@ -56,33 +60,44 @@ function DropDown({
 }
 
 export default function Toolbar({
-  disableSearch,
   disableDirectionSelection,
   disableEngineSelection,
   onChange,
   onSave,
   onReset,
+  onSearch,
+  onSearchType,
 } : {
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
-  onChange?: (engine: Engine, options: SelectionOptions) => void,
+  // eslint-disable-next-line no-unused-vars
+  onChange?: (engine: Engine, direction: Direction) => void,
+  // eslint-disable-next-line no-unused-vars
   onSave?: (type: Format) => void
   onReset?: () => void,
+  // eslint-disable-next-line no-unused-vars
+  onSearch?: (searchString: string, searchOptions: SearchOptions) => void,
+  // eslint-disable-next-line no-unused-vars
+  onSearchType?: (searchString: string, searchOptions: SearchOptions) => void,
 }) : JSX.Element {
   const [engine, setEngine] = React.useState<string>("Dot");
-
-  const [options, setOptions] = React.useState<SelectionOptions>({
+  const [direction, setDirection] = React.useState<Direction>("Bidirectional");
+  const [searchOptions, setSearchOptions] = React.useState<SearchOptions>({
     caseSensitive: false,
     regex: false,
-    direction: "Bidirectional",
+    nodeLabel: true,
+    nodeName: true,
+    clusterLabel: true,
+    clusterName: true,
+    edgeLabel: true,
   });
 
   React.useEffect(() => {
     if (onChange) {
-      onChange(engine.toLowerCase() as Engine, options);
+      onChange(engine.toLowerCase() as Engine, direction);
     }
-  }, [engine, options]);
+  }, [engine, direction]);
 
   return <>
     <div style={{
@@ -103,15 +118,25 @@ export default function Toolbar({
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>}
       </div>
-      {!disableSearch && <VSCodeTextField placeholder="Search ..." id="searchInput">
+      {onSearch && <VSCodeTextField placeholder="Search ..."
+        onKeyDown={(e) => {
+          const searchString = (e.target as any).value;
+          if (e.key !== "Enter") {
+            if (onSearchType) {
+              onSearchType(searchString, searchOptions);
+            }
+            return;
+          }
+          onSearch(searchString, searchOptions);
+        }}>
         <span slot="start" className="codicon codicon-search"></span>
-        <VSCodeOption slot="end" selected={options.caseSensitive} onClick={() => setOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
+        <VSCodeOption slot="end" selected={searchOptions.caseSensitive} onClick={() => setSearchOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
           <span className="codicon codicon-case-sensitive"></span>
         </VSCodeOption>
         <VSCodeOption
           slot="end"
-          selected={options.regex}
-          onClick={() => setOptions((s) => ({ ...s, regex: !s.regex }))}>
+          selected={searchOptions.regex}
+          onClick={() => setSearchOptions((s) => ({ ...s, regex: !s.regex }))}>
           <span className="codicon codicon-regex"></span>
         </VSCodeOption>
         {/* <VSCodeOption slot="end">
@@ -121,7 +146,7 @@ export default function Toolbar({
       {!disableDirectionSelection && <DropDown
         initial="Bidirectional"
         options={["Bidirectional", "Downstream", "Upstream", "Single"]}
-        onChange={(i) => setOptions((state) => ({ ...state, direction: i as Direction }))}
+        onChange={(i) => setDirection(i as Direction)}
       />}
       {!disableEngineSelection && <DropDown
         initial="Dot"
