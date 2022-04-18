@@ -33,8 +33,6 @@ export default function View(
   const [engine, setEngine] = React.useState<Engine>("dot");
   const [direction, setDirection] = React.useState<Direction>("Bidirectional");
 
-  console.log(searchResult);
-
   // @ts-ignore
   ref.current = {
     direction,
