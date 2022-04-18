@@ -22,6 +22,11 @@ export type SearchOptions = {
   clusterName: boolean,
 }
 
+const overlayStyle : React.CSSProperties = {
+  backgroundColor: "var(--vscode-editorPane-background)",
+  padding: "5px",
+};
+
 export function InfoToolBar(
   { text, type } : {
         text?: string,
@@ -39,7 +44,6 @@ export function InfoToolBar(
 }
 
 function DropDown({
-  initial,
   options,
   onChange,
 }:{
@@ -83,8 +87,10 @@ export default function Toolbar({
   onSearchType?: (searchString: string, searchOptions: SearchOptions) => void,
 }) : JSX.Element {
   const refSaveButton = React.useRef();
+  const refTypeButton = React.useRef();
 
   const [showSaveOverly, setShowSaveOverlay] = React.useState(false);
+  const [showTypeSelection, setShowTypeSelection] = React.useState(false);
 
   const saveFunction = (type: Format) => () => {
     setShowSaveOverlay(false);
@@ -135,8 +141,10 @@ export default function Toolbar({
           >
             {({ props/* , arrowProps, placement */ }) => (
               <div {...props}>
-                <VSCodeButton onClick={saveFunction("svg")}>SVG</VSCodeButton>
-                <VSCodeButton onClick={saveFunction("dot")}>DOT</VSCodeButton>
+                <div style={overlayStyle}>
+                  <VSCodeButton onClick={saveFunction("svg")}>SVG</VSCodeButton>
+                  <VSCodeButton onClick={saveFunction("dot")}>DOT</VSCodeButton>
+                </div>
               </div>
             )}
           </Overlay>
@@ -173,9 +181,51 @@ export default function Toolbar({
           onClick={() => setSearchOptions((s) => ({ ...s, regex: !s.regex }))}>
           <span className="codicon codicon-regex"></span>
         </VSCodeOption>
-        {/* <VSCodeOption slot="end">
+        <VSCodeOption
+          selected={showTypeSelection}
+          slot="end"
+          onClick={() => setShowTypeSelection(!showTypeSelection)}
+          ref={refTypeButton as any}
+        >
           <span className="codicon codicon-settings"></span>
-        </VSCodeOption> */}
+        </VSCodeOption>
+        <Overlay
+          target={refTypeButton as any}
+          show={showTypeSelection}
+        >
+          {({ props/* , arrowProps, placement */ }) => (
+            <div {...props}>
+              <div style={overlayStyle}>
+                <VSCodeOption
+                  selected={searchOptions.nodeLabel}
+                  onClick={() => setSearchOptions((s) => ({
+                    ...s,
+                    nodeLabel: !s.nodeLabel,
+                    nodeName: !s.nodeName,
+                  }))}
+                >Node
+                </VSCodeOption>
+                <VSCodeOption
+                  selected={searchOptions.edgeLabel}
+                  onClick={() => setSearchOptions((s) => ({
+                    ...s,
+                    edgeLabel: !s.edgeLabel,
+                  }))}
+                >Edge
+                </VSCodeOption>
+                <VSCodeOption
+                  selected={searchOptions.clusterLabel}
+                  onClick={() => setSearchOptions((s) => ({
+                    ...s,
+                    clusterLabel: !s.clusterLabel,
+                    clusterName: !s.clusterName,
+                  }))}
+                >Cluster
+                </VSCodeOption>
+              </div>
+            </div>
+          )}
+        </Overlay>
       </VSCodeTextField>}
       {!disableDirectionSelection && <DropDown
         initial="Bidirectional"
