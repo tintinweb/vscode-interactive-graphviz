@@ -114,10 +114,10 @@ export default function View(
         .entries(directory.nodes)
         .filter(([key]) => searchFunction(key))
         .map(([key, value]) => value)),
-      edges: (!searchOptions.edgeLabel) ? undefined : Object
+      edges: (!searchOptions.edgeLabel) ? undefined : flatten(Object
         .entries(directory.edges)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value),
+        .map(([key, value]) => value)),
       clusters: (!searchOptions.clusterName && !searchOptions.clusterLabel) ? undefined : Object
         .entries(directory.clusters)
         .filter(([key]) => searchFunction(key))
@@ -137,7 +137,12 @@ export default function View(
       }}
       onSearch={(searchString, searchOptions) => {
         const res = search(searchString, searchOptions);
+        if (!res
+          || !graphvizView || !graphvizView.current) {
+          return;
+        }
         console.log(res);
+        if (res.nodes) setHighlights(res.nodes as BaseType[]);
       }}
       onSearchType={(searchString, searchOptions) => {
         const res = search(searchString, searchOptions);

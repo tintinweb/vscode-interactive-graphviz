@@ -150,13 +150,19 @@ export default function Toolbar({
         onKeyDown={(e) => {
           const searchString = (e.target as any).value;
           if (e.key !== "Enter") {
-            if (onSearchType) {
-              onSearchType(searchString, searchOptions);
-            }
             return;
           }
           onSearch(searchString, searchOptions);
-        }}>
+        }}
+        onKeyUp={(e) => {
+          const searchString = (e.target as any).value;
+          if (e.key !== "Enter") {
+            if (onSearchType) {
+              onSearchType(searchString, searchOptions);
+            }
+          }
+        }}
+      >
         <span slot="start" className="codicon codicon-search"></span>
         <VSCodeOption slot="end" selected={searchOptions.caseSensitive} onClick={() => setSearchOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
           <span className="codicon codicon-case-sensitive"></span>
