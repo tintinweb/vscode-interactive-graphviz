@@ -8,6 +8,7 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { Engine, Format } from "@hpcc-js/wasm";
+import { Overlay } from "react-overlays";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -81,6 +82,15 @@ export default function Toolbar({
   // eslint-disable-next-line no-unused-vars
   onSearchType?: (searchString: string, searchOptions: SearchOptions) => void,
 }) : JSX.Element {
+  const refSaveButton = React.useRef();
+
+  const [showSaveOverly, setShowSaveOverlay] = React.useState(false);
+
+  const saveFunction = (type: Format) => () => {
+    setShowSaveOverlay(false);
+    if (onSave) onSave(type);
+  };
+
   const [engine, setEngine] = React.useState<string>("Dot");
   const [direction, setDirection] = React.useState<Direction>("Bidirectional");
   const [searchOptions, setSearchOptions] = React.useState<SearchOptions>({
@@ -111,9 +121,27 @@ export default function Toolbar({
         alignItems: "center",
         marginRight: "3px",
       }}>
-        {onSave && <VSCodeButton appearance="icon" onClick={() => onSave("svg")}>
-          <span className="codicon codicon-save"></span>
-        </VSCodeButton>}
+        {
+          onSave && <><VSCodeButton
+            appearance="icon"
+            onClick={() => setShowSaveOverlay(!showSaveOverly)}
+            ref={refSaveButton as any}
+          >
+            <span className="codicon codicon-save"></span>
+          </VSCodeButton>
+          <Overlay
+            target={refSaveButton as any}
+            show={showSaveOverly}
+          >
+            {({ props/* , arrowProps, placement */ }) => (
+              <div {...props}>
+                <VSCodeButton onClick={saveFunction("svg")}>SVG</VSCodeButton>
+                <VSCodeButton onClick={saveFunction("dot")}>DOT</VSCodeButton>
+              </div>
+            )}
+          </Overlay>
+          </>
+        }
         {onReset && <VSCodeButton appearance="icon" aria-label="Reset view" onClick={onReset}>
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>}
