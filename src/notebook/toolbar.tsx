@@ -9,9 +9,9 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { Engine, Format } from "@hpcc-js/wasm";
 
-type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
+export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
-type SelectionOptions = {
+export type SelectionOptions = {
   direction: Direction,
   caseSensitive: boolean,
   regex: boolean,

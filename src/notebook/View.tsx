@@ -6,11 +6,12 @@ import {
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
 import { BaseType } from "d3";
+import { uniq } from "lodash";
 
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
 
-import Toolbar, { InfoToolBar } from "./toolbar";
+import Toolbar, { InfoToolBar, SelectionOptions } from "./toolbar";
 import Graphviz from "./Graphviz";
 
 export default function View(
@@ -22,6 +23,7 @@ export default function View(
     context: RendererContext<any>
   },
 ) : JSX.Element {
+  const ref = React.useRef<{options: SelectionOptions}>();
   const graphvizView = React.useRef();
   // console.log(output);
   // console.log(output.text());
@@ -29,6 +31,16 @@ export default function View(
   const [searchResult, setSearchResult] = React.useState("");
   const [error, setError] = React.useState("");
   const [engine, setEngine] = React.useState<Engine>("dot");
+  const [options, setOptions] = React.useState<SelectionOptions>({
+    caseSensitive: false,
+    direction: "Bidirectional",
+    regex: false,
+  });
+
+  // @ts-ignore
+  ref.current = {
+    options,
+  };
 
   const [highlights, setHighlights] = React.useState<BaseType[]>([]);
 
@@ -85,8 +97,10 @@ export default function View(
       onSave={context.postMessage && saveFunction}
       onReset={() => graphvizView && graphvizView.current && (graphvizView.current as any).reset()}
       disableSearch
-      disableDirectionSelection
-      onChange={(eng/* , options */) => { setEngine(eng); }}
+      onChange={(eng, newOptions) => {
+        setEngine(eng);
+        setOptions(newOptions);
+      }}
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
@@ -94,8 +108,14 @@ export default function View(
       dot={graph}
       ref={graphvizView}
       onClick={(el) => {
-        setHighlights((graphvizView.current as any).findLinkedFrom(el));
-        // setHighlights((state) => [...state, el]);
+        if (!ref.current || !ref.current.options) return;
+        const downstream = (ref.current.options.direction === "Bidirectional" || ref.current.options.direction === "Downstream")
+          ? (graphvizView.current as any).findLinkedFrom(el) : [];
+        const upstream = (ref.current.options.direction === "Bidirectional" || ref.current.options.direction === "Upstream")
+          ? (graphvizView.current as any).findLinkedTo(el) : [];
+
+        const toHighlight = uniq([...downstream, el, ...upstream]);
+        setHighlights(toHighlight);
       }}
     />
   </>;
