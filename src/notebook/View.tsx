@@ -5,7 +5,7 @@ import {
   Format,
   graphvizSync, graphvizVersion,
 } from "@hpcc-js/wasm";
-import { BaseType } from "d3";
+import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
 // @ts-ignore
@@ -98,6 +98,22 @@ export default function View(
     return uniq([...downstream, el, ...upstream]);
   };
 
+  const searchNodesForEdges = (el: BaseType):(BaseType|undefined)[] => {
+    if (!graphvizView || !graphvizView.current) return [undefined, undefined];
+
+    const { directory } = graphvizView.current as any;
+
+    const edgeName = select(el).attr("data-name");
+    const [upStreamNodeName, downStreamNodeName, ...rest] = edgeName.split("->");
+    if (rest && rest.length > 0) {
+      return [undefined, undefined];
+    }
+    return [
+      upStreamNodeName ? directory.nodes[upStreamNodeName] : undefined,
+      downStreamNodeName ? directory.nodes[downStreamNodeName] : undefined,
+    ];
+  };
+
   const search = (searchString:string, searchOptions: SearchOptions) => {
     if (!graphvizView || !graphvizView.current) return undefined;
 
@@ -147,7 +163,8 @@ export default function View(
       onSearch={(searchString, searchOptions) => {
         const res = search(searchString, searchOptions);
         if (!res
-          || !graphvizView || !graphvizView.current) {
+          || !graphvizView || !graphvizView.current
+          || !ref || !ref.current) {
           return;
         }
         let h : BaseType[] = [];
@@ -156,6 +173,20 @@ export default function View(
         }
         if (res.clusters) {
           h = [...h, ...res.clusters];
+        }
+        if (res.edges) {
+          h = [...h, ...res.edges];
+          res.edges.forEach((edge) => {
+            const [upStreamNode, downStreamNode] = searchNodesForEdges(edge);
+            if ((ref.current?.direction === "Bidirectional" || ref.current?.direction === "Downstream") && downStreamNode) {
+              const r = streamSearch(downStreamNode) || [];
+              h = [...h, ...r];
+            }
+            if ((ref.current?.direction === "Bidirectional" || ref.current?.direction === "Upstream") && upStreamNode) {
+              const r = streamSearch(upStreamNode) || [];
+              h = [...h, ...r];
+            }
+          });
         }
         setHighlights(h);
       }}
