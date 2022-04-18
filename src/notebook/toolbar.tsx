@@ -88,6 +88,7 @@ export default function Toolbar({
 }) : JSX.Element {
   const refSaveButton = React.useRef();
   const refTypeButton = React.useRef();
+  const refTextInput = React.useRef();
 
   const [showSaveOverly, setShowSaveOverlay] = React.useState(false);
   const [showTypeSelection, setShowTypeSelection] = React.useState(false);
@@ -114,6 +115,11 @@ export default function Toolbar({
       onChange(engine.toLowerCase() as Engine, direction);
     }
   }, [engine, direction]);
+
+  React.useEffect(() => {
+    if (!onSearchType || !refTextInput || !refTextInput.current) return;
+    onSearchType((refTextInput.current as any).value, searchOptions);
+  }, [searchOptions]);
 
   return <>
     <div style={{
@@ -154,7 +160,9 @@ export default function Toolbar({
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>}
       </div>
-      {onSearch && <VSCodeTextField placeholder="Search ..."
+      {onSearch && <VSCodeTextField
+        placeholder="Search ..."
+        ref={refTextInput as any}
         onKeyDown={(e) => {
           const searchString = (e.target as any).value;
           if (e.key !== "Enter") {
