@@ -90,6 +90,16 @@ export default function View(
     }
   }, [highlights]);
 
+  const streamSearch = (el: BaseType) => {
+    if (!ref.current || !ref.current.direction) return undefined;
+    const downstream:BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Downstream")
+      ? (graphvizView.current as any).findLinkedFrom(el) : [];
+    const upstream: BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Upstream")
+      ? (graphvizView.current as any).findLinkedTo(el) : [];
+
+    return uniq([...downstream, el, ...upstream]);
+  };
+
   const search = (searchString:string, searchOptions: SearchOptions) => {
     if (!graphvizView || !graphvizView.current) return;
 
@@ -113,15 +123,15 @@ export default function View(
       nodes: (!searchOptions.nodeName && !searchOptions.nodeLabel) ? undefined : flatten(Object
         .entries(directory.nodes)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value)),
+        .map(([key, value]) => value)) as BaseType[],
       edges: (!searchOptions.edgeLabel) ? undefined : flatten(Object
         .entries(directory.edges)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value)),
+        .map(([key, value]) => value)) as BaseType[],
       clusters: (!searchOptions.clusterName && !searchOptions.clusterLabel) ? undefined : Object
         .entries(directory.clusters)
         .filter(([key]) => searchFunction(key))
-        .map(([key, value]) => value),
+        .map(([key, value]) => value) as BaseType[],
     };
 
     return searchRes;
@@ -141,8 +151,14 @@ export default function View(
           || !graphvizView || !graphvizView.current) {
           return;
         }
-        console.log(res);
-        if (res.nodes) setHighlights(res.nodes as BaseType[]);
+        let h : BaseType[] = [];
+        if (res.nodes) {
+          h = [...h, ...uniq(flatten(res.nodes.map((node) => streamSearch(node) || [])))];
+        }
+        if (res.clusters) {
+          h = [...h, ...res.clusters];
+        }
+        setHighlights(h);
       }}
       onSearchType={(searchString, searchOptions) => {
         const res = search(searchString, searchOptions);
@@ -166,14 +182,7 @@ export default function View(
       dot={graph}
       ref={graphvizView}
       onClick={(el) => {
-        if (!ref.current || !ref.current.direction) return;
-        const downstream = (ref.current.direction === "Bidirectional" || ref.current.direction === "Downstream")
-          ? (graphvizView.current as any).findLinkedFrom(el) : [];
-        const upstream = (ref.current.direction === "Bidirectional" || ref.current.direction === "Upstream")
-          ? (graphvizView.current as any).findLinkedTo(el) : [];
-
-        const toHighlight = uniq([...downstream, el, ...upstream]);
-        setHighlights(toHighlight);
+        setHighlights(streamSearch(el) || []);
       }}
     />
   </>;
