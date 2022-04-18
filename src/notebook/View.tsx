@@ -94,7 +94,8 @@ export default function View(
       dot={graph}
       ref={graphvizView}
       onClick={(el) => {
-        setHighlights((state) => [...state, el]);
+        setHighlights((graphvizView.current as any).findLinkedFrom(el));
+        // setHighlights((state) => [...state, el]);
       }}
     />
   </>;

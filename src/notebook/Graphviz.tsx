@@ -2,6 +2,7 @@ import {
   BaseType,
   select, zoom, zoomIdentity,
 } from "d3";
+import { flatten } from "lodash";
 import React, { forwardRef, useImperativeHandle } from "react";
 
 export default forwardRef(({
@@ -19,7 +20,7 @@ export default forwardRef(({
 
     const nodesByName : {[name:string]:BaseType} = {};
     const clustersByName : {[name:string]:BaseType} = {};
-    const edgesByName : {[name:string]:BaseType} = {};
+    const edgesByName : {[name:string]:BaseType[]} = {};
 
     // Render SVG
     select(ref.current).html(dot);
@@ -54,6 +55,7 @@ export default forwardRef(({
       let name = select(this).select("title").text();
       // remove any compass points:
       name = name.replace(/:[snew][ew]?/g, "");
+      select(this).attr("data-name", name);
       nodesByName[name] = this;
     });
 
@@ -64,7 +66,9 @@ export default forwardRef(({
       let name = select(this).select("title").text();
       // remove any compass points:
       name = name.replace(/:[snew][ew]?/g, "");
-      edgesByName[name] = this;
+      select(this).attr("data-name", name);
+      if (edgesByName[name]) edgesByName[name].push(this);
+      else edgesByName[name] = [this];
     });
 
     // Extract cluster data
@@ -74,6 +78,7 @@ export default forwardRef(({
       let name = select(this).select("title").text();
       // remove any compass points:
       name = name.replace(/:[snew][ew]?/g, "");
+      select(this).attr("data-name", name);
       clustersByName[name] = this;
     });
 
@@ -125,20 +130,100 @@ export default forwardRef(({
     resetSelection();
   };
 
+  const findEdges = (
+    node: BaseType,
+    testEdge: (edgeName: string, nodeName: string
+    ) => string|undefined,
+  ): {edges: BaseType[], nodeNames:string[]}|undefined => {
+    if (!directory || !directory.edges || !node) return undefined;
+
+    const nodeName = select(node).attr("data-name");
+    const resultEdges: BaseType[] = [];
+    const resultNodeNames: string[] = [];
+    Object.keys(directory.edges).forEach((edgeName) => {
+      const otherNodeName = testEdge(edgeName, nodeName);
+      if (!otherNodeName) {
+        return;
+      }
+      resultNodeNames.push(otherNodeName);
+      directory.edges[edgeName].forEach((edge) => {
+        resultEdges.push(edge);
+      });
+    });
+
+    return {
+      edges: resultEdges,
+      nodeNames: resultNodeNames,
+    };
+  };
+
   const findLinked = (
     node: BaseType,
     testEdge: (edgeName: string, nodeName: string
-      ) => boolean,
+      ) => string|undefined,
   ) : BaseType[] => {
-    const result : BaseType[] = [];
-    return result;
+    if (!directory || !directory.nodes) return [];
+    let searchNodes : BaseType[] = [node];
+    const nodes : BaseType[] = [node];
+    const edges : BaseType[] = [];
+
+    while (searchNodes.length > 0) {
+      const edgeResults = flatten(searchNodes.map((n) => findEdges(n, testEdge)));
+      searchNodes = [];
+      // eslint-disable-next-line no-loop-func
+      edgeResults.forEach((r) => {
+        if (!r) return;
+
+        r.edges.forEach((edge) => {
+          if (!edges.includes(edge)) edges.push(edge);
+        });
+
+        r.nodeNames.forEach((nodeName) => {
+          const newNode = directory.nodes[nodeName];
+          if (!newNode || nodes.includes(newNode)) return;
+
+          nodes.push(newNode);
+          searchNodes.push(newNode);
+        });
+      });
+    }
+
+    return [...nodes, ...edges];
   };
+
+  const findLinkedFrom = (node: BaseType) => findLinked(
+    node,
+    (edgeName:string, nodeName: string):string|undefined => {
+      const other = undefined;
+
+      const connection = edgeName.split("->");
+      if (connection.length > 1 && (connection[0] === nodeName || connection[0].startsWith(`${nodeName}:`))) {
+        return connection[1].split(":")[0];
+      }
+      return other;
+    },
+  );
+
+  const findLinkedTo = (node: BaseType) => findLinked(
+    node,
+    (edgeName:string, nodeName: string):string|undefined => {
+      const other = undefined;
+
+      const connection = edgeName.split("->");
+      if (connection.length > 1 && (connection[1] === nodeName || connection[1].startsWith(`${nodeName}:`))) {
+        return connection[0].split(":")[0];
+      }
+      return other;
+    },
+  );
 
   useImperativeHandle(parentRef, () => ({
     reset: resetView,
     resetSelection,
     highlight,
     findLinked,
+    findLinkedFrom,
+    findLinkedTo,
     directory,
   }));
 
