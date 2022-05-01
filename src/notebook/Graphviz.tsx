@@ -15,7 +15,7 @@ export default forwardRef(({
 }, parentRef) : JSX.Element => {
   const ref = React.useRef<HTMLDivElement>(null);
   // Inject SVG and setup Zoom
-  const [zoomFunc, zoomArea, directory] = React.useMemo(() => {
+  const [zoomFunc, zoomArea, directory, originalTransform] = React.useMemo(() => {
     if (!ref.current || dot === "") return [undefined, undefined];
 
     const nodesByName : {[name:string]:BaseType} = {};
@@ -28,13 +28,26 @@ export default forwardRef(({
     // Initialize zoom
     const svg = select(ref.current).select("svg");
     svg.attr("width", "100%").attr("height", "100%");
+    const g = svg.select("g");
     const zoomBehave = zoom()
-      .scaleExtent([0, Infinity])
+      // .scaleExtent([0, Infinity])
       .on("zoom", (e) => {
-        svg.attr("transform", e.transform);
+        g.attr("transform", e.transform);
       });
-    const ar = select(ref.current).call(zoomBehave as any);
-    zoomBehave.transform(ar as any, zoomIdentity);
+    const c = (g.node() as SVGGElement).transform.baseVal;
+    let originalTransform;
+    for (let i = 0; i < c.length; i += 1) {
+      const item = c.getItem(i);
+      if (item.type === 2) {
+        originalTransform = [item.matrix.e, item.matrix.f];
+      }
+    }
+
+    const ar = svg.call(zoomBehave as any);
+    // zoomBehave.transform(ar as any, zoomIdentity);
+    if (originalTransform) {
+      zoomBehave.translateBy(svg as any, originalTransform[0], originalTransform[1]);
+    }
 
     // Extract data
     // eslint-disable-next-line func-names
@@ -88,7 +101,10 @@ export default forwardRef(({
       onClick(this);
     });
 
-    return [zoomBehave, ar, { nodes: nodesByName, edges: edgesByName, clusters: clustersByName }];
+    return [zoomBehave,
+      ar,
+      { nodes: nodesByName, edges: edgesByName, clusters: clustersByName },
+      originalTransform];
   }, [ref, ref.current, dot]);
 
   const highlight = (elements: BaseType[]) => {
@@ -126,7 +142,11 @@ export default forwardRef(({
   // Reset view on button click
   const resetView = () => {
     if (!zoomArea || !zoomFunc) return;
+    const svg = select(ref.current).select("svg");
     zoomFunc.transform(zoomArea as any, zoomIdentity);
+    if (originalTransform) {
+      zoomFunc.translateBy(svg as any, originalTransform[0], originalTransform[1]);
+    }
     resetSelection();
   };
 
