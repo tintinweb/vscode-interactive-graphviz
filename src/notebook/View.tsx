@@ -11,8 +11,9 @@ import { flatten, uniq } from "lodash";
 // @ts-ignore
 import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
 
-import Toolbar, { Direction, InfoToolBar, SearchOptions } from "./toolbar";
+import { InfoToolBar } from "./Toolbar";
 import Graphviz from "./Graphviz";
+import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 
 export default function View(
   {
@@ -153,7 +154,7 @@ export default function View(
   };
 
   return <>
-    <Toolbar
+    <GraphvizToolbar
       onSave={context.postMessage && saveFunction}
       onReset={() => graphvizView && graphvizView.current && (graphvizView.current as any).reset()}
       onChange={(eng, dir) => {
