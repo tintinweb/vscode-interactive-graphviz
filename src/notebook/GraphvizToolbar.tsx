@@ -10,6 +10,7 @@ import { Engine, Format } from "@hpcc-js/wasm";
 import { Overlay } from "react-overlays";
 import DropDown from "./DropDown";
 import Toolbar from "./Toolbar";
+import TextField from "./TextField";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -120,22 +121,15 @@ export default function GraphvizToolbar({
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>}
       </div>
-      {onSearch && <VSCodeTextField
+      {onSearch
+      && <TextField
         placeholder="Search ..."
-        ref={refTextInput as any}
-        onKeyDown={(e) => {
-          const searchString = (e.target as any).value;
-          if (e.key !== "Enter") {
-            return;
-          }
-          onSearch(searchString, searchOptions);
+        onEnter={(s) => {
+          onSearch(s, searchOptions);
         }}
-        onKeyUp={(e) => {
-          const searchString = (e.target as any).value;
-          if (e.key !== "Enter") {
-            if (onSearchType) {
-              onSearchType(searchString, searchOptions);
-            }
+        onType={(s) => {
+          if (onSearchType) {
+            onSearchType(s, searchOptions);
           }
         }}
       >
@@ -194,7 +188,7 @@ export default function GraphvizToolbar({
             </div>
           )}
         </Overlay>
-      </VSCodeTextField>}
+      </TextField>}
       {!disableDirectionSelection && <DropDown
         initial="Bidirectional"
         options={["Bidirectional", "Downstream", "Upstream", "Single"]}

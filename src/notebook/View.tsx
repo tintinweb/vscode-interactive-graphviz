@@ -1,5 +1,5 @@
 import React from "react";
-import { OutputItem, RendererContext } from "vscode-notebook-renderer";
+import { RendererContext } from "vscode-notebook-renderer";
 import {
   Engine,
   Format,
@@ -17,17 +17,15 @@ import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 
 export default function View(
   {
-    output,
+    source,
     context,
   } : {
-    output: OutputItem,
+    source: string,
     context: RendererContext<any>
   },
 ) : JSX.Element {
   const ref = React.useRef<{direction: Direction}>();
   const graphvizView = React.useRef();
-  // console.log(output);
-  // console.log(output.text());
   const [graph, setGraph] = React.useState("");
   const [searchResult, setSearchResult] = React.useState("");
   const [error, setError] = React.useState("");
@@ -40,10 +38,6 @@ export default function View(
   };
 
   const [highlights, setHighlights] = React.useState<BaseType[]>([]);
-
-  let source = output.text();
-  source = source.substring(1, source.length - 1);
-  source = source.replace(/\\"/g, "\"");
 
   // Render/Layout
   React.useEffect(() => {
@@ -60,7 +54,7 @@ export default function View(
         setError(e.message);
       }
     });
-  }, [output, engine]);
+  }, [source, engine]);
 
   const saveFunction = (type: Format) => {
     let fileData: string;
