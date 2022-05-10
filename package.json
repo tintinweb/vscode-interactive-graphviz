@@ -2,7 +2,7 @@
     "name": "graphviz-interactive-preview",
     "displayName": "Graphviz Interactive Preview",
     "description": "Graphviz (dot) Interactive Preview",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "keywords": [
         "dot",
         "graphviz",
@@ -173,8 +173,8 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run updateDependencies && npm run package",
-        "updateDependencies": "node updateDependencies.js",
-        "generateDocumentation": "node src/language/documentation/generator.js",
+        "updateDependencies": "node scripts/updateDependencies.js",
+        "generateDocumentation": "node scripts/language/documentation/generator.js && eslint src/language/documentation/documentation.ts --fix",
         "postinstall": "npm run updateDependencies",
         "compile": "webpack",
         "watch": "npm run generateDocumentation && webpack --watch",
