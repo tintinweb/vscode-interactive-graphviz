@@ -1,5 +1,19 @@
 # Change Log
 
+## 0.2.2
+
+
+- new: Outline View now shows an outline of the graph file. (using a parser lib with a fallback to regex symbol extraction under the hood) - #97
+
+<img width="794" alt="image" src="https://user-images.githubusercontent.com/2865694/167640865-43d7caaf-4976-42ee-8f28-9748bda5a5e6.png">
+
+- new: Auto Formatting for dot files - #99
+  - <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>: `Format Document`
+
+<img width="527" alt="image" src="https://user-images.githubusercontent.com/2865694/167641010-7c571b80-4dca-4298-b7b1-15e1d29f4597.png">
+
+
+
 ## 0.2.1
 
 - new: Symbols, Rename and References (fixes #79) - #94
