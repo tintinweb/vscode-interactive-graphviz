@@ -157,6 +157,7 @@
     },
     "dependencies": {
         "@hpcc-js/wasm": "^1.4.1",
+        "@ts-graphviz/parser": "^0.6.0",
         "@types/text-encoding": "^0.0.36",
         "@vscode/codicons": "^0.0.27",
         "@vscode/webview-ui-toolkit": "^1.0.0",
@@ -167,6 +168,7 @@
         "jquery-mousewheel": "^3.1.13",
         "lodash": "^4.17.21",
         "text-encoding": "^0.7.0",
+        "ts-graphviz": "^0.16.0",
         "vscode-uri": "^3.0.3"
     },
     "scripts": {
