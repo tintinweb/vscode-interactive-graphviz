@@ -221,7 +221,7 @@ implements
     try {
       const dotParser = new DotParser();
       dotParser.parse(document);
-      symbols = (dotParser.getVscodeTypedAst() as DocumentSymbolInformation).children;
+      symbols = [(dotParser.getVscodeTypedAst() as DocumentSymbolInformation)];
     } catch (e: any) {
       symbols = symbols.concat(this.findExplicitNodeDefinition(document));
       symbols = symbols.concat(this.findNodeDefinition(document));
