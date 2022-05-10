@@ -8,6 +8,7 @@ import {
   Range,
   TextDocument,
   TextEdit,
+  window,
 } from "vscode";
 
 export default class DotDocumentFormatter implements DocumentFormattingEditProvider {
@@ -17,17 +18,25 @@ export default class DotDocumentFormatter implements DocumentFormattingEditProvi
     // options: FormattingOptions,
     // token: CancellationToken,
   ): ProviderResult<TextEdit[]> {
-    const d = parse(document.getText());
-    const dot = toDot(d);
+    try {
+      const d = parse(document.getText());
+      const dot = toDot(d);
 
-    const edit: TextEdit[] = [];
-    edit.push(new TextEdit(
-      new Range(
-        new Position(0, 0),
-        new Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length),
-      ),
-      dot,
-    ));
-    return edit;
+      const edit: TextEdit[] = [];
+      edit.push(new TextEdit(
+        new Range(
+          new Position(0, 0),
+          new Position(document.lineCount - 1, document.lineAt(document.lineCount - 1).text.length),
+        ),
+        dot,
+      ));
+      return edit;
+    } catch (e: any) {
+      // (parser error) don't bubble up as a pot. unhandled thenable promise;
+      // explicitly return "no change" instead.
+      // show error message
+      window.showErrorMessage(`${e.name} (@${e.location.start.line}:${e.location.start.column}): ${e.message}`);
+      return undefined;
+    }
   }
 }
