@@ -10,6 +10,7 @@ import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
+import DotDocumentFormatter from "./language/DocumentFormatter";
 import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
@@ -116,6 +117,10 @@ function onActivate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerReferenceProvider(
     [settings.languageId],
     symProvider,
+  ));
+  context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(
+    [settings.languageId],
+    new DotDocumentFormatter(),
   ));
 }
 

@@ -257,7 +257,10 @@ implements
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private containingSymbol(symbols: DocumentSymbolInformation[], position: Position) {
+  private containingSymbol(
+    symbols: DocumentSymbolInformation[],
+    position: Position,
+  ) {
     let closestSymbol: DocumentSymbolInformation|undefined;
 
     const crawler = (syms: DocumentSymbolInformation[]) => {
