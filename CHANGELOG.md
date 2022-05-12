@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.2
+## 0.3.0
 
 
 - new: Outline View now shows an outline of the graph file. (using a parser lib with a fallback to regex symbol extraction under the hood) - #97
