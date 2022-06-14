@@ -1,11 +1,16 @@
 import "./toolbar.css";
 
 import React from "react";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 
 export function InfoToolBar(
-  { text, type } : {
+  {
+    text, type, children, infoButton,
+  } : {
         text?: string,
-        type: "search"|"error"
+        type: "search"|"error",
+        infoButton?: () => void,
+        children?: React.ReactNode,
     },
 ) : JSX.Element {
   if (!text || text === "") {
@@ -15,6 +20,10 @@ export function InfoToolBar(
     <span className="toolbar-item">
       {text}
     </span>
+    {infoButton && <VSCodeButton appearance="icon" onClick={infoButton}>
+      <span className="codicon codicon-info" />
+    </VSCodeButton>}
+    {children}
   </div>;
 }
 
