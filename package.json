@@ -185,11 +185,10 @@
         "xml2js": "^0.4.23"
     },
     "dependencies": {
-        "@hpcc-js/wasm": "^1.4.1",
+        "@hpcc-js/wasm": "^1.12.8",
         "@vscode/codicons": "^0.0.27",
         "@vscode/webview-ui-toolkit": "^1.0.0",
         "d3": "^7.4.4",
-        "d3-graphviz": "^4.1.1",
         "fork-ts-checker-webpack-plugin": "^7.2.6",
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
