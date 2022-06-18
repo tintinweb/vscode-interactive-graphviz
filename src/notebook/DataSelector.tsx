@@ -6,9 +6,13 @@ import StatView, { DataSelectorStat } from "./StatView";
 import TextField from "./TextField";
 import Toolbar, { InfoToolBar } from "./Toolbar";
 
+// eslint-disable-next-line no-shadow,no-unused-vars
 enum DataSelectorState {
+    // eslint-disable-next-line no-unused-vars
     loading,
+    // eslint-disable-next-line no-unused-vars
     noData,
+    // eslint-disable-next-line no-unused-vars
     json
 }
 
