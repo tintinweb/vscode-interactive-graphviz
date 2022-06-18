@@ -18,6 +18,10 @@ export function extensionConfig() {
   return vscode.workspace.getConfiguration("graphviz-interactive-preview");
 }
 
+export function extensionBaseConfig(id: string) {
+  return vscode.workspace.getConfiguration(id);
+}
+
 export function extension() {
   return vscode.extensions.getExtension("tintinweb.graphviz-interactive-preview");
 }
