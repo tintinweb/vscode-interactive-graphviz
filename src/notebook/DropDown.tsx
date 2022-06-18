@@ -20,9 +20,12 @@ export default function DropDown({
     marginLeft: "5px",
     marginBottom: "2px",
   }}>
-    {options.map((i) => <VSCodeOption key={i} onClick={() => {
-      // setSelection(i);
-      onChange(i);
-    }}>{i}</VSCodeOption>)}
+    {options.map((i) => <VSCodeOption onClick={
+      () => {
+        onChange(i);
+      }
+    }>
+      {i}
+    </VSCodeOption>)}
   </VSCodeDropdown>;
 }

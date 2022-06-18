@@ -4,7 +4,6 @@ import React from "react";
 import {
   VSCodeButton,
   VSCodeOption,
-  VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { Engine, Format } from "@hpcc-js/wasm";
 import { Overlay } from "react-overlays";
@@ -106,7 +105,7 @@ export default function GraphvizToolbar({
             target={refSaveButton as any}
             show={showSaveOverly}
           >
-            {({ props/* , arrowProps, placement */ }) => (
+            {({ props }) => (
               <div {...props}>
                 <div style={overlayStyle}>
                   <VSCodeButton onClick={saveFunction("svg")}>SVG</VSCodeButton>
@@ -133,15 +132,15 @@ export default function GraphvizToolbar({
           }
         }}
       >
-        <span slot="start" className="codicon codicon-search"></span>
+        <span slot="start" className="codicon codicon-search" />
         <VSCodeOption slot="end" selected={searchOptions.caseSensitive} onClick={() => setSearchOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
-          <span className="codicon codicon-case-sensitive"></span>
+          <span className="codicon codicon-case-sensitive" />
         </VSCodeOption>
         <VSCodeOption
           slot="end"
           selected={searchOptions.regex}
           onClick={() => setSearchOptions((s) => ({ ...s, regex: !s.regex }))}>
-          <span className="codicon codicon-regex"></span>
+          <span className="codicon codicon-regex" />
         </VSCodeOption>
         <VSCodeOption
           selected={showTypeSelection}
@@ -149,13 +148,13 @@ export default function GraphvizToolbar({
           onClick={() => setShowTypeSelection(!showTypeSelection)}
           ref={refTypeButton as any}
         >
-          <span className="codicon codicon-settings"></span>
+          <span className="codicon codicon-settings" />
         </VSCodeOption>
         <Overlay
           target={refTypeButton as any}
           show={showTypeSelection}
         >
-          {({ props/* , arrowProps, placement */ }) => (
+          {({ props }) => (
             <div {...props}>
               <div style={overlayStyle}>
                 <VSCodeOption

@@ -11,6 +11,7 @@ export default forwardRef(({
 }:
 {
     dot:string,
+    // eslint-disable-next-line no-unused-vars
     onClick:(t:BaseType)=>void
 }, parentRef) : JSX.Element => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -152,6 +153,7 @@ export default forwardRef(({
 
   const findEdges = (
     node: BaseType,
+    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
     ) => string|undefined,
   ): {edges: BaseType[], nodeNames:string[]}|undefined => {
@@ -179,6 +181,7 @@ export default forwardRef(({
 
   const findLinked = (
     node: BaseType,
+    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
       ) => string|undefined,
   ) : BaseType[] => {

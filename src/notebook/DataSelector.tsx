@@ -1,4 +1,3 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { get, isArray } from "lodash";
 import React, { useEffect, useState } from "react";
 import { digraph, INode, toDot } from "ts-graphviz";
@@ -122,9 +121,6 @@ export default function DataSelector({
 
   return <>
     <Toolbar>
-      <VSCodeButton appearance="icon">
-        <span className="codicon codicon-json" />
-      </VSCodeButton>
       <TextField
         style={{ marginRight: "5px" }}
         onEnter={setSelector}
