@@ -105,8 +105,12 @@ class Compiler {
                 acc.res.push("");
               }
             }
-            acc.lastLine = ((cur.type === "edge")
-             || (cur.type === "comment" && cur.kind === "slash")) ? cur.location.start.line : cur.location.end.line;
+            acc.lastLine = cur.location.end.line;
+            if ((cur.type === "edge")) {
+              acc.lastLine = cur.location.start.line;
+            } else if ((cur.type === "comment" && cur.kind === "slash")) {
+              acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
+            }
             acc.res.push(this.stringify(cur));
             return acc;
           }, { res: [], lastLine: Infinity })
@@ -130,7 +134,12 @@ class Compiler {
                 acc.res.push("");
               }
             }
-            acc.lastLine = (cur.type === "comment" && cur.kind === "slash") ? cur.location.start.line : cur.location.end.line;
+            acc.lastLine = cur.location.end.line;
+            if ((cur.type === "edge")) {
+              acc.lastLine = cur.location.start.line;
+            } else if ((cur.type === "comment" && cur.kind === "slash")) {
+              acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
+            }
             acc.res.push(this.stringify(cur));
             return acc;
           }, { res: [], lastLine: Infinity })
