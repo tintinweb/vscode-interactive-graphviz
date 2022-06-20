@@ -91,31 +91,35 @@ class Compiler {
     return `{${ast.body.map(this.stringify.bind(this)).join(" ")}}`;
   }
 
+  protected printBody(ast: AST.Graph | AST.Subgraph) : string {
+    if (ast.body.length === 0) return "{}";
+
+    return `{\n${ast.body
+      .reduce((acc:{res: string[], lastLine:number}, cur) => {
+        if (acc.lastLine < cur.location.start.line) {
+          for (let i = 0; i < cur.location.start.line - acc.lastLine - 1; i += 1) {
+            acc.res.push("");
+          }
+        }
+        acc.lastLine = cur.location.end.line;
+        if ((cur.type === "edge")) {
+          acc.lastLine = cur.location.start.line;
+        } else if ((cur.type === "comment" && cur.kind === "slash")) {
+          acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
+        }
+        acc.res.push(this.stringify(cur));
+        return acc;
+      }, { res: [], lastLine: Infinity })
+      .res
+      .map(this.indent.bind(this)).join("\n")}\n}`;
+  }
+
   protected printGroup(ast: AST.Graph): string {
     return [
       ast.strict ? "strict" : null,
       ast.directed ? "digraph" : "graph",
       ast.id ? this.stringify(ast.id) : null,
-      ast.body.length === 0
-        ? "{}"
-        : `{\n${ast.body
-          .reduce((acc:{res: string[], lastLine:number}, cur) => {
-            if (acc.lastLine < cur.location.start.line) {
-              for (let i = 0; i < cur.location.start.line - acc.lastLine - 1; i += 1) {
-                acc.res.push("");
-              }
-            }
-            acc.lastLine = cur.location.end.line;
-            if ((cur.type === "edge")) {
-              acc.lastLine = cur.location.start.line;
-            } else if ((cur.type === "comment" && cur.kind === "slash")) {
-              acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
-            }
-            acc.res.push(this.stringify(cur));
-            return acc;
-          }, { res: [], lastLine: Infinity })
-          .res
-          .map(this.indent.bind(this)).join("\n")}\n}`,
+      this.printBody(ast),
     ]
       .filter((v) => v !== null)
       .join(" ");
@@ -125,26 +129,7 @@ class Compiler {
     return [
       "subgraph",
       ast.id ? this.stringify(ast.id) : null,
-      ast.body.length === 0
-        ? "{}"
-        : `{\n${ast.body
-          .reduce((acc:{res: string[], lastLine:number}, cur) => {
-            if (acc.lastLine < cur.location.start.line) {
-              for (let i = 0; i < cur.location.start.line - acc.lastLine - 1; i += 1) {
-                acc.res.push("");
-              }
-            }
-            acc.lastLine = cur.location.end.line;
-            if ((cur.type === "edge")) {
-              acc.lastLine = cur.location.start.line;
-            } else if ((cur.type === "comment" && cur.kind === "slash")) {
-              acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
-            }
-            acc.res.push(this.stringify(cur));
-            return acc;
-          }, { res: [], lastLine: Infinity })
-          .res
-          .map(this.indent.bind(this)).join("\n")}\n}`,
+      this.printBody(ast),
     ]
       .filter((v) => v !== null)
       .join(" ");
