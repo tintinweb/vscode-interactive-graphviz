@@ -97,6 +97,7 @@ npm run open-in-browser
 ```javascript
 let options = {
     document: <vscode.document>,
+    uri: <vscode.uri>,
     content: <string: dotSrc>,
     callback: <function(webpanel){}>,
     allowMultiplePanels: <bool: false|[true]>,
