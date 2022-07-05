@@ -142,7 +142,7 @@ class Compiler {
     case false:
       return ast.value;
     case "html":
-      return `<${ast.value}>`;
+      return `<${ast.value.replace(/\n\s*/g, `\n${" ".repeat(this.indentSize)}`)}>`;
     default: throw new Error("Unknown literal type");
     }
   }
