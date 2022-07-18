@@ -1,0 +1,14 @@
+strict digraph {
+  /* This block comment is important or something. */
+
+  // I want to remember this later....
+  // layout = "dot";
+  node [
+    fillcolor = "#ffffff",
+  ];
+
+  // general note related to nothing important
+
+  // cool info here about this connection
+  "hello" -> "graph";
+}

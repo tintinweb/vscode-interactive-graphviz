@@ -94,6 +94,11 @@
                     "default": true,
                     "description": "Enable/Disable code completion. **Note:** Takes effect after restart."
                 },
+                "graphviz-interactive-preview.format.condenseAttributes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable/Disable attribute condension. This will try remove line breaks at attributes."
+                },
                 "graphviz-interactive-preview.guardInterval": {
                     "type": "number",
                     "default": 10,
