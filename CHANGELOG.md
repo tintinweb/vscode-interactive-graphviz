@@ -2,7 +2,7 @@
 
 ## 0.3.1
 
-- new: Switch to URI identifaction instead of document identification. Improves API. - #114
+- new: Switch to URI identification instead of document identification. Improves API. - #114
 - new: Introduce condense formatting option - #111
 - update: dependencies
 
