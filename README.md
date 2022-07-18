@@ -91,7 +91,7 @@ npm run open-in-browser
 }
 ```
 
-* Create one or multiple new panels displaying the rendered dot graph. Either provide a document or both the document and the graphviz dot source. The callback function receives the newly created [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/be9c496/src/features/interactiveWebview.js#L312-L328). Overload `webPanel.handleMessage((message)` from your callback function to receive message events like `onClick` and `onDblClick` emitted from inside the dot render window. 
+* Create one or multiple new panels displaying the rendered dot graph. Provide the `document` or `uri` object reference of the source code you want to render. Alternatively, you can also provide a `document` or `uri` reference of a virtual document and provide the graphviz dot source with the `content` field. In this case the extension will render the `content` and use the virtual document to extract the path information. The callback function receives the newly created [webPanel](https://github.com/tintinweb/vscode-interactive-graphviz/blob/be9c496/src/features/interactiveWebview.js#L312-L328). Overload `webPanel.handleMessage((message)` from your callback function to receive message events like `onClick` and `onDblClick` emitted from inside the dot render window. 
 
 
 ```javascript
