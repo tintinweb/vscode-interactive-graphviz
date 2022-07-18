@@ -2,7 +2,8 @@
 
 ## 0.3.1
 
-- Switch to URI identifaction instead of document identification. Improves API. - #110
+- Switch to URI identifaction instead of document identification. Improves API. - #114
+- Introduce condense formatting option - #111
 
 ## 0.3.0
 
