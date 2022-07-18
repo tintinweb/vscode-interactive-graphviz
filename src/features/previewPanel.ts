@@ -10,7 +10,7 @@ import * as settings from "../settings";
 export default class PreviewPanel {
   panel: vscode.WebviewPanel;
 
-  uri: vscode.Uri;
+  uri: vscode.Uri | undefined;
 
   needsRebuild: boolean;
 
@@ -57,7 +57,7 @@ export default class PreviewPanel {
         }
     };
 
-  constructor(uri: vscode.Uri, panel : vscode.WebviewPanel) {
+  constructor(uri: vscode.Uri | undefined, panel : vscode.WebviewPanel) {
     this.needsRebuild = false;
     this.uri = uri;
     this.panel = panel;
@@ -267,15 +267,17 @@ export default class PreviewPanel {
       const m = err.match(/syntax error in line (\d+)/);
       if (m) {
         const line = parseInt(m[1], 10) - 1;
-        diagnosticCollection.set(this.uri, [
-          new vscode.Diagnostic(
-            new vscode.Range(
-              new vscode.Position(line, 0),
-              new vscode.Position(line, 65535),
+        if (this.uri) {
+          diagnosticCollection.set(this.uri, [
+            new vscode.Diagnostic(
+              new vscode.Range(
+                new vscode.Position(line, 0),
+                new vscode.Position(line, 65535),
+              ),
+              err,
             ),
-            err,
-          ),
-        ]);
+          ]);
+        }
       }
     }
 

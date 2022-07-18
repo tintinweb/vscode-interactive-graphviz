@@ -1,7 +1,10 @@
 # Change Log
 
-## 0.3.0
+## 0.3.1
 
+- Switch to URI identifaction instead of document identification. Improves API. - #110
+
+## 0.3.0
 
 - new: Outline View now shows an outline of the graph file. (using a parser lib with a fallback to regex symbol extraction under the hood) - #97
 

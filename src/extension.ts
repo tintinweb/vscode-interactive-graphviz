@@ -48,6 +48,7 @@ function onActivate(context: vscode.ExtensionContext) {
       const args = a || {};
       const options = {
         document: args.document,
+        uri: args.uri,
         content: args.content,
         callback: args.callback,
         allowMultiplePanels: args.allowMultiplePanels,
@@ -63,7 +64,11 @@ function onActivate(context: vscode.ExtensionContext) {
         options.content = options.document.getText();
       }
 
-      graphvizView.revealOrCreatePreview(vscode.ViewColumn.Beside, options.document, options)
+      graphvizView.revealOrCreatePreview(
+        vscode.ViewColumn.Beside,
+        options.uri ? options.uri : (options.document && options.document.uri),
+        options,
+      )
         .then((webpanel : PreviewPanel) => {
           // trigger dot render on page load success
           // just in case webpanel takes longer to load, wait for page
