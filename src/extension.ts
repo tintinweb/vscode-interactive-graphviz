@@ -74,25 +74,25 @@ function onActivate(context: vscode.ExtensionContext) {
         options.uri = options.document.uri;
       }
 
-      const execute = (options:any) => {
+      const execute = (o:any) => {
         graphvizView.revealOrCreatePreview(
           vscode.ViewColumn.Beside,
-          options.uri,
-          options,
+          o.uri,
+          o,
         )
           .then((webpanel : PreviewPanel) => {
             // trigger dot render on page load success
             // just in case webpanel takes longer to load, wait for page
             // to ping back and perform action
             // eslint-disable-next-line no-param-reassign
-            webpanel.waitingForRendering = options.content;
+            webpanel.waitingForRendering = o.content;
             // eslint-disable-next-line no-param-reassign
-            webpanel.search = options.search;
+            webpanel.search = o.search;
 
             // allow caller to handle messages by providing them with the newly created webpanel
             // e.g. caller can override webpanel.handleMessage = function(message){};
-            if (options.callback) {
-              options.callback(webpanel);
+            if (o.callback) {
+              o.callback(webpanel);
             }
           });
       };
