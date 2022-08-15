@@ -45,19 +45,23 @@
             border-color: var(--vscode-inputValidation-errorBorder);
         }
 
-        svg g polygon {
+        .vscodeTheme svg g polygon {
             fill: none;
         }
 
-        svg, svg ellipse, svg path, svg polygon, svg polyline {
+        .vscodeTheme svg,
+        .vscodeTheme svg ellipse,
+        .vscodeTheme svg path,
+        .vscodeTheme svg polygon,
+        .vscodeTheme svg polyline {
             stroke: var(--vscode-foreground);
         }
 
-        svg g.edge polygon {
+        .vscodeTheme svg g.edge polygon {
             fill: var(--vscode-foreground);
         }
 
-        svg text {
+        .vscodeTheme svg text {
             stroke: none;
             fill: var(--vscode-foreground);
         }
@@ -330,6 +334,10 @@
                     break;
                 case 'setConfig':
                     viewConfig = message.value;
+                    if(viewConfig.themeColors)
+                        $("#graph").addClass("vscodeTheme");
+                    else
+                        $("#graph").removeClass("vscodeTheme");
                     break;
             }
         }, false);
