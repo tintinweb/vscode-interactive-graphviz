@@ -3,8 +3,11 @@
 [[  🌐  ](https://diligence.consensys.net)  [  📩  ](mailto:diligence@consensys.net)  [  🔥  ](https://consensys.github.io/diligence/)]
 </sup><br/><br/>
 
+[![Version](https://vsmarketplacebadge.apphb.com/version/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)
 
-# vscode-interactive-graphviz
+# Graphviz Interactive Preview (Visual Studio Code Extension)
 
 A VSCode extension that provides syntax highlighting, snippets, and an interactive, zoom-, pan- and searchable, live preview with edge tracing for graphs in Graphviz / dot format.
 
@@ -24,10 +27,6 @@ A VSCode extension that provides syntax highlighting, snippets, and an interacti
 <img width="303" alt="image" src="https://user-images.githubusercontent.com/27259/161251962-6aa3792c-70da-4f48-a9fa-5933012fede2.png">
 <img width="576" alt="image" src="https://user-images.githubusercontent.com/2865694/163143275-05f0547b-ce69-43ce-af66-ed76b1f7aa88.png">
 
-
-[![Version](https://vsmarketplacebadge.apphb.com/version/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)
 
 ## Interactivity Features
 * Renders dot/Graphviz sources in an interactive live preview.
