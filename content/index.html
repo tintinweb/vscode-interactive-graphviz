@@ -44,6 +44,23 @@
             background-color: var(--vscode-inputValidation-errorBackground);
             border-color: var(--vscode-inputValidation-errorBorder);
         }
+
+        svg g polygon {
+            fill: none;
+        }
+
+        svg, svg ellipse, svg path, svg polygon, svg polyline {
+            stroke: var(--vscode-foreground);
+        }
+
+        svg g.edge polygon {
+            fill: var(--vscode-foreground);
+        }
+
+        svg text {
+            stroke: none;
+            fill: var(--vscode-foreground);
+        }
     </style>
 
     <script src="dist/jquery.min.js"></script>
