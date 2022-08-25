@@ -59,7 +59,7 @@ export default class InteractiveWebviewGenerator {
   async revealOrCreatePreview(
     displayColumn: vscode.ViewColumn,
     uri: vscode.Uri | undefined,
-    options: { allowMultiplePanels: true; title: string; },
+    options: { allowMultiplePanels?: boolean; title?: string; },
   ) : Promise<PreviewPanel> {
     const that = this;
 
@@ -69,7 +69,7 @@ export default class InteractiveWebviewGenerator {
       if (previewPanel && !options.allowMultiplePanels) {
         previewPanel.reveal(displayColumn);
       } else {
-        previewPanel = that.createPreviewPanel(uri, displayColumn, options.title);
+        previewPanel = that.createPreviewPanel(uri, displayColumn, options.title || "Unnamed");
 
         if (!previewPanel) {
           reject();

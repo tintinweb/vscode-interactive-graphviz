@@ -5,6 +5,7 @@
   * */
 
 /** imports */
+import { TextDecoder } from "text-encoding";
 import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
@@ -46,7 +47,16 @@ function onActivate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
       // take document or string; default active editor if
       const args = a || {};
-      const options = {
+      const options : {
+        document?: vscode.TextDocument,
+        uri?: vscode.Uri,
+        content?: string,
+        // eslint-disable-next-line no-unused-vars
+        callback?: (panel: PreviewPanel) => void,
+        allowMultiplePanels?: boolean,
+        title?: string,
+        search?: any,
+      } = {
         document: args.document,
         uri: args.uri,
         content: args.content,
@@ -56,34 +66,53 @@ function onActivate(context: vscode.ExtensionContext) {
         search: args.search,
       };
 
-      if (!options.content && !options.document && vscode.window.activeTextEditor?.document) {
+      if (!options.content
+        && !options.document
+        && !options.uri
+        && vscode.window.activeTextEditor?.document) {
         options.document = vscode.window.activeTextEditor.document;
+        options.uri = options.document.uri;
       }
 
-      if (!options.content && options.document) {
-        options.content = options.document.getText();
+      const execute = (o:any) => {
+        graphvizView.revealOrCreatePreview(
+          vscode.ViewColumn.Beside,
+          o.uri,
+          o,
+        )
+          .then((webpanel : PreviewPanel) => {
+            // trigger dot render on page load success
+            // just in case webpanel takes longer to load, wait for page
+            // to ping back and perform action
+            // eslint-disable-next-line no-param-reassign
+            webpanel.waitingForRendering = o.content;
+            // eslint-disable-next-line no-param-reassign
+            webpanel.search = o.search;
+
+            // allow caller to handle messages by providing them with the newly created webpanel
+            // e.g. caller can override webpanel.handleMessage = function(message){};
+            if (o.callback) {
+              o.callback(webpanel);
+            }
+          });
+      };
+
+      if (!options.content) {
+        if (options.document) {
+          options.content = options.document.getText();
+        } else if (options.uri) {
+          vscode.workspace.fs.readFile(options.uri)
+            .then((data) => {
+              const td = new TextDecoder();
+              options.content = td.decode(data);
+              execute(options);
+            });
+          return;
+        } else {
+          vscode.window.showErrorMessage("No content for previewing!");
+        }
       }
-
-      graphvizView.revealOrCreatePreview(
-        vscode.ViewColumn.Beside,
-        options.uri ? options.uri : (options.document && options.document.uri),
-        options,
-      )
-        .then((webpanel : PreviewPanel) => {
-          // trigger dot render on page load success
-          // just in case webpanel takes longer to load, wait for page
-          // to ping back and perform action
-          // eslint-disable-next-line no-param-reassign
-          webpanel.waitingForRendering = options.content;
-          // eslint-disable-next-line no-param-reassign
-          webpanel.search = options.search;
-
-          // allow caller to handle messages by providing them with the newly created webpanel
-          // e.g. caller can override webpanel.handleMessage = function(message){};
-          if (options.callback) {
-            options.callback(webpanel);
-          }
-        });
+      execute(options);
     }),
   );
 
