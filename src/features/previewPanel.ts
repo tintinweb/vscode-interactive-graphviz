@@ -303,6 +303,7 @@ export default class PreviewPanel {
       value: {
         transitionDelay: settings.extensionConfig().get("view.transitionDelay"),
         transitionaDuration: settings.extensionConfig().get("view.transitionDuration"),
+        themeColors: settings.extensionConfig().get("view.themeColors"),
       },
     });
     this.renderWaitingContent();

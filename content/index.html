@@ -44,6 +44,27 @@
             background-color: var(--vscode-inputValidation-errorBackground);
             border-color: var(--vscode-inputValidation-errorBorder);
         }
+
+        .vscodeTheme svg g polygon {
+            fill: none;
+        }
+
+        .vscodeTheme svg,
+        .vscodeTheme svg ellipse,
+        .vscodeTheme svg path,
+        .vscodeTheme svg polygon,
+        .vscodeTheme svg polyline {
+            stroke: var(--vscode-foreground);
+        }
+
+        .vscodeTheme svg g.edge polygon {
+            fill: var(--vscode-foreground);
+        }
+
+        .vscodeTheme svg text {
+            stroke: none;
+            fill: var(--vscode-foreground);
+        }
     </style>
 
     <script src="dist/jquery.min.js"></script>
@@ -313,6 +334,10 @@
                     break;
                 case 'setConfig':
                     viewConfig = message.value;
+                    if(viewConfig.themeColors)
+                        $("#graph").addClass("vscodeTheme");
+                    else
+                        $("#graph").removeClass("vscodeTheme");
                     break;
             }
         }, false);

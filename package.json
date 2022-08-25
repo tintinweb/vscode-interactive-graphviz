@@ -143,6 +143,11 @@
                     "type": "number",
                     "default": 500,
                     "description": "The duration of the graph change transition."
+                },
+                "graphviz-interactive-preview.view.themeColors": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the preview in VS Code's Theme Colors. (Experimental)"
                 }
             }
         }
