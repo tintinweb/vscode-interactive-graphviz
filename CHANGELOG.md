@@ -2,9 +2,9 @@
 
 ## 0.3.2
 
-- new: Added option for not focusing on the newly created preview (focus stays on the editor) - #125
-- new: Automatically open the preview when opening files with the DOT-Language - #122
-- new: Added (experimental) configuration option to use VSCode's Theme Colors - #72 #120
+- new: Added option for not focusing on the newly created preview (focus stays on the editor) (default: `true`, setting: `graphviz-interactive-preview.preserveFocus`) - #125
+- new: Automatically open the preview when opening files with the DOT-Language (default: `true`, setting: `graphviz-interactive-preview.openAutomatically`) - #122
+- new: Added (experimental) configuration option to use VSCode's Theme Colors (default: `false`, setting: `graphviz-interactive-preview.view.themeColors`) - #72 #120
 - new: given an URI and no content the content is read from the URI - #119
 - fix: Also Dim Node Background color - #115
 - update: dependencies
