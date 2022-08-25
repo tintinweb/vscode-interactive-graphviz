@@ -82,6 +82,9 @@ function onActivate(context: vscode.ExtensionContext) {
         && !options.uri
         && vscode.window.activeTextEditor?.document) {
         options.document = vscode.window.activeTextEditor.document;
+      }
+
+      if (!options.uri && options.document) {
         options.uri = options.document.uri;
       }
 

@@ -73,7 +73,7 @@ export default class InteractiveWebviewGenerator {
       if (previewPanel && !options.allowMultiplePanels) {
         previewPanel.reveal(isObject(displayColumn) ? displayColumn.viewColumn : displayColumn);
       } else {
-        previewPanel = that.createPreviewPanel(uri, displayColumn, options.title || "Unnamed");
+        previewPanel = that.createPreviewPanel(uri, displayColumn, options.title);
 
         if (!previewPanel) {
           reject();
@@ -184,9 +184,9 @@ export default class InteractiveWebviewGenerator {
         viewColumn: vscode.ViewColumn;
         preserveFocus?: boolean | undefined;
     },
-    title: string,
+    title: string | undefined,
   ) {
-    const previewTitle = title || `Preview: '${uri ? Utils.basename(uri) : "Unknown"}'`;
+    const previewTitle = title || `Preview: '${uri ? Utils.basename(uri) : "Unnamed"}'`;
 
     const webViewPanel = vscode.window.createWebviewPanel("graphvizPreview", previewTitle, displayColumn, {
       enableFindWidget: false,
