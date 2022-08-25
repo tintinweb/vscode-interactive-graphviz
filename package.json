@@ -89,6 +89,11 @@
         "configuration": {
             "title": "Graphviz Interactive Preview",
             "properties": {
+                "graphviz-interactive-preview.openAutomatically": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically open the preview when a file is opened with the DOT language."
+                },
                 "graphviz-interactive-preview.codeCompletion.enable": {
                     "type": "boolean",
                     "default": true,

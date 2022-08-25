@@ -41,6 +41,17 @@ function onActivate(context: vscode.ExtensionContext) {
     }
   }));
 
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument((doc) => {
+      if (doc.languageId !== settings.languageId) return;
+      if (!settings.extensionConfig().get("openAutomatically")) return;
+
+      vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", {
+        document: doc,
+      });
+    }),
+  );
+
   /* commands */
 
   context.subscriptions.push(
