@@ -7,6 +7,7 @@
 - new: Added (experimental) configuration option to use VSCode's Theme Colors - #72 #120
 - new: given an URI and no content the content is read from the URI - #119
 - fix: Also Dim Node Background color - #115
+- update: dependencies
 
 ## 0.3.1
 
