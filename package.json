@@ -109,6 +109,11 @@
                     "default": 10,
                     "description": "In miliseconds; First render request after a period of inactivity specified by guardInterval is delayed by guardInterval. Fixes old-content/new-content double-events with on-save and on-change events while preserving the ability to monitor fast-changing files. This is effectively an anti-debounce and thus has no effect when debouncingInterval is set."
                 },
+                "graphviz-interactive-preview.preserveFocus": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Keep the focus on the currently active window."
+                },
                 "graphviz-interactive-preview.debouncingInterval": {
                     "type": "number",
                     "default": 0,

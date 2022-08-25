@@ -87,7 +87,10 @@ function onActivate(context: vscode.ExtensionContext) {
 
       const execute = (o:any) => {
         graphvizView.revealOrCreatePreview(
-          vscode.ViewColumn.Beside,
+          {
+            viewColumn: vscode.ViewColumn.Beside,
+            preserveFocus: settings.extensionConfig().get("preserveFocus"),
+          },
           o.uri,
           o,
         )

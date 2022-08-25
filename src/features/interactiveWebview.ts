@@ -8,6 +8,7 @@
 import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
 import { TextEncoder } from "text-encoding";
+import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
 
@@ -57,7 +58,10 @@ export default class InteractiveWebviewGenerator {
   }
 
   async revealOrCreatePreview(
-    displayColumn: vscode.ViewColumn,
+    displayColumn: vscode.ViewColumn | {
+      viewColumn: vscode.ViewColumn;
+      preserveFocus?: boolean | undefined;
+  },
     uri: vscode.Uri | undefined,
     options: { allowMultiplePanels?: boolean; title?: string; },
   ) : Promise<PreviewPanel> {
@@ -67,7 +71,7 @@ export default class InteractiveWebviewGenerator {
       let previewPanel = (uri) ? that.webviewPanels.get(uri) : undefined;
 
       if (previewPanel && !options.allowMultiplePanels) {
-        previewPanel.reveal(displayColumn);
+        previewPanel.reveal(isObject(displayColumn) ? displayColumn.viewColumn : displayColumn);
       } else {
         previewPanel = that.createPreviewPanel(uri, displayColumn, options.title || "Unnamed");
 
