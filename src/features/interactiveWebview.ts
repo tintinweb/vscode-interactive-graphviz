@@ -89,8 +89,10 @@ export default class InteractiveWebviewGenerator {
         // when the user closes the tab, remove the panel
         previewPanel.getPanel().onDidDispose(() => {
           previewPanel?.dispose();
-          // eslint-disable-next-line no-sequences
-          if (uri) return that.webviewPanels.delete(uri.toString()), undefined, that.context.subscriptions;
+          if (uri) {
+            // eslint-disable-next-line no-sequences
+            return that.webviewPanels.delete(uri.toString()), undefined, that.context.subscriptions;
+          }
           return that.context.subscriptions;
         });
         // when the pane becomes visible again, refresh it
