@@ -96,6 +96,10 @@ function onActivate(context: vscode.ExtensionContext) {
         options.uri = options.document.uri;
       }
 
+      if (typeof options.displayColumn === "object" && options.displayColumn.preserveFocus === undefined) {
+        options.displayColumn.preserveFocus = settings.extensionConfig().get("preserveFocus"); // default to user settings
+      }
+
       const execute = (o:any) => {
         graphvizView.revealOrCreatePreview(
           o.displayColumn,
