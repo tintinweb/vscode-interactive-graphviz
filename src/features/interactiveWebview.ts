@@ -7,7 +7,6 @@
 /** imports */
 import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
-import { TextEncoder } from "text-encoding";
 import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
@@ -102,6 +101,7 @@ export default class InteractiveWebviewGenerator {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   handleMessage(
     previewPanel: PreviewPanel,
     message: {
