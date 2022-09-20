@@ -5,6 +5,8 @@ import {
 import { flatten } from "lodash";
 import React, { forwardRef, useImperativeHandle } from "react";
 
+import "./vscodeTheme.css";
+
 export default forwardRef(({
   dot,
   onClick,
@@ -36,6 +38,7 @@ export default forwardRef(({
         g.attr("transform", e.transform);
       });
     const c = (g.node() as SVGGElement).transform.baseVal;
+    // eslint-disable-next-line no-shadow
     let originalTransform;
     for (let i = 0; i < c.length; i += 1) {
       const item = c.getItem(i);
@@ -256,6 +259,7 @@ export default forwardRef(({
     overflow: "hidden",
     textAlign: "center",
   }}
+  className="vscodeTheme"
   ref={ref}
   />;
 });

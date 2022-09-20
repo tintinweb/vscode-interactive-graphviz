@@ -1,0 +1,20 @@
+.vscodeTheme svg g polygon {
+  fill: none;
+}
+
+.vscodeTheme svg,
+.vscodeTheme svg ellipse,
+.vscodeTheme svg path,
+.vscodeTheme svg polygon,
+.vscodeTheme svg polyline {
+  stroke: var(--vscode-foreground);
+}
+
+.vscodeTheme svg g.edge polygon {
+  fill: var(--vscode-foreground);
+}
+
+.vscodeTheme svg text {
+  stroke: none;
+  fill: var(--vscode-foreground);
+}

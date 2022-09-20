@@ -10,6 +10,7 @@ import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import saveFile from "./features/saveFile";
+import { IMessageSetConfiguration } from "./IRenderConfiguration";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotDocumentFormatter from "./language/DocumentFormatter";
@@ -140,6 +141,17 @@ function onActivate(context: vscode.ExtensionContext) {
   messageChannel.onDidReceiveMessage((e) => {
     if (e.message.action === "saveFile") {
       saveFile(e.message.payload.data, e.message.payload.type);
+    }
+    if (e.message.command === "ready") {
+      const msg : IMessageSetConfiguration = {
+        command: "setConfiguration",
+        value: {
+          transitionDelay: settings.extensionConfig().get("view.transitionDelay"),
+          transitionDuration: settings.extensionConfig().get("view.transitionDuration"),
+          themeColors: settings.extensionConfig().get("view.themeColors"),
+        },
+      };
+      messageChannel.postMessage(msg);
     }
   });
 
