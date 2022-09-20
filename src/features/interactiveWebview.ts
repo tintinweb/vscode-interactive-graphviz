@@ -7,6 +7,8 @@
 /** imports */
 import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
+import { TextEncoder } from "text-encoding";
+import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
 import saveFile from "./saveFile";
@@ -53,30 +55,36 @@ export default class InteractiveWebviewGenerator {
   }
 
   async revealOrCreatePreview(
-    displayColumn: vscode.ViewColumn,
-    doc: vscode.TextDocument,
-    options: { allowMultiplePanels: true; title: string; },
+    displayColumn: vscode.ViewColumn | {
+      viewColumn: vscode.ViewColumn;
+      preserveFocus?: boolean | undefined;
+  },
+    uri: vscode.Uri | undefined,
+    options: { allowMultiplePanels?: boolean; title?: string; },
   ) : Promise<PreviewPanel> {
     const that = this;
 
     return new Promise((resolve, reject) => {
-      let previewPanel = that.webviewPanels.get(doc.uri);
+      let previewPanel = (uri) ? that.webviewPanels.get(uri) : undefined;
 
       if (previewPanel && !options.allowMultiplePanels) {
-        previewPanel.reveal(displayColumn);
+        previewPanel.reveal(isObject(displayColumn) ? displayColumn.viewColumn : displayColumn);
       } else {
-        previewPanel = that.createPreviewPanel(doc, displayColumn, options.title);
+        previewPanel = that.createPreviewPanel(uri, displayColumn, options.title);
 
         if (!previewPanel) {
           reject();
           return;
         }
-        that.webviewPanels.set(doc.uri, previewPanel);
+        if (uri) {
+          that.webviewPanels.set(uri, previewPanel);
+        }
         // when the user closes the tab, remove the panel
         previewPanel.getPanel().onDidDispose(() => {
           previewPanel?.dispose();
           // eslint-disable-next-line no-sequences
-          return that.webviewPanels.delete(doc.uri), undefined, that.context.subscriptions;
+          if (uri) return that.webviewPanels.delete(uri), undefined, that.context.subscriptions;
+          return that.context.subscriptions;
         });
         // when the pane becomes visible again, refresh it
         // eslint-disable-next-line no-unused-vars
@@ -136,14 +144,14 @@ export default class InteractiveWebviewGenerator {
   }
 
   createPreviewPanel(
-    doc: vscode.TextDocument,
+    uri: vscode.Uri | undefined,
     displayColumn: vscode.ViewColumn | {
         viewColumn: vscode.ViewColumn;
         preserveFocus?: boolean | undefined;
     },
-    title: string,
+    title: string | undefined,
   ) {
-    const previewTitle = title || `Preview: '${Utils.basename(doc.uri)}'`;
+    const previewTitle = title || `Preview: '${uri ? Utils.basename(uri) : "Unnamed"}'`;
 
     const webViewPanel = vscode.window.createWebviewPanel("graphvizPreview", previewTitle, displayColumn, {
       enableFindWidget: false,
@@ -156,7 +164,7 @@ export default class InteractiveWebviewGenerator {
 
     webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content", "icon.png");
 
-    return new PreviewPanel(doc.uri, webViewPanel);
+    return new PreviewPanel(uri, webViewPanel);
   }
 
   updateContent(previewPanel: PreviewPanel) : void {

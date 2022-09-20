@@ -19,9 +19,51 @@
         }
 
         .toolbar-item {
-            color: white;
-            font-weight: bold;
+            color: var(--vscode-input-foreground);
+            font-weight: normal;
             text-decoration: none;
+        }
+
+        .toolbar {
+            border-style: solid;
+            font-size: .9em;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-top: 3px;
+            margin-bottom: 3px;
+            padding: 5px;
+            border-width: 1px;
+        }
+
+        .toolbar-search {
+            background-color: var(--vscode-inputValidation-infoBackground);
+            border-color: var(--vscode-inputValidation-infoBorder);
+        }
+
+        .toolbar-error {
+            background-color: var(--vscode-inputValidation-errorBackground);
+            border-color: var(--vscode-inputValidation-errorBorder);
+        }
+
+        .vscodeTheme svg g polygon {
+            fill: none;
+        }
+
+        .vscodeTheme svg,
+        .vscodeTheme svg ellipse,
+        .vscodeTheme svg path,
+        .vscodeTheme svg polygon,
+        .vscodeTheme svg polyline {
+            stroke: var(--vscode-foreground);
+        }
+
+        .vscodeTheme svg g.edge polygon {
+            fill: var(--vscode-foreground);
+        }
+
+        .vscodeTheme svg text {
+            stroke: none;
+            fill: var(--vscode-foreground);
         }
     </style>
 
@@ -85,12 +127,12 @@
         </vscode-dropdown>
     </div>
 
-    <div id="searchtoolbar" class="toolbar-dark">
+    <div id="searchtoolbar" class="toolbar toolbar-search">
         <span id="searchresult" class="toolbar-item">
         </span>
     </div>
 
-    <div id="faulttoolbar" class="toolbar-danger">
+    <div id="faulttoolbar" class="toolbar toolbar-error">
         <span id="faultmessage" class="toolbar-item">
         </span>
     </div>
@@ -230,7 +272,7 @@
         /** main render funcs **/
         function render(dotSrc) {
             $("#faulttoolbar").hide();
-            $("#searchtoolbar").hide();
+            //$("#searchtoolbar").hide();
             transition = d3.transition("startTransition")
                 .ease(d3.easeLinear)
                 .delay(viewConfig.transitionDelay)
@@ -293,6 +335,10 @@
                     break;
                 case 'setConfig':
                     viewConfig = message.value;
+                    if(viewConfig.themeColors)
+                        $("#graph").addClass("vscodeTheme");
+                    else
+                        $("#graph").removeClass("vscodeTheme");
                     break;
             }
         }, false);

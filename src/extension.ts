@@ -5,24 +5,24 @@
   * */
 
 /** imports */
-import {
-  commands, ExtensionContext, languages, NotebookRendererMessaging, notebooks, ViewColumn, window, workspace,
-} from "vscode";
+import { TextDecoder } from "text-encoding";
+import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import saveFile from "./features/saveFile";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
+import DotDocumentFormatter from "./language/DocumentFormatter";
 import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
 
-function onActivate(context: ExtensionContext) {
+function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
   /* Document Events */
 
-  workspace.onDidChangeTextDocument((event) => {
+  vscode.workspace.onDidChangeTextDocument((event) => {
     if (event.document.languageId === settings.languageId
         || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(event.document.uri);
@@ -32,7 +32,7 @@ function onActivate(context: ExtensionContext) {
     }
   }, null, context.subscriptions);
 
-  context.subscriptions.push(workspace.onDidSaveTextDocument((doc) => {
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => {
     if (doc.languageId === settings.languageId
         || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(doc.uri);
@@ -42,14 +42,35 @@ function onActivate(context: ExtensionContext) {
     }
   }));
 
+  context.subscriptions.push(
+    vscode.workspace.onDidOpenTextDocument((doc) => {
+      if (doc.languageId !== settings.languageId) return;
+      if (!settings.extensionConfig().get("openAutomatically")) return;
+
+      vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", {
+        document: doc,
+      });
+    }),
+  );
+
   /* commands */
 
   context.subscriptions.push(
-    commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
+    vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
       // take document or string; default active editor if
       const args = a || {};
-      const options = {
+      const options : {
+        document?: vscode.TextDocument,
+        uri?: vscode.Uri,
+        content?: string,
+        // eslint-disable-next-line no-unused-vars
+        callback?: (panel: PreviewPanel) => void,
+        allowMultiplePanels?: boolean,
+        title?: string,
+        search?: any,
+      } = {
         document: args.document,
+        uri: args.uri,
         content: args.content,
         callback: args.callback,
         allowMultiplePanels: args.allowMultiplePanels,
@@ -57,35 +78,64 @@ function onActivate(context: ExtensionContext) {
         search: args.search,
       };
 
-      if (!options.content && !options.document && window.activeTextEditor?.document) {
-        options.document = window.activeTextEditor?.document;
+      if (!options.content
+        && !options.document
+        && !options.uri
+        && vscode.window.activeTextEditor?.document) {
+        options.document = vscode.window.activeTextEditor.document;
       }
 
-      if (!options.content && options.document) {
-        options.content = options.document.getText();
+      if (!options.uri && options.document) {
+        options.uri = options.document.uri;
       }
 
-      graphvizView.revealOrCreatePreview(ViewColumn.Beside, options.document, options)
-        .then((webpanel : PreviewPanel) => {
-          // trigger dot render on page load success
-          // just in case webpanel takes longer to load, wait for page
-          // to ping back and perform action
-          // eslint-disable-next-line no-param-reassign
-          webpanel.waitingForRendering = options.content;
-          // eslint-disable-next-line no-param-reassign
-          webpanel.search = options.search;
+      const execute = (o:any) => {
+        graphvizView.revealOrCreatePreview(
+          {
+            viewColumn: vscode.ViewColumn.Beside,
+            preserveFocus: settings.extensionConfig().get("preserveFocus"),
+          },
+          o.uri,
+          o,
+        )
+          .then((webpanel : PreviewPanel) => {
+            // trigger dot render on page load success
+            // just in case webpanel takes longer to load, wait for page
+            // to ping back and perform action
+            // eslint-disable-next-line no-param-reassign
+            webpanel.waitingForRendering = o.content;
+            // eslint-disable-next-line no-param-reassign
+            webpanel.search = o.search;
 
-          // allow caller to handle messages by providing them with the newly created webpanel
-          // e.g. caller can override webpanel.handleMessage = function(message){};
-          if (options.callback) {
-            options.callback(webpanel);
-          }
-        });
+            // allow caller to handle messages by providing them with the newly created webpanel
+            // e.g. caller can override webpanel.handleMessage = function(message){};
+            if (o.callback) {
+              o.callback(webpanel);
+            }
+          });
+      };
+
+      if (!options.content) {
+        if (options.document) {
+          options.content = options.document.getText();
+        } else if (options.uri) {
+          vscode.workspace.fs.readFile(options.uri)
+            .then((data) => {
+              const td = new TextDecoder();
+              options.content = td.decode(data);
+              execute(options);
+            });
+          return;
+        } else {
+          vscode.window.showErrorMessage("No content for previewing!");
+        }
+      }
+      execute(options);
     }),
   );
 
   /* notebook messaging */
-  const messageChannel: NotebookRendererMessaging = notebooks
+  const messageChannel: vscode.NotebookRendererMessaging = vscode.notebooks
     .createRendererMessaging(settings.notebookRendererId);
   messageChannel.onDidReceiveMessage((e) => {
     if (e.message.action === "saveFile") {
@@ -96,7 +146,7 @@ function onActivate(context: ExtensionContext) {
   /* add. providers */
 
   if (settings.extensionConfig().codeCompletion.enable as boolean) {
-    context.subscriptions.push(languages.registerCompletionItemProvider(
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
       [settings.languageId],
       new DotCompletionItemProvider(),
       "=",
@@ -106,28 +156,32 @@ function onActivate(context: ExtensionContext) {
     ));
   }
 
-  context.subscriptions.push(languages.registerColorProvider(
+  context.subscriptions.push(vscode.languages.registerColorProvider(
     [settings.languageId],
     new ColorProvider(),
   ));
 
-  context.subscriptions.push(languages.registerHoverProvider(
+  context.subscriptions.push(vscode.languages.registerHoverProvider(
     [settings.languageId],
     new DotHoverProvider(),
   ));
 
   const symProvider = new SymbolProvider();
-  context.subscriptions.push(languages.registerDocumentSymbolProvider(
+  context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(
     [settings.languageId],
     symProvider,
   ));
-  context.subscriptions.push(languages.registerRenameProvider(
+  context.subscriptions.push(vscode.languages.registerRenameProvider(
     [settings.languageId],
     symProvider,
   ));
-  context.subscriptions.push(languages.registerReferenceProvider(
+  context.subscriptions.push(vscode.languages.registerReferenceProvider(
     [settings.languageId],
     symProvider,
+  ));
+  context.subscriptions.push(vscode.languages.registerDocumentFormattingEditProvider(
+    [settings.languageId],
+    new DotDocumentFormatter(),
   ));
 }
 

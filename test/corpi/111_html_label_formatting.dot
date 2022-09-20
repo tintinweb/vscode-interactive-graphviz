@@ -1,0 +1,36 @@
+digraph luffarschack {
+	node [shape=none];
+	"baabb--ba-" [label=<<TABLE BORDER="1" BGCOLOR="white">
+		<TR><TD BGCOLOR="red"></TD><TD BGCOLOR="red"></TD><TD BGCOLOR="blue"></TD></TR>
+		<TR><TD BGCOLOR="blue"></TD><TD BGCOLOR="white"></TD><TD BGCOLOR="white"></TD></TR>
+		<TR><TD BGCOLOR="blue"></TD><TD BGCOLOR="red"></TD><TD BGCOLOR="white"></TD></TR>
+	</TABLE>>];
+	"baabb--ba-" -> "abbaa-a-b-";
+	"baabb--ba-" -> "ab-aaba--b";
+	"baabb--ba-" -> "abbaaba---";
+	"baabb--ba-" -> "ab--a-abba";
+	"baabb--ba-" -> "a-bba-a-ba";
+	"baabb--ba-" -> "ab-aa-a-bb";
+	"baabb--ba-" -> "a--baba-ba";
+	"baabb--ba-" -> "a-baa-ab-b";
+	"baabb--ba-" -> "ab-ba-ab-a";
+	"a-bba-aba-" [label=<<TABLE BORDER="1" BGCOLOR="white">
+		<TR><TD BGCOLOR="white"></TD><TD BGCOLOR="blue"></TD><TD BGCOLOR="blue"></TD></TR>
+		<TR><TD BGCOLOR="red"></TD><TD BGCOLOR="white"></TD><TD BGCOLOR="red"></TD></TR>
+		<TR><TD BGCOLOR="blue"></TD><TD BGCOLOR="red"></TD><TD BGCOLOR="white"></TD></TR>
+	</TABLE>>];
+	"a-bba-aba-" -> "bbbaa---ab";
+	"a-bba-aba-" -> "bbb-aa--ab";
+	"a-bba-aba-" -> "baabb--ba-";
+	"a-bba-aba-" -> "b-abb-ab-a";
+	"a-bba-aba-" -> "bbaa--a-bb";
+	"a-bba-aba-" -> "bbba--a-ab";
+	"a-bba-aba-" -> "b-abb--baa";
+	"a-bba-aba-" -> "bbb--aa-ab";
+	"a-bba-aba-" -> "b--baaabb-";
+	"a-a--ba-b-" [label=<<TABLE BORDER="1" BGCOLOR="white">
+		<TR><TD BGCOLOR="white"></TD><TD BGCOLOR="red"></TD><TD BGCOLOR="white"></TD></TR>
+		<TR><TD BGCOLOR="white"></TD><TD BGCOLOR="blue"></TD><TD BGCOLOR="red"></TD></TR>
+		<TR><TD BGCOLOR="white"></TD><TD BGCOLOR="blue"></TD><TD BGCOLOR="white"></TD></TR>
+	</TABLE>>];
+}

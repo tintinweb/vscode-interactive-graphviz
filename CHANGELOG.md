@@ -1,5 +1,61 @@
 # Change Log
 
+## 0.3.2
+
+- new: Added option for not focusing on the newly created preview (focus stays on the editor) (default: `true`, setting: `graphviz-interactive-preview.preserveFocus`) - #125
+- new: Automatically open the preview when opening files with the DOT-Language (default: `true`, setting: `graphviz-interactive-preview.openAutomatically`) - #122
+- new: Added (experimental) configuration option to use VSCode's Theme Colors (default: `false`, setting: `graphviz-interactive-preview.view.themeColors`) - #72 #120
+- new: given an URI and no content the content is read from the URI - #119
+- fix: Also Dim Node Background color - #115
+- update: dependencies
+
+## 0.3.1
+
+- new: Switch to URI identification instead of document identification. Improves API. - #114
+- fix: Introduce condense formatting option - #111
+- update: dependencies
+
+## 0.3.0
+
+- new: Outline View now shows an outline of the graph file. (using a parser lib with a fallback to regex symbol extraction under the hood) - #97
+
+<img width="794" alt="image" src="https://user-images.githubusercontent.com/2865694/167640865-43d7caaf-4976-42ee-8f28-9748bda5a5e6.png">
+
+- new: Auto Formatting for dot files - #99
+  - <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>: `Format Document`
+
+<img width="527" alt="image" src="https://user-images.githubusercontent.com/2865694/167641010-7c571b80-4dca-4298-b7b1-15e1d29f4597.png">
+
+
+
+## 0.2.1
+
+- new: Symbols, Rename and References (fixes #79) - #94
+  - suggest proper symbols (Press `Ctrl+P` and afterwards enter `@`)
+
+<img width="756" alt="Screenshot 2022-04-13 at 23 36 20" src="https://user-images.githubusercontent.com/27259/163274489-6bc4627e-f545-47f1-a674-a7b551583d34.png">
+
+  - renaming
+
+<img width="390" alt="Screenshot 2022-04-13 at 23 38 42" src="https://user-images.githubusercontent.com/27259/163274816-7a49ff59-c4a5-4d35-92b6-7958b32cad7b.png">
+
+  - references
+
+<img width="666" alt="Screenshot 2022-04-13 at 23 40 07" src="https://user-images.githubusercontent.com/27259/163274997-6e696418-c9de-4fa8-800d-fbf0bee2e7de.png">
+
+- new: Improved toolbar styling for different themes - #100
+
+<img width="674" alt="Screenshot 2022-04-15 at 12 07 57" src="https://user-images.githubusercontent.com/27259/163558499-d2c552e6-2b07-4299-8f5d-53dca9361a84.png">
+
+<img width="674" alt="Screenshot 2022-04-15 at 12 09 06" src="https://user-images.githubusercontent.com/27259/163558623-117ce7de-9c99-4c2e-8613-32af1d05df6f.png">
+
+<img width="674" alt="Screenshot 2022-04-15 at 12 08 43" src="https://user-images.githubusercontent.com/27259/163558637-e9074a64-15cb-4970-aca5-b59287cbdd76.png">
+
+- fix: Keep search bar while rendering - #102 fixes #101
+
+- update: Documentation information on Hover and on CodeCompletion have been harmonised - #103
+
+
 ## 0.2.0
 
 - new: Implements Selection of Render Engine - #85 fixes #69
