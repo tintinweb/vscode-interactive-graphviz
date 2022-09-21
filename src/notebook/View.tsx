@@ -14,14 +14,17 @@ import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
 import { InfoToolBar } from "./Toolbar";
 import Graphviz from "./Graphviz";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
+import { IRenderConfiguration } from "../IRenderConfiguration";
 
 export default function View(
   {
     source,
     context,
+    config,
   } : {
     source: string,
-    context: RendererContext<any>
+    context: RendererContext<any>,
+    config: IRenderConfiguration
   },
 ) : JSX.Element {
   const ref = React.useRef<{direction: Direction}>();
@@ -210,6 +213,7 @@ export default function View(
     <Graphviz
       dot={graph}
       ref={graphvizView}
+      config={config}
       onClick={(el) => {
         setHighlights(streamSearch(el) || []);
       }}

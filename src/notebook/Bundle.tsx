@@ -13,7 +13,11 @@ export default function Bundle({
 }) : JSX.Element {
   const [source, setSource] = useState<string|undefined>();
 
-  const [configuration, setConfiguration] = useState<IRenderConfiguration|undefined>();
+  const [configuration, setConfiguration] = useState<IRenderConfiguration>({
+    themeColors: false,
+    transitionDelay: 0,
+    transitionDuration: 0,
+  });
 
   useEffect(() => {
     // @ts-ignore
@@ -26,10 +30,8 @@ export default function Bundle({
     context.postMessage({ command: "ready" });
   }, []);
 
-  console.log(configuration);
-
   return <>
     <DataSelector data={outputItem} onUpdate={setSource} />
-    {source && <View source={source} context={context} />}
+    {source && <View source={source} context={context} config={configuration} />}
   </>;
 }
