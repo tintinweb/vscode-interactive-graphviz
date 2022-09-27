@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { OutputItem, RendererContext } from "vscode-notebook-renderer";
-import DataSelector from "./DataSelector";
+import { Format } from "@hpcc-js/wasm";
+import DataSelector from "../shared/DataSelector";
 import { IRenderConfiguration, IMessageSetConfiguration } from "../IRenderConfiguration";
-import View from "./View";
+import View from "../shared/View";
 
 export default function Bundle({
   context,
@@ -19,6 +20,22 @@ export default function Bundle({
     transitionDuration: 0,
   });
 
+  const saveFunction = (data: string, type: Format) => {
+    if (type !== "dot" && type !== "svg") {
+      throw new Error("Unknown export file type!");
+    }
+
+    if (context && context.postMessage) {
+      context.postMessage({
+        action: "saveFile",
+        payload: {
+          type,
+          data,
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     // @ts-ignore
     context.onDidReceiveMessage((e: IMessageSetConfiguration) => {
@@ -32,6 +49,6 @@ export default function Bundle({
 
   return <>
     <DataSelector data={outputItem} onUpdate={setSource} />
-    {source && <View source={source} context={context} config={configuration} />}
+    {<View source={source} config={configuration} saveFunction={saveFunction} />}
   </>;
 }

@@ -1,5 +1,3 @@
-import "./toolbar.css";
-
 import React from "react";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 

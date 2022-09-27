@@ -131,7 +131,7 @@ const makeConfig = (argv, {
 
 module.exports = (env, argv) => [
   makeConfig(argv, {
-    entry: "./src/notebook/index.tsx",
+    entry: "./src/notebook.tsx",
     out: "./dist/notebook.js",
     target: "web",
     library: "module",
@@ -141,6 +141,12 @@ module.exports = (env, argv) => [
     out: "./dist/extension.js",
     target: "node",
   }),
+  makeConfig(argv, {
+    entry: "./src/webview.tsx",
+    out: "./content2/webview.js",
+    target: "node",
+  }),
+
   /* makeConfig(argv, {
     entry: "./src/extension/extension.ts",
     out: "./out/extension/extension.web.js",

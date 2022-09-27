@@ -7,7 +7,7 @@ import errorOverlay from "vscode-notebook-error-overlay";
 import type { ActivationFunction, OutputItem } from "vscode-notebook-renderer";
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import Bundle from "./Bundle";
+import Bundle from "./notebook/Bundle";
 
 // Fix the public path so that any async import()'s work as expected.
 // declare const __webpack_relative_entrypoint_to_root__: string;

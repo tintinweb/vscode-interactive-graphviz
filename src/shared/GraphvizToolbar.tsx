@@ -1,5 +1,3 @@
-import "./toolbar.css";
-
 import React from "react";
 import {
   VSCodeButton,
@@ -7,9 +5,9 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { Engine, Format } from "@hpcc-js/wasm";
 import { Overlay } from "react-overlays";
-import DropDown from "./DropDown";
-import Toolbar from "./Toolbar";
-import TextField from "./TextField";
+import DropDown from "./components/DropDown";
+import Toolbar from "./components/Toolbar";
+import TextField from "./components/TextField";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -36,7 +34,9 @@ export default function GraphvizToolbar({
   onReset,
   onSearch,
   onSearchType,
+  disabled,
 } : {
+  disabled?: boolean,
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
@@ -95,6 +95,7 @@ export default function GraphvizToolbar({
       }}>
         {
           onSave && <><VSCodeButton
+            disabled={disabled}
             appearance="icon"
             onClick={() => setShowSaveOverlay(!showSaveOverly)}
             ref={refSaveButton as any}
@@ -116,12 +117,18 @@ export default function GraphvizToolbar({
           </Overlay>
           </>
         }
-        {onReset && <VSCodeButton appearance="icon" aria-label="Reset view" onClick={onReset}>
+        {onReset && <VSCodeButton
+          disabled={disabled}
+          appearance="icon"
+          aria-label="Reset view"
+          onClick={onReset}
+        >
           <span className="codicon codicon-refresh"></span>
         </VSCodeButton>}
       </div>
       {onSearch
       && <TextField
+        disabled={disabled}
         placeholder="Search ..."
         onEnter={(s) => {
           onSearch(s, searchOptions);
@@ -133,16 +140,22 @@ export default function GraphvizToolbar({
         }}
       >
         <span slot="start" className="codicon codicon-search" />
-        <VSCodeOption slot="end" selected={searchOptions.caseSensitive} onClick={() => setSearchOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
+        <VSCodeOption
+          disabled={disabled}
+          slot="end"
+          selected={searchOptions.caseSensitive}
+          onClick={() => setSearchOptions((s) => ({ ...s, caseSensitive: !s.caseSensitive }))}>
           <span className="codicon codicon-case-sensitive" />
         </VSCodeOption>
         <VSCodeOption
+          disabled={disabled}
           slot="end"
           selected={searchOptions.regex}
           onClick={() => setSearchOptions((s) => ({ ...s, regex: !s.regex }))}>
           <span className="codicon codicon-regex" />
         </VSCodeOption>
         <VSCodeOption
+          disabled={disabled}
           selected={showTypeSelection}
           slot="end"
           onClick={() => setShowTypeSelection(!showTypeSelection)}

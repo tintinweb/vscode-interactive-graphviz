@@ -4,7 +4,7 @@ import {
 } from "d3";
 import { flatten } from "lodash";
 import React, { forwardRef, useImperativeHandle } from "react";
-import { IRenderConfiguration } from "../IRenderConfiguration";
+import { IRenderConfiguration } from "../../IRenderConfiguration";
 
 import "./vscodeTheme.css";
 
@@ -17,7 +17,7 @@ export default forwardRef(({
     dot:string,
     // eslint-disable-next-line no-unused-vars
     onClick:(t:BaseType)=>void,
-    config: IRenderConfiguration
+    config?: IRenderConfiguration
 }, parentRef) : JSX.Element => {
   const ref = React.useRef<HTMLDivElement>(null);
   // Inject SVG and setup Zoom
@@ -258,11 +258,11 @@ export default forwardRef(({
 
   return <div style={{
     width: "100%",
-    height: "500px",
+    height: "100%",
     overflow: "hidden",
     textAlign: "center",
   }}
-  className={config.themeColors ? "vscodeTheme" : ""}
+  className={config && config.themeColors ? "vscodeTheme" : ""}
   ref={ref}
   />;
 });

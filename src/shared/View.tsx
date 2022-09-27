@@ -1,5 +1,4 @@
 import React from "react";
-import { RendererContext } from "vscode-notebook-renderer";
 import {
   Engine,
   Format,
@@ -9,22 +8,28 @@ import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
 // @ts-ignore
-import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
+import GraphvizWasm from "@hpcc-js/wasm/dist/graphvizlib.wasm";
 
-import { InfoToolBar } from "./Toolbar";
-import Graphviz from "./Graphviz";
+import { InfoToolBar } from "./components/Toolbar";
+import Graphviz from "./components/Graphviz";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 import { IRenderConfiguration } from "../IRenderConfiguration";
 
 export default function View(
   {
     source,
-    context,
     config,
+    saveFunction,
+    onFinish,
+    onError,
   } : {
-    source: string,
-    context: RendererContext<any>,
-    config: IRenderConfiguration
+    source?: string,
+    config?: IRenderConfiguration,
+    // eslint-disable-next-line no-unused-vars
+    saveFunction: (data: string, type: Format) => void,
+    onFinish?: () => void,
+    // eslint-disable-next-line no-unused-vars
+    onError?: (err: any) => void,
   },
 ) : JSX.Element {
   const ref = React.useRef<{direction: Direction}>();
@@ -44,6 +49,7 @@ export default function View(
 
   // Render/Layout
   React.useEffect(() => {
+    if (!source) return;
     graphvizVersion("dist", GraphvizWasm).then((t) => {
       console.log(`Graphviz Version: ${t}`);
     });
@@ -53,32 +59,13 @@ export default function View(
         // Layout and inject svg
         const res = syncObject.layout(source, "svg", engine);
         setGraph(res);
+        if (onFinish) onFinish();
       } catch (e: any) {
         setError(e.message);
+        if (onError) onError(e.message);
       }
     });
   }, [source, engine]);
-
-  const saveFunction = (type: Format) => {
-    let fileData: string;
-    if (type === "dot") {
-      fileData = source;
-    } else if (type === "svg") {
-      fileData = graph;
-    } else {
-      throw new Error("Unknown export file type!");
-    }
-
-    if (context && context.postMessage) {
-      context.postMessage({
-        action: "saveFile",
-        payload: {
-          type,
-          data: fileData,
-        },
-      });
-    }
-  };
 
   React.useEffect(() => {
     if (graphvizView && graphvizView.current) {
@@ -152,7 +139,16 @@ export default function View(
 
   return <>
     <GraphvizToolbar
-      onSave={context.postMessage && saveFunction}
+      disabled={!!source}
+      onSave={(a) => {
+        if (a === "dot") {
+          saveFunction(source as string, a);
+        } else if (a === "svg") {
+          saveFunction(graph, a);
+        } else {
+          console.error("unknown save function");
+        }
+      }}
       onReset={() => graphvizView && graphvizView.current && (graphvizView.current as any).reset()}
       onChange={(eng, dir) => {
         setEngine(eng);

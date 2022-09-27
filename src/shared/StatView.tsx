@@ -1,6 +1,6 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow } from "@vscode/webview-ui-toolkit/react";
 import React, { useState } from "react";
-import { InfoToolBar } from "./Toolbar";
+import { InfoToolBar } from "./components/Toolbar";
 
 type DataSelectorStatItem = {
   index: number,

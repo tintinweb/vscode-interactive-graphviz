@@ -69,4 +69,6 @@ content/dist/
 dist/
 out/
 
+content2/webview.js
+
 src/language/documentation/documentation.ts

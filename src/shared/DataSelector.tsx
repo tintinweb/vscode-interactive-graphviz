@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { digraph, INode, toDot } from "ts-graphviz";
 import { OutputItem } from "vscode-notebook-renderer";
 import StatView, { DataSelectorStat } from "./StatView";
-import TextField from "./TextField";
-import Toolbar, { InfoToolBar } from "./Toolbar";
+import TextField from "./components/TextField";
+import Toolbar, { InfoToolBar } from "./components/Toolbar";
 
 // eslint-disable-next-line no-shadow,no-unused-vars
 enum DataSelectorState {

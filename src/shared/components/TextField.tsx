@@ -8,7 +8,9 @@ export default function TextField({
   onType,
   style,
   initial,
+  disabled,
 }:{
+  disabled?: boolean,
   initial?: string,
   children: React.ReactNode,
   placeholder?: string,
@@ -26,6 +28,7 @@ export default function TextField({
   }, [ref, ref.current]);
 
   return <VSCodeTextField
+    disabled={disabled}
     placeholder={placeholder}
     ref={ref as any}
     style={style}

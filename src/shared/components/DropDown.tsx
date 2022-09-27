@@ -1,5 +1,3 @@
-import "./toolbar.css";
-
 import React from "react";
 import {
   VSCodeDropdown,
