@@ -139,7 +139,7 @@ export default function View(
 
   return <>
     <GraphvizToolbar
-      disabled={!!source}
+      disabled={!source}
       onSave={(a) => {
         if (a === "dot") {
           saveFunction(source as string, a);
