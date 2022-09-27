@@ -2,7 +2,8 @@ import React from "react";
 import {
   Engine,
   Format,
-  graphvizSync, graphvizVersion,
+  graphvizSync,
+  graphvizVersion,
 } from "@hpcc-js/wasm";
 import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
@@ -50,21 +51,23 @@ export default function View(
   // Render/Layout
   React.useEffect(() => {
     if (!source) return;
-    graphvizVersion("dist", GraphvizWasm).then((t) => {
-      console.log(`Graphviz Version: ${t}`);
-    });
-    graphvizSync(GraphvizWasm).then((syncObject) => {
-      setError("");
-      try {
+    graphvizVersion("dist", GraphvizWasm)
+      .then((t) => {
+        console.log(`Graphviz Version: ${t}`);
+      })
+      .then(() => graphvizSync(GraphvizWasm))
+      .then((syncObject) => {
+        setError("");
+        try {
         // Layout and inject svg
-        const res = syncObject.layout(source, "svg", engine);
-        setGraph(res);
-        if (onFinish) onFinish();
-      } catch (e: any) {
-        setError(e.message);
-        if (onError) onError(e.message);
-      }
-    });
+          const res = syncObject.layout(source, "svg", engine);
+          setGraph(res);
+          if (onFinish) onFinish();
+        } catch (e: any) {
+          setError(e.message);
+          if (onError) onError(e.message);
+        }
+      });
   }, [source, engine]);
 
   React.useEffect(() => {

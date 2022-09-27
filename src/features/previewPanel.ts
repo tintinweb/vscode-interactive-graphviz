@@ -198,9 +198,6 @@ export default class PreviewPanel {
       );
     }
 
-    // Send the message to the renderer
-    this.panel.webview.postMessage({ command: "renderDot", value: dotSrc });
-
     // Increase the started renders counter so that only one progress
     // indicator is created.
     this.startedRenders += 1;
@@ -211,6 +208,8 @@ export default class PreviewPanel {
         cancellable: false,
       }, () => new Promise((resolve) => {
         this.progressResolve = resolve;
+        // Send the message to the renderer
+        this.panel.webview.postMessage({ command: "renderDot", value: dotSrc });
       }));
     }
   }
