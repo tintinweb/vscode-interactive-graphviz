@@ -1,7 +1,7 @@
 # Change Log
 
 ## 0.3.3
-- update: API - Allow caller to define view options (preserveFocus, vieColumn - #132
+- update: API - Allow caller to define view options (preserveFocus, vieColumn) - #132
 - fix: "openAutomatically" creates a new URI object. When revealing the graph for an already rendered `.dot` file the extension would open another render view because the lookup if the panel already exists fails as `vscode.URI` objects are not singletons (`new vscode.Uri("hi") != new vscode.Uri("hi")`. in order to fix this we now index `vscode.Uri.toString()` in the `URI -> panelObject` mapping. - #131 #132
 - update: dependencies
 
