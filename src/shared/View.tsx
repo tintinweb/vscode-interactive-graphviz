@@ -9,7 +9,7 @@ import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
 // @ts-ignore
-import GraphvizWasm from "@hpcc-js/wasm/dist/graphvizlib.wasm";
+import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
 
 import { InfoToolBar } from "./components/Toolbar";
 import Graphviz from "./components/Graphviz";
