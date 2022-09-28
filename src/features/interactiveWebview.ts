@@ -21,7 +21,7 @@ const webviewPanelContent = require("../../content/index.html").default;
 export default class InteractiveWebviewGenerator {
   private context: vscode.ExtensionContext;
 
-  private webviewPanels: Map<vscode.Uri, PreviewPanel>;
+  private webviewPanels: Map<String, PreviewPanel>;
 
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -29,7 +29,7 @@ export default class InteractiveWebviewGenerator {
   }
 
   setNeedsRebuild(uri: vscode.Uri, needsRebuild: boolean) {
-    const panel = this.webviewPanels.get(uri);
+    const panel = this.webviewPanels.get(uri.toString());
 
     if (panel) {
       panel.setNeedsRebuild(needsRebuild);
@@ -38,7 +38,7 @@ export default class InteractiveWebviewGenerator {
   }
 
   getPanel(uri: vscode.Uri) {
-    return this.webviewPanels.get(uri);
+    return this.webviewPanels.get(uri.toString());
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -68,10 +68,14 @@ export default class InteractiveWebviewGenerator {
     const that = this;
 
     return new Promise((resolve, reject) => {
-      let previewPanel = (uri) ? that.webviewPanels.get(uri) : undefined;
+      let previewPanel = (uri) ? that.webviewPanels.get(uri.toString()) : undefined;
 
       if (previewPanel && !options.allowMultiplePanels) {
-        previewPanel.reveal(isObject(displayColumn) ? displayColumn.viewColumn : displayColumn);
+        if (!isObject(displayColumn)) {
+          previewPanel.reveal(displayColumn);
+        } else {
+          previewPanel.reveal(displayColumn.viewColumn, displayColumn.preserveFocus);
+        }
       } else {
         previewPanel = that.createPreviewPanel(uri, displayColumn, options.title);
 
@@ -80,13 +84,15 @@ export default class InteractiveWebviewGenerator {
           return;
         }
         if (uri) {
-          that.webviewPanels.set(uri, previewPanel);
+          that.webviewPanels.set(uri.toString(), previewPanel);
         }
         // when the user closes the tab, remove the panel
         previewPanel.getPanel().onDidDispose(() => {
           previewPanel?.dispose();
-          // eslint-disable-next-line no-sequences
-          if (uri) return that.webviewPanels.delete(uri), undefined, that.context.subscriptions;
+          if (uri) {
+            // eslint-disable-next-line no-sequences
+            return that.webviewPanels.delete(uri.toString()), undefined, that.context.subscriptions;
+          }
           return that.context.subscriptions;
         });
         // when the pane becomes visible again, refresh it

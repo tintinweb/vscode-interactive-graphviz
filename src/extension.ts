@@ -67,6 +67,10 @@ function onActivate(context: vscode.ExtensionContext) {
         allowMultiplePanels?: boolean,
         title?: string,
         search?: any,
+        displayColumn?: vscode.ViewColumn | {
+          viewColumn: vscode.ViewColumn;
+          preserveFocus?: boolean | undefined;
+        }
       } = {
         document: args.document,
         uri: args.uri,
@@ -75,6 +79,10 @@ function onActivate(context: vscode.ExtensionContext) {
         allowMultiplePanels: args.allowMultiplePanels,
         title: args.title,
         search: args.search,
+        displayColumn: args.displayColumn || {
+          viewColumn: vscode.ViewColumn.Beside,
+          preserveFocus: settings.extensionConfig().get("preserveFocus"),
+        },
       };
 
       if (!options.content
@@ -88,12 +96,13 @@ function onActivate(context: vscode.ExtensionContext) {
         options.uri = options.document.uri;
       }
 
+      if (typeof options.displayColumn === "object" && options.displayColumn.preserveFocus === undefined) {
+        options.displayColumn.preserveFocus = settings.extensionConfig().get("preserveFocus"); // default to user settings
+      }
+
       const execute = (o:any) => {
         graphvizView.revealOrCreatePreview(
-          {
-            viewColumn: vscode.ViewColumn.Beside,
-            preserveFocus: settings.extensionConfig().get("preserveFocus"),
-          },
+          o.displayColumn,
           o.uri,
           o,
         )

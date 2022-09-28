@@ -83,8 +83,8 @@ export default class PreviewPanel {
       : 0;
   }
 
-  reveal(displayColumn: vscode.ViewColumn) {
-    this.panel.reveal(displayColumn);
+  reveal(displayColumn: vscode.ViewColumn, preserveFocus?: boolean) {
+    this.panel.reveal(displayColumn, preserveFocus);
   }
 
   setNeedsRebuild(needsRebuild : boolean) {
