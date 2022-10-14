@@ -207,7 +207,7 @@
         "xml2js": "^0.4.23"
     },
     "dependencies": {
-        "@hpcc-js/wasm": "^1.12.8",
+        "@hpcc-js/wasm": "^1.16.5",
         "@ts-graphviz/parser": "^0.6.0",
         "@types/text-encoding": "^0.0.36",
         "@vscode/codicons": "^0.0.32",

@@ -144,7 +144,8 @@ module.exports = (env, argv) => [
   makeConfig(argv, {
     entry: "./src/webview.tsx",
     out: "./content2/webview.js",
-    target: "node",
+    target: "web",
+    library: "module",
   }),
 
   /* makeConfig(argv, {

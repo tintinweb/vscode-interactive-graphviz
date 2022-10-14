@@ -55,7 +55,7 @@ export default function View(
       .then((t) => {
         console.log(`Graphviz Version: ${t}`);
       })
-      .then(() => graphvizSync(GraphvizWasm))
+      .then(() => graphvizSync(undefined, GraphvizWasm))
       .then((syncObject) => {
         setError("");
         try {
