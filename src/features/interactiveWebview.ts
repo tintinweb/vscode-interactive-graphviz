@@ -7,16 +7,12 @@
 /** imports */
 import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
-import { TextEncoder } from "text-encoding";
 import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
+import saveFile from "./saveFile";
 
-const webviewPanelContent = require("../../content/index.html").default;
-
-/** global vars */
-
-/** classdecs */
+const webviewPanelContent = require("../../content2/index.html").default;
 
 export default class InteractiveWebviewGenerator {
   private context: vscode.ExtensionContext;
@@ -112,37 +108,6 @@ export default class InteractiveWebviewGenerator {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  saveFile(data: string, fileType: string) {
-    let filter;
-    if (fileType === "dot") {
-      filter = { "Graphviz Dot Files": ["dot"] };
-    } else if (fileType === "svg") {
-      filter = { Images: ["svg"] };
-    } else {
-      vscode.window.showErrorMessage("Unknown file type for saving!");
-      return;
-    }
-    vscode.window.showSaveDialog({
-      saveLabel: "export",
-      filters: filter,
-    })
-      .then((fileUri) => {
-        if (fileUri) {
-          try {
-            const te = new TextEncoder();
-            vscode.workspace.fs.writeFile(fileUri, te.encode(data))
-              .then(() => {
-                console.log("File Saved");
-              }, (err : any) => {
-                vscode.window.showErrorMessage(`Error on writing file: ${err}`);
-              });
-          } catch (err) {
-            vscode.window.showErrorMessage(`Error on writing file: ${err}`);
-          }
-        }
-      });
-  }
-
   handleMessage(
     previewPanel: PreviewPanel,
     message: {
@@ -176,7 +141,7 @@ export default class InteractiveWebviewGenerator {
       previewPanel.handleMessage(message); // just forward the event for now
       break;
     case "saveAs":
-      this.saveFile(message.value.data, message.value.type);
+      saveFile(message.value.data, message.value.type);
       break;
     default:
       previewPanel.handleMessage(message);
@@ -199,11 +164,11 @@ export default class InteractiveWebviewGenerator {
       enableScripts: true,
       retainContextWhenHidden: true,
       localResourceRoots: [
-        Utils.joinPath(this.context.extensionUri, "content"),
+        Utils.joinPath(this.context.extensionUri, "content2"),
       ],
     });
 
-    webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content", "icon.png");
+    webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content2", "icon.png");
 
     return new PreviewPanel(uri, webViewPanel);
   }
@@ -214,6 +179,6 @@ export default class InteractiveWebviewGenerator {
       webviewPanel.webview.html = "Please wait...";
     }
     previewPanel.setNeedsRebuild(false);
-    webviewPanel.webview.html = prepareHTML(webviewPanelContent, this.context, "content", webviewPanel);
+    webviewPanel.webview.html = prepareHTML(webviewPanelContent, this.context, "content2", webviewPanel);
   }
 }

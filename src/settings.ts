@@ -13,6 +13,7 @@ export const docSelector = {
   language: languageId,
 };
 export const fileExtension = ".dot";
+export const notebookRendererId = "graphviz-interactive-preview";
 
 export function extensionConfig() {
   return vscode.workspace.getConfiguration("graphviz-interactive-preview");
