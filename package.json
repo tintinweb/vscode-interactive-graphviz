@@ -2,7 +2,7 @@
     "name": "graphviz-interactive-preview",
     "displayName": "Graphviz Interactive Preview",
     "description": "Graphviz (dot) Interactive Preview",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "keywords": [
         "dot",
         "graphviz",

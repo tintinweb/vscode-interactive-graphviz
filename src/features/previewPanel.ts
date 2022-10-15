@@ -40,6 +40,8 @@ export default class PreviewPanel {
 
   renderLockTimeout: number;
 
+  private initialized: boolean;
+
   // eslint-disable-next-line no-unused-vars
   progressResolve?: (value?:unknown) => void;
 
@@ -81,28 +83,30 @@ export default class PreviewPanel {
     this.renderLockTimeout = (this.enableRenderLock && renderLockAdditionalTimeout >= 0)
       ? renderLockAdditionalTimeout + viewTransitionDelay + viewTransitionaDuration
       : 0;
+
+    this.initialized = false;
   }
 
-  reveal(displayColumn: vscode.ViewColumn, preserveFocus?: boolean) {
+  public reveal(displayColumn: vscode.ViewColumn, preserveFocus?: boolean) {
     this.panel.reveal(displayColumn, preserveFocus);
   }
 
-  setNeedsRebuild(needsRebuild : boolean) {
+  public setNeedsRebuild(needsRebuild : boolean) {
     this.needsRebuild = needsRebuild;
   }
 
-  getNeedsRebuild() {
+  public getNeedsRebuild() {
     return this.needsRebuild;
   }
 
-  getPanel() {
+  public getPanel() {
     return this.panel;
   }
 
   // the following functions do not use any locking/synchronization mechanisms,
   // so it may behave weirdly in edge cases
 
-  requestRender(dotSrc: string) {
+  public requestRender(dotSrc: string) {
     const now = Date.now();
     const sinceLastRequest = now - this.lastRequest;
     const sinceLastRender = now - this.lastRender;
@@ -110,6 +114,8 @@ export default class PreviewPanel {
 
     // save the latest content
     this.waitingForRendering = dotSrc;
+
+    if (!this.initialized) return;
 
     // hardcoded:
     // why: to filter out double-events on-save on-change etc, while preserving
@@ -153,7 +159,7 @@ export default class PreviewPanel {
   }
 
   // Renders content which has been put in the waiting quue
-  renderWaitingContent() {
+  private renderWaitingContent() {
     // clear the timeout and null it's handle, we are rendering any waiting content now!
     if (this.timeoutForWaiting) {
       console.log("renderWaitingContent() clearing existing timeout");
@@ -179,7 +185,7 @@ export default class PreviewPanel {
      * Sends the DOT source to the rendering panel
      * @param dotSrc DOT source
      */
-  renderNow(dotSrc : string) {
+  private renderNow(dotSrc : string) {
     console.log("renderNow()");
     this.lockRender = true;
     this.lastRender = Date.now();
@@ -215,7 +221,7 @@ export default class PreviewPanel {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  handleMessage(message: {
+  public handleMessage(message: {
             command: any; value?: {
                 err: any; // save the latest content
                 // save the latest content
@@ -244,7 +250,7 @@ export default class PreviewPanel {
      * Restarts the renderWaiting function after the render lock has
      * timed out.
      */
-  restartRender() {
+  private restartRender() {
     if (this.timeoutForRendering) {
       clearTimeout(this.timeoutForRendering);
       this.timeoutForRendering = undefined;
@@ -258,7 +264,7 @@ export default class PreviewPanel {
      * @param err
      */
   // eslint-disable-next-line no-undef
-  onRenderFinished(err?: string) {
+  public onRenderFinished(err?: string) {
     diagnosticCollection.clear();
     if (err) {
       console.log(`rendering failed: ${err}`);
@@ -296,7 +302,8 @@ export default class PreviewPanel {
   /**
      * Called by the Webview after it has been loaded.
      */
-  onPageLoaded() {
+  public onPageLoaded() {
+    this.initialized = true;
     this.panel.webview.postMessage({
       command: "setConfig",
       value: {
@@ -312,7 +319,7 @@ export default class PreviewPanel {
      * Function which is called after disposing of the PreviewPanel
      * (typically after closing the tab)
      */
-  dispose() {
+  public dispose() {
     // Resolve all remaining promises on disposal
     if (this.progressResolve) {
       this.progressResolve();
