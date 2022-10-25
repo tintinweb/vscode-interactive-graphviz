@@ -147,7 +147,7 @@ function onActivate(context: vscode.ExtensionContext) {
   if (settings.extensionConfig().codeCompletion.enable as boolean) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
       [settings.languageId],
-      new DotCompletionItemProvider(),
+      new DotCompletionItemProvider(context),
       "=",
       "[",
       "{",

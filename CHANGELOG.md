@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.3.5
+- new: show preview for node shapes - #137
+
 ## 0.3.4
 - fix: A bug could lead to the web view crashing when another extension created a DOT document (with automatically open enabled) and then executes the preview command - #138
 
