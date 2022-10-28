@@ -2,6 +2,10 @@
 
 ## 0.3.5
 - new: show preview for node shapes - #137
+  - Note: to enable, wait for the suggestion box to appear and click on the `>` to expand the preview
+
+![node-shape-preview](https://user-images.githubusercontent.com/27259/197874676-2f0d502e-622d-4cd5-87da-f0deea744d8c.png)
+- update: dependencies
 
 ## 0.3.4
 - fix: A bug could lead to the web view crashing when another extension created a DOT document (with automatically open enabled) and then executes the preview command - #138
