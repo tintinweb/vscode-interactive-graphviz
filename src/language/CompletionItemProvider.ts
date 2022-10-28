@@ -2,12 +2,16 @@ import {
   CompletionItem,
   CompletionItemKind,
   CompletionItemProvider,
+  ExtensionContext,
+  MarkdownString,
   Position,
   SnippetString,
   SymbolKind,
   TextDocument,
 } from "vscode";
+
 import { isNumber, uniq } from "lodash";
+import { Utils } from "vscode-uri";
 import attributeList from "./definitions/attributelist";
 import colors from "./definitions/colors";
 import arrowType from "./definitions/arrowType";
@@ -46,7 +50,7 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
 
   private specialAttributes: {[attribute: string] : string} = {};
 
-  constructor() {
+  constructor(context: ExtensionContext) {
     /* const names = {
       G: "Root graph",
       N: "Nodes",
@@ -81,6 +85,8 @@ export default class DotCompletionItemProvider implements CompletionItemProvider
     });
     this.nodeShapes = nodeShapes.split("|").map((type) => {
       const pack = new CompletionItem(type, CompletionItemKind.Constant);
+      pack.documentation = new MarkdownString(`![image](${Utils.joinPath(context.extensionUri, `images/shapes/${type}.gif`)})
+      `);
       return pack;
     });
     this.style = style.split("|").map((type) => {
