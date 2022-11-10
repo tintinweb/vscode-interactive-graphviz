@@ -532,7 +532,7 @@
 
                         var fill = "black";
 
-                        arrow = d3.select("svg").append('line')
+                        arrow = d3.select("svg").select("g").append('line')
                             .style("stroke", fill)
                             .style("opacity", 0.8)
                             .style("stroke-width", 2)
@@ -581,7 +581,8 @@
                             }
                         });
 
-                    dragHandler(d3.select("svg").select("g"));
+                    // skip the first level to allow drag of the canvas
+                    dragHandler(d3.select("svg").select("g").selectAll("g"));
 
                     $(document).keydown(function (evt) {
                         // press escape to cancel highlight
