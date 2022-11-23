@@ -339,6 +339,17 @@
                     else
                         $("#graph").removeClass("vscodeTheme");
                     break;
+                case 'highlight':
+                    // TODO: I'm sure this can be done in one line?!
+                    const plainNodes = gv.nodesByName();
+                    const nodesSelected = Array();
+                    for (n of message.value) {
+                        nodesSelected.push(plainNodes[n]);
+                    }
+                    const nodes = $(nodesSelected);
+
+                    gv.highlight(nodes, true)
+                    break;
             }
         }, false);
 
@@ -347,6 +358,9 @@
         };
 
         function DomToJsonAttribs(element) {
+            if (element === null || element === undefined || element.attributes === undefined)
+                return;
+
             var result = {}
             const attribs = element.attributes;
             for (let i = 0; i < attribs.length; i++) {
@@ -356,14 +370,14 @@
             return result;
         }
 
-        function findDataNode(elem) {
-            if (!elem)
+        function findNodeWithAttr(elem, attr) {
+            if (elem === null || elem === undefined)
                 return undefined;
             
-            if (elem.attributes && elem.attributes['data-name'])
+            if (elem.attributes !== undefined && elem.attributes[attr])
                 return elem;
 
-            return findDataNode(elem.parentElement);
+            return findNodeWithAttr(elem.parentElement, attr);
         }
 
         function isNonEmptyTextNode(elem) {
@@ -446,7 +460,7 @@
                     gv.nodes().click(function (event) {
                         const set = $();
 
-                        var node = findDataNode(event.target);
+                        var node = findNodeWithAttr(event.target, 'data-name');
 
                         set.push(node);
 
@@ -468,17 +482,19 @@
                             command: 'onClick', value: {
                                 // I guess: TODO: report which node was clicked
                                 node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href')),
                                 text: findNextText(event.target)
                             }
                         })
                     })
                     gv.nodes().dblclick(function (event) {
-                        var node = findDataNode(event.target);
+                        var node = findNodeWithAttr(event.target, 'data-name');
 
                         vscode.postMessage({
                             command: 'onDblClick', value: {
                                 // I guess: TODO: report which node was clicked, to show the code?
                                 node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href')),
                                 text: findNextText(event.target)
                             }
                         })
@@ -486,7 +502,7 @@
 
                     gv.clusters().click(function (event) {
                         const set = $();
-                        var node = findDataNode(event.target);
+                        var node = findNodeWithAttr(event.target, 'data-name');
 
                         set.push(node);
 
@@ -508,6 +524,7 @@
                             command: 'onClick', value: {
                                 // I guess: TODO: report which node was clicked
                                 node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href'))
                             }
                         })
                     })
@@ -521,7 +538,7 @@
                     var startText = null;
 
                     dragStart = function(evt) {
-                        startNode = findDataNode(evt.sourceEvent.target);
+                        startNode = findNodeWithAttr(evt.sourceEvent.target, 'data-name');
                         startText = findNextText(evt.sourceEvent.target);
 
                         // find closest fill to use the same color for the line
@@ -549,7 +566,7 @@
                                 arrow.remove();
                                 arrow = null;
 
-                                var destNode = findDataNode(evt.sourceEvent.target);
+                                var destNode = findNodeWithAttr(evt.sourceEvent.target, 'data-name');
                                
                                 vscode.postMessage({
                                     command: 'onConnect', value: {
