@@ -339,6 +339,17 @@
                     else
                         $("#graph").removeClass("vscodeTheme");
                     break;
+                case 'highlight':
+                    // TODO: I'm sure this can be done in one line?!
+                    const plainNodes = gv.nodesByName();
+                    const nodesSelected = Array();
+                    for (n of message.value) {
+                        nodesSelected.push(plainNodes[n]);
+                    }
+                    const nodes = $(nodesSelected);
+
+                    gv.highlight(nodes, true)
+                    break;
             }
         }, false);
 
@@ -347,6 +358,9 @@
         };
 
         function DomToJsonAttribs(element) {
+            if (element === null || element === undefined || element.attributes === undefined)
+                return;
+
             var result = {}
             const attribs = element.attributes;
             for (let i = 0; i < attribs.length; i++) {
@@ -355,6 +369,77 @@
             }
             return result;
         }
+
+        function findNodeWithAttr(elem, attr) {
+            if (elem === null || elem === undefined)
+                return undefined;
+            
+            if (elem.attributes !== undefined && elem.attributes[attr])
+                return elem;
+
+            return findNodeWithAttr(elem.parentElement, attr);
+        }
+
+        function isNonEmptyTextNode(elem) {
+            return elem.nodeName &&  
+                    (elem.nodeName == "#text" || elem.nodeName == "text") &&
+                    elem.textContent &&
+                    elem.textContent.trim().length > 0 ;
+        }
+
+        function findNextText(elem) { 
+            if (isNonEmptyTextNode(elem))
+                return elem.textContent;
+
+            if (!elem.parentElement)
+                return undefined;
+
+            siblings = elem.parentElement.childNodes;
+
+            // skip until we find the originating node
+            i = 0;
+            for (;i<siblings.length;i++)
+                if (siblings[i] == elem)
+                    break;
+
+            // check if any of the sibling is a non empty text node
+            for (;i<siblings.length;i++)
+                if (isNonEmptyTextNode(siblings[i]))
+                    return siblings[i].textContent;
+
+            // recurse up
+            return findNextText(elem.parentElement);
+        }
+
+        function addArrowMarker() {
+            d3.select("svg").append("svg:defs").append("svg:marker")
+                .attr("id", "triangle")
+                .attr("refX", 1.5)
+                .attr("refY", 1.5)
+                .attr("markerWidth", 5)
+                .attr("markerHeight", 5)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 3 1.5 0 3 0.75 1.5")
+                .style("fill", "black");
+        }
+
+        // function findClosestFill(elem) {
+        //     if (!elem)
+        //         return undefined;
+
+        //     if (elem.style && elem.style("fill"))
+        //         return elem.style("fill");
+
+        //     if (!elem.parentElement || !elem.parentElement.childNodes)
+        //         return undefined;
+
+        //     for (sibling in elem.parentElement.childNodes)
+        //         if (sibling.style && sibling.style("fill"))
+        //             return sibling.style("fill");
+
+        //     return findClosestFill(elem.parentElement);
+        // }
 
         $(document).ready(function () {
             // this inits the graphviz object from jquery.grapviz.svg.js
@@ -365,11 +450,19 @@
                 shrink: null,
                 zoom: false,
                 ready: function () {
-                    gv = this
+                    gv = this;
+
+                    // remove pointer-events attr to make sure events are hitting HTML elements
+                    gv.nodes().each(function () {
+                        $(this).removeAttr("pointer-events");
+                    });
 
                     gv.nodes().click(function (event) {
                         const set = $();
-                        set.push(this);
+
+                        var node = findNodeWithAttr(event.target, 'data-name');
+
+                        set.push(node);
 
                         var obj = {
                             set: set,
@@ -388,22 +481,30 @@
                         vscode.postMessage({
                             command: 'onClick', value: {
                                 // I guess: TODO: report which node was clicked
-                                node: DomToJsonAttribs(this),
+                                node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href')),
+                                text: findNextText(event.target)
                             }
                         })
                     })
-                    gv.nodes().dblclick(function () {
+                    gv.nodes().dblclick(function (event) {
+                        var node = findNodeWithAttr(event.target, 'data-name');
+
                         vscode.postMessage({
                             command: 'onDblClick', value: {
                                 // I guess: TODO: report which node was clicked, to show the code?
-                                node: DomToJsonAttribs(this),
+                                node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href')),
+                                text: findNextText(event.target)
                             }
                         })
                     })
 
                     gv.clusters().click(function (event) {
                         const set = $();
-                        set.push(this);
+                        var node = findNodeWithAttr(event.target, 'data-name');
+
+                        set.push(node);
 
                         var obj = {
                             set: set,
@@ -422,10 +523,83 @@
                         vscode.postMessage({
                             command: 'onClick', value: {
                                 // I guess: TODO: report which node was clicked
-                                node: DomToJsonAttribs(this),
+                                node: DomToJsonAttribs(node),
+                                href: DomToJsonAttribs(findNodeWithAttr(event.target, 'href'))
                             }
                         })
                     })
+
+
+                    addArrowMarker();
+
+                    // local state
+                    var arrow = null;
+                    var startNode = null;
+                    var startText = null;
+
+                    dragStart = function(evt) {
+                        startNode = findNodeWithAttr(evt.sourceEvent.target, 'data-name');
+                        startText = findNextText(evt.sourceEvent.target);
+
+                        // find closest fill to use the same color for the line
+                        // TODO: not optimal if it's white...
+                        // var fill = findClosestFill(d3.select(evt.sourceEvent.target));
+                        // if (!fill || fill == "white")
+                        //     fill = "black";
+
+                        var fill = "black";
+
+                        arrow = d3.select("svg").select("g").append('line')
+                            .style("stroke", fill)
+                            .style("opacity", 0.8)
+                            .style("stroke-width", 2)
+                        .style("opacity", 0.6)
+                            .attr("x1", evt.x)
+                            .attr("y1", evt.y)
+                            .attr("x2", evt.x)
+                            .attr("y2", evt.y);
+                    }
+
+                    dragEnd = function(evt) {
+                            if (arrow) {
+                                // reset local state
+                                arrow.remove();
+                                arrow = null;
+
+                                var destNode = findNodeWithAttr(evt.sourceEvent.target, 'data-name');
+                               
+                                vscode.postMessage({
+                                    command: 'onConnect', value: {
+                                        source: {
+                                            node: DomToJsonAttribs(startNode),
+                                            text: startText
+                                        },
+                                        destination: {
+                                            node: DomToJsonAttribs(destNode),
+                                            text: findNextText(evt.sourceEvent.target)
+                                        }
+                                    }
+                                })
+                            }
+                    }
+
+                    dragHandler = d3.drag()
+                        .on("start", function(evt) { dragStart(evt); })
+                        .on("end",   function(evt) { dragEnd(evt);   })
+                        .on("drag", function (evt) {
+                            if (arrow) {
+                                if (Math.abs(arrow.attr("x1") - evt.x) > 5 ||
+                                    Math.abs(arrow.attr("y1") - evt.y) > 5)
+                                    arrow.attr("marker-end", "url(#triangle)");
+
+                                arrow
+                                    .attr("x2", evt.x)
+                                    .attr("y2", evt.y);
+                            }
+                        });
+
+                    // skip the first level to allow drag of the canvas
+                    dragHandler(d3.select("svg").select("g").selectAll("g"));
 
                     $(document).keydown(function (evt) {
                         // press escape to cancel highlight
