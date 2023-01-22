@@ -10,7 +10,7 @@ import "../shared/webviewStyle.css";
 const vscode = acquireVsCodeApi();
 
 export default function WebViewBundle() {
-  const [dot, setDot] = useState<undefined|string>();
+  const [dot, setDot] = useState<undefined | string>();
 
   useEffect(() => {
     const receivedMessage = (a: any) => {
@@ -30,6 +30,13 @@ export default function WebViewBundle() {
   // eslint-disable-next-line no-unused-vars
   const saveFunction = (data: string, type: Format) => {
     // vscode.postMessage({ command: "onPageLoaded", value: {} });
+    vscode.postMessage({
+      command: "saveAs",
+      value: {
+        data,
+        type,
+      }
+    });
   };
 
   const onFinish = () => {

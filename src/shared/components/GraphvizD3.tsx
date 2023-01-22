@@ -40,8 +40,6 @@ let counter = 0;
 // eslint-disable-next-line no-plusplus
 const getId = () => `graphviz${counter++}`;
 
-
-
 const GraphvizD3 = forwardRef((
   { dot, className, engine = "dot", onError, onFinish, onClick, config }: IGraphvizProps, parentRef) => {
   const id = useMemo(getId, []);
@@ -57,7 +55,7 @@ const GraphvizD3 = forwardRef((
       .ease(easeLinear)
       .delay(config?.transitionDelay || 200)
       .duration(config?.transitionDuration || 500);
-    graphviz(`#${id}`, {
+    const process = graphviz(`#${id}`, {
       ...defaultOptions,
       ...{
         engine: engine as any
@@ -68,10 +66,15 @@ const GraphvizD3 = forwardRef((
       .transition(() => transit)
       .tweenPaths(true)
       .tweenShapes(true)
-      .renderDot(dot).onerror((err) => {
+      .renderDot(dot, () => {
+        console.log(this);
+
+      })
+      .onerror((err) => {
         if (onError)
           onError(err)
-      }).on("end", () => {
+      })
+      .on("end", () => {
         const nodesByName: { [name: string]: BaseType } = {};
         const clustersByName: { [name: string]: BaseType } = {};
         const edgesByName: { [name: string]: BaseType[] } = {};

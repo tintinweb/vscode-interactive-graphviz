@@ -11,6 +11,7 @@ import { IRenderConfiguration } from "../IRenderConfiguration";
 //import {Graphviz} from "@hpcc-js/wasm/graphviz";
 import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import GraphvizD3 from "./components/GraphvizD3";
+import { Graphviz } from "@hpcc-js/wasm";
 
 export default function View(
   {
@@ -29,7 +30,6 @@ export default function View(
 ): JSX.Element {
   const ref = React.useRef<{ direction: Direction }>();
   const graphvizView = React.useRef();
-  const [graph, setGraph] = React.useState("");
   const [searchResult, setSearchResult] = React.useState("");
   const [error, setError] = React.useState("");
   const [engine, setEngine] = React.useState<Engine>("dot");
@@ -120,10 +120,22 @@ export default function View(
     <GraphvizToolbar
       disabled={!source}
       onSave={(a) => {
+        if (!source) {
+          console.error("noting to save!");
+          return;
+        }
+        console.log(a);
+        console.log(source);
         if (a === "dot") {
-          saveFunction(source as string, a);
+          console.log("save dot");
+          saveFunction(source, a);
         } else if (a === "svg") {
-          saveFunction(graph, a);
+          console.log("save svg");
+          Graphviz.load().then((gv) => {
+            const d = gv.layout(source, undefined, engine);
+            console.log(d);
+            saveFunction(d, a);
+          });
         } else {
           console.error("unknown save function");
         }
