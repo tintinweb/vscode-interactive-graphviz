@@ -7,9 +7,10 @@ import Graphvizview from "./components/Graphviz";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 import { IRenderConfiguration } from "../IRenderConfiguration";
 
-// @ts-ignore
-import {Graphviz} from "@hpcc-js/wasm/graphviz";
-import { Engine, Format, Graphviz as GraphvizType } from "@hpcc-js/wasm/types/graphviz";
+// // @ts-ignore
+//import {Graphviz} from "@hpcc-js/wasm/graphviz";
+import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
+import GraphvizD3 from "./components/GraphvizD3";
 
 export default function View(
   {
@@ -21,10 +22,8 @@ export default function View(
   } : {
     source?: string,
     config?: IRenderConfiguration,
-    // eslint-disable-next-line no-unused-vars
     saveFunction: (data: string, type: Format) => void,
     onFinish?: () => void,
-    // eslint-disable-next-line no-unused-vars
     onError?: (err: any) => void,
   },
 ) : JSX.Element {
@@ -43,22 +42,9 @@ export default function View(
 
   const [highlights, setHighlights] = React.useState<BaseType[]>([]);
 
-  // Render/Layout
   React.useEffect(() => {
-    if (!source) return;
-    Graphviz.load().then((graphviz: GraphvizType) => {
-      setError("");
-      try {
-      // Layout and inject svg
-        const res = graphviz.layout(source, "svg", engine);
-        setGraph(res);
-        if (onFinish) onFinish();
-      } catch (e: any) {
-        setError(e.message);
-        if (onError) onError(e.message);
-      }
-    });
-  }, [source, engine]);
+    setError("");
+  }, [source, engine])
 
   React.useEffect(() => {
     if (graphvizView && graphvizView.current) {
@@ -199,13 +185,18 @@ export default function View(
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <Graphvizview
-      dot={graph}
-      ref={graphvizView}
-      config={config}
-      onClick={(el) => {
-        setHighlights(streamSearch(el) || []);
+    {source && <GraphvizD3
+      dot={source}
+      options={{
+        engine: engine as any || "dot",
+        tweenPaths: true,
       }}
-    />
+      onError={(e: any) => {
+        setError(e);
+        if (onError)
+          onError(e);
+      }}
+      onFinish={onFinish}
+    />}
   </>;
 }

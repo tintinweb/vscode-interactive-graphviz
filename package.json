@@ -170,7 +170,7 @@
         }
     },
     "devDependencies": {
-        "@types/d3": "^7.1.0",
+        "@types/d3": "^7.4.0",
         "@types/glob": "^7.1.4",
         "@types/lodash": "^4.14.178",
         "@types/mocha": "^9.0.0",
@@ -209,10 +209,12 @@
     "dependencies": {
         "@hpcc-js/wasm": "^2.7.0",
         "@ts-graphviz/parser": "^0.6.0",
+        "@types/d3-graphviz": "^2.6.7",
         "@types/text-encoding": "^0.0.36",
         "@vscode/codicons": "^0.0.32",
         "@vscode/webview-ui-toolkit": "^1.0.0",
         "d3": "^7.4.4",
+        "d3-graphviz": "^5.0.2",
         "fork-ts-checker-webpack-plugin": "^7.2.6",
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
