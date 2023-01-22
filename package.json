@@ -181,8 +181,6 @@
         "style-loader": "^3.3.1",
         "uint8array-loader": "^1.0.2",
         "url-loader": "^4.1.1",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^4.8.0",
         "xml2js": "^0.4.23"
     },
     "dependencies": {
@@ -226,7 +224,9 @@
         "uninstall": "^0.0.0",
         "vsce": "^2.15.0",
         "vscode-notebook-error-overlay": "^1.0.1",
-        "vscode-uri": "^3.0.7"
+        "vscode-uri": "^3.0.7",
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.1"
     },
     "scripts": {
         "vscode:prepublish": "npm run updateDependencies && npm run package",
