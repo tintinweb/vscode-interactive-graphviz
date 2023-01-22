@@ -69,6 +69,6 @@ content/dist/
 dist/
 out/
 
-content2/webview.js*
+content/webview.js*
 
 src/language/documentation/documentation.ts

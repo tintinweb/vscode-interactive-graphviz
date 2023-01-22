@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.0.0
+
+- The render core has been rewritten to use React. This enables faster development
+- A notebook view has been introduced. It allows to render the preview within notebooks. The following mime types support this:
+  * application/json
+  * application/json+graphviz-interactive-preview
+  * text/plain
+  * text/x-json
+  * text/x-graphviz
+  * text/x-dot
+
 ## 0.3.4
 - fix: A bug could lead to the web view crashing when another extension created a DOT document (with automatically open enabled) and then executes the preview command - #138
 

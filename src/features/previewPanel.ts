@@ -284,6 +284,7 @@ export default class PreviewPanel {
 
     // Decrease startedRenders counter
     this.startedRenders -= 1;
+    if(this.startedRenders<0) this.startedRenders=0; // should not happen, but just in case (e.g. if onRenderFinished is called twice
     console.log(`started renders:${this.startedRenders}`);
     // Hide progress bar after all renders have been finished
     if (this.progressResolve && this.startedRenders === 0) {

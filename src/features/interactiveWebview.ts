@@ -13,7 +13,7 @@ import prepareHTML from "./prepareHTML";
 import saveFile from "./saveFile";
 import { IRenderCommunication } from "../types/IRenderConfiguration";
 
-const webviewPanelContent = require("../../content2/index.html").default;
+const webviewPanelContent = require("../../content/index.html").default;
 
 export default class InteractiveWebviewGenerator {
   private context: vscode.ExtensionContext;
@@ -163,11 +163,11 @@ export default class InteractiveWebviewGenerator {
       enableScripts: true,
       retainContextWhenHidden: true,
       localResourceRoots: [
-        Utils.joinPath(this.context.extensionUri, "content2"),
+        Utils.joinPath(this.context.extensionUri, "content"),
       ],
     });
 
-    webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content2", "icon.png");
+    webViewPanel.iconPath = Utils.joinPath(this.context.extensionUri, "content", "icon.png");
 
     return new PreviewPanel(uri, webViewPanel);
   }
@@ -178,6 +178,6 @@ export default class InteractiveWebviewGenerator {
       webviewPanel.webview.html = "Please wait...";
     }
     previewPanel.setNeedsRebuild(false);
-    webviewPanel.webview.html = prepareHTML(webviewPanelContent, this.context, "content2", webviewPanel);
+    webviewPanel.webview.html = prepareHTML(webviewPanelContent, this.context, "content", webviewPanel);
   }
 }

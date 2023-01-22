@@ -67,8 +67,6 @@ Open a Graphviz/Dot file in the active editor and use either of the following me
 
 ## Developer Notes
 
-**Note**:❗v0.0.8 introduced a breaking change: the render command was renamed from `interactive-graphviz.preview.beside` to `graphviz-interactive-preview.preview.beside`
-
 The extension can be set run on development machines with
 ```
 npm run watch

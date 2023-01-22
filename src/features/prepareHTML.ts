@@ -10,7 +10,7 @@ export default function prepareHTML(
   // Get data from file
   let templateHtml = originalHTML;
 
-  const resource = Utils.joinPath(context.extensionUri, "content2");
+  const resource = Utils.joinPath(context.extensionUri, "content");
   const contentURI = webviewPanel.webview.asWebviewUri(resource);
 
   // Replace script and link tag resources with extension's path

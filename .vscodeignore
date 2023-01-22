@@ -15,3 +15,5 @@ webpack.config.js
 dist/*.js.map
 **/test/**
 out/
+scripts/**
+.github/**
