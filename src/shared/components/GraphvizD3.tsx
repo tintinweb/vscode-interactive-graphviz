@@ -67,6 +67,7 @@ const GraphvizD3 = forwardRef((
       .transition(() => transit)
       .tweenPaths(true)
       .tweenShapes(true)
+      .renderDot(dot)
       .onerror((err) => {
         if (onError)
           onError(err)
