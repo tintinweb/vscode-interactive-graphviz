@@ -9,15 +9,13 @@ import {
   Range,
 } from "vscode";
 import getAttributeDetail from "./getAttributeDetail";
-// import { parseString } from "xml2js";
 
 export default class DotHoverProvider implements HoverProvider {
   public provideHover(
     document: TextDocument,
     position: Position,
   // token: CancellationToken,
-  ):
-        Promise<Hover> {
+  ): Promise<Hover> {
     const startResult = document.getText(
       new Range(new Position(position.line, 0), position),
     ).match(/[{[\s;](\w+)$/);
@@ -27,9 +25,6 @@ export default class DotHoverProvider implements HoverProvider {
         new Position(position.line, 65535),
       ),
     ).match(/^(\w*)\s*=/);
-
-    // console.log(startResult);
-    // console.log(endResult);
 
     if (!startResult || !endResult) {
       return Promise.reject();
