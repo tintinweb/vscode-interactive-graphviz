@@ -3,11 +3,11 @@ import {
   VSCodeButton,
   VSCodeOption,
 } from "@vscode/webview-ui-toolkit/react";
-import { Engine, Format } from "@hpcc-js/wasm";
 import { Overlay } from "react-overlays";
 import DropDown from "./components/DropDown";
 import Toolbar from "./components/Toolbar";
 import TextField from "./components/TextField";
+import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 

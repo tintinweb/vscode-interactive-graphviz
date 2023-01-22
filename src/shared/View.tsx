@@ -1,20 +1,15 @@
 import React from "react";
-import {
-  Engine,
-  Format,
-  graphvizSync,
-  graphvizVersion,
-} from "@hpcc-js/wasm";
 import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
-// @ts-ignore
-import GraphvizWasm from "../../content/dist/graphvizlib.wasm";
-
 import { InfoToolBar } from "./components/Toolbar";
-import Graphviz from "./components/Graphviz";
+import Graphvizview from "./components/Graphviz";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 import { IRenderConfiguration } from "../IRenderConfiguration";
+
+// @ts-ignore
+import {Graphviz} from "@hpcc-js/wasm/graphviz";
+import { Engine, Format, Graphviz as GraphvizType } from "@hpcc-js/wasm/types/graphviz";
 
 export default function View(
   {
@@ -51,23 +46,18 @@ export default function View(
   // Render/Layout
   React.useEffect(() => {
     if (!source) return;
-    graphvizVersion("dist", GraphvizWasm)
-      .then((t) => {
-        console.log(`Graphviz Version: ${t}`);
-      })
-      .then(() => graphvizSync(undefined, GraphvizWasm))
-      .then((syncObject) => {
-        setError("");
-        try {
-        // Layout and inject svg
-          const res = syncObject.layout(source, "svg", engine);
-          setGraph(res);
-          if (onFinish) onFinish();
-        } catch (e: any) {
-          setError(e.message);
-          if (onError) onError(e.message);
-        }
-      });
+    Graphviz.load().then((graphviz: GraphvizType) => {
+      setError("");
+      try {
+      // Layout and inject svg
+        const res = graphviz.layout(source, "svg", engine);
+        setGraph(res);
+        if (onFinish) onFinish();
+      } catch (e: any) {
+        setError(e.message);
+        if (onError) onError(e.message);
+      }
+    });
   }, [source, engine]);
 
   React.useEffect(() => {
@@ -209,7 +199,7 @@ export default function View(
     />
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
-    <Graphviz
+    <Graphvizview
       dot={graph}
       ref={graphvizView}
       config={config}

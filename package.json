@@ -207,7 +207,7 @@
         "xml2js": "^0.4.23"
     },
     "dependencies": {
-        "@hpcc-js/wasm": "^1.16.5",
+        "@hpcc-js/wasm": "^2.7.0",
         "@ts-graphviz/parser": "^0.6.0",
         "@types/text-encoding": "^0.0.36",
         "@vscode/codicons": "^0.0.32",
@@ -221,7 +221,7 @@
         "react-dom": "^18.0.0",
         "react-overlays": "^5.1.1",
         "text-encoding": "^0.7.0",
-        "ts-graphviz": "^0.16.0",
+        "ts-graphviz": "^1.5.0",
         "vscode-notebook-error-overlay": "^1.0.1",
         "vscode-uri": "^3.0.3"
     },

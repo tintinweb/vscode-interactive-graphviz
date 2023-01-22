@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { Format } from "@hpcc-js/wasm";
+import { Format } from "@hpcc-js/wasm/types/graphviz";
 import React, { useEffect, useState } from "react";
 import View from "../shared/View";
 

@@ -1,6 +1,6 @@
 import { get, isArray } from "lodash";
 import React, { useEffect, useState } from "react";
-import { digraph, INode, toDot } from "ts-graphviz";
+import { digraph, NodeModel, toDot } from "ts-graphviz";
 import { OutputItem } from "vscode-notebook-renderer";
 import StatView, { DataSelectorStat } from "./StatView";
 import TextField from "./components/TextField";
@@ -72,12 +72,12 @@ export default function DataSelector({
       return;
     }
 
-    const dict : {[n:string]: INode} = {};
+    const dict : {[n:string]: NodeModel} = {};
     const localstat : DataSelectorStat = [];
     a.forEach((element, idx) => {
       const s = get(element, source);
-      let tn: INode|undefined;
-      let sn: INode|undefined;
+      let tn: NodeModel|undefined;
+      let sn: NodeModel|undefined;
 
       if (s) {
         sn = dict[s];

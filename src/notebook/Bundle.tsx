@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { OutputItem, RendererContext } from "vscode-notebook-renderer";
-import { Format } from "@hpcc-js/wasm";
 import DataSelector from "../shared/DataSelector";
 import { IRenderConfiguration, IMessageSetConfiguration } from "../IRenderConfiguration";
 import View from "../shared/View";
+import { Format } from "@hpcc-js/wasm/types/graphviz";
 
 export default function Bundle({
   context,
