@@ -79,7 +79,6 @@ const GraphvizD3 = forwardRef((
 
         const svg = select(`#${id} svg`);
         // Extract data
-        // eslint-disable-next-line func-names
         svg.selectAll("polygon,text,path").each(function () {
           const stroke = select(this).attr("stroke");
           const fill = select(this).attr("fill");
@@ -92,7 +91,6 @@ const GraphvizD3 = forwardRef((
         // Extract node data
         const nodes = svg.select("g").selectAll(".node");
         nodes.attr("pointer-events", "visible");
-        // eslint-disable-next-line func-names
         nodes.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -103,7 +101,6 @@ const GraphvizD3 = forwardRef((
 
         // Extract edge data
         const edges = svg.select("g").selectAll(".edge");
-        // eslint-disable-next-line func-names
         edges.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -115,7 +112,6 @@ const GraphvizD3 = forwardRef((
 
         // Extract cluster data
         const clusters = svg.select("g").selectAll(".cluster");
-        // eslint-disable-next-line func-names
         clusters.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -125,7 +121,6 @@ const GraphvizD3 = forwardRef((
         });
 
         // Make Nodes clickable
-        // eslint-disable-next-line func-names
         nodes.on("click", function () {
           onClick(this);
         });
@@ -160,27 +155,14 @@ const GraphvizD3 = forwardRef((
   };
 
   const resetSelection = () => {
-    // eslint-disable-next-line func-names
     select(`#${id} svg`).select("g").selectAll("ellipse, path, polygon, text").each(function () {
       const opacity = select(this).attr("data-opacity") || 1;
       select(this).style("opacity", opacity);
     });
   };
 
-  // Reset view on button click
-  /*const resetView = () => {
-    if (!zoomArea || !zoomFunc) return;
-    const svg = select(ref.current).select("svg");
-    zoomFunc.transform(zoomArea as any, zoomIdentity);
-    if (originalTransform) {
-      zoomFunc.translateBy(svg as any, originalTransform[0], originalTransform[1]);
-    }
-    resetSelection();
-  };*/
-
   const findEdges = (
     node: BaseType,
-    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
     ) => string | undefined,
   ): { edges: BaseType[], nodeNames: string[] } | undefined => {
@@ -208,7 +190,6 @@ const GraphvizD3 = forwardRef((
 
   const findLinked = (
     node: BaseType,
-    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
     ) => string | undefined,
   ): BaseType[] => {
