@@ -1,0 +1,3 @@
+digraph G {
+	node [ shape="ellipse",fillcolor="#aa0000:#00aa00",style="filled" ] ":(";
+}
