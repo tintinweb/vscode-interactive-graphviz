@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Format } from "@hpcc-js/wasm/types/graphviz";
 import React, { useEffect, useState } from "react";
-import { IRenderCommunication } from "../IRenderConfiguration";
+import { IRenderCommunication, IRenderConfiguration } from "../IRenderConfiguration";
 import View from "../shared/View";
 
 import "../shared/webviewStyle.css";
@@ -12,12 +12,18 @@ const vscode = acquireVsCodeApi();
 
 export default function WebViewBundle() {
   const [dot, setDot] = useState<undefined | string>();
+  const [config, setConfig] = useState<undefined | IRenderConfiguration>()
 
   useEffect(() => {
     const receivedMessage = (a: { data: IRenderCommunication }) => {
-      if (!a.data || a.data.command !== "renderDot") return;
-
-      setDot(a.data.value);
+      if (a.data && a.data.command === "renderDot") {
+        setDot(a.data.value);
+      } else if (a.data && a.data.command === "setConfiguration") {
+        setConfig(a.data.value);
+      } else {
+        console.log("Unknown command");
+        console.log(a);
+      }
     };
 
     window.addEventListener("message", receivedMessage);
@@ -49,6 +55,7 @@ export default function WebViewBundle() {
   if (!dot) return <></>;
 
   return <View
+    config={config}
     source={dot}
     saveFunction={saveFunction}
     onFinish={onFinish}

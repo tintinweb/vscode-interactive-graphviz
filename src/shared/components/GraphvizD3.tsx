@@ -5,6 +5,8 @@ import { flatten } from 'lodash';
 import { Engine } from '@hpcc-js/wasm/types/graphviz';
 import { IRenderConfiguration } from '../../IRenderConfiguration';
 
+import "./vscodeTheme.css";
+
 interface IGraphvizProps {
   /**
    * A string containing a graph representation using the Graphviz DOT language.
@@ -258,7 +260,10 @@ const GraphvizD3 = forwardRef((
     directory,
   }));
 
-  return <div className={className} id={id} />;
+  return <div
+    className={config && config.themeColors ? "vscodeTheme" : ""}
+    id={id}
+  />;
 });
 
 export { GraphvizD3, IGraphvizProps };
