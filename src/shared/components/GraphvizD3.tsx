@@ -48,6 +48,7 @@ const GraphvizD3 = forwardRef((
     nodes: { [name: string]: BaseType },
     clusters: { [name: string]: BaseType },
     edges: { [name: string]: BaseType[] },
+    resetView: () => any
   }>();
 
   useEffect(() => {
@@ -66,10 +67,6 @@ const GraphvizD3 = forwardRef((
       .transition(() => transit)
       .tweenPaths(true)
       .tweenShapes(true)
-      .renderDot(dot, () => {
-        console.log(this);
-
-      })
       .onerror((err) => {
         if (onError)
           onError(err)
@@ -132,7 +129,7 @@ const GraphvizD3 = forwardRef((
           onClick(this);
         });
 
-        setDirectory({ nodes: nodesByName, edges: edgesByName, clusters: clustersByName });
+        setDirectory({ nodes: nodesByName, edges: edgesByName, clusters: clustersByName, resetView: process.resetZoom.bind(process) });
 
         if (onFinish)
           onFinish()
@@ -270,7 +267,7 @@ const GraphvizD3 = forwardRef((
   );
 
   useImperativeHandle(parentRef, () => ({
-    //reset: resetView,
+    reset: directory?.resetView,
     resetSelection,
     highlight,
     findLinked,
