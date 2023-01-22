@@ -3,12 +3,9 @@ import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
 import { InfoToolBar } from "./components/Toolbar";
-import Graphvizview from "./components/Graphviz";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 import { IRenderConfiguration } from "../IRenderConfiguration";
 
-// // @ts-ignore
-//import {Graphviz} from "@hpcc-js/wasm/graphviz";
 import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import GraphvizD3 from "./components/GraphvizD3";
 import { Graphviz } from "@hpcc-js/wasm";
@@ -35,7 +32,6 @@ export default function View(
   const [engine, setEngine] = React.useState<Engine>("dot");
   const [direction, setDirection] = React.useState<Direction>("Bidirectional");
 
-  // @ts-ignore
   ref.current = {
     direction,
   };
