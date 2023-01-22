@@ -4,7 +4,7 @@
  *
 * */
 import * as vscode from "vscode";
-import { IRenderCommunication } from "../IRenderConfiguration";
+import { IRenderCommunication } from "../types/IRenderConfiguration";
 import diagnosticCollection from "../language/diagnosticCollection";
 import * as settings from "../settings";
 

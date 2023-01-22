@@ -3,7 +3,7 @@ import { graphviz, GraphvizOptions } from 'd3-graphviz';
 import { BaseType, easeLinear, select, transition } from 'd3';
 import { flatten } from 'lodash';
 import { Engine } from '@hpcc-js/wasm/types/graphviz';
-import { IRenderConfiguration } from '../../IRenderConfiguration';
+import { IRenderConfiguration } from '../../types/IRenderConfiguration';
 
 import "./vscodeTheme.css";
 

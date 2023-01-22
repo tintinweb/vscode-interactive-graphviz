@@ -4,7 +4,7 @@ import { flatten, uniq } from "lodash";
 
 import { InfoToolBar } from "./components/Toolbar";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
-import { IRenderConfiguration } from "../IRenderConfiguration";
+import { IRenderConfiguration } from "../types/IRenderConfiguration";
 
 import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import GraphvizD3 from "./components/GraphvizD3";

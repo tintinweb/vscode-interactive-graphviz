@@ -9,9 +9,9 @@ import * as vscode from "vscode";
 import { Utils } from "vscode-uri";
 import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
-import prepareHTML from "../prepareHTML";
+import prepareHTML from "./prepareHTML";
 import saveFile from "./saveFile";
-import { IRenderCommunication } from "../IRenderConfiguration";
+import { IRenderCommunication } from "../types/IRenderConfiguration";
 
 const webviewPanelContent = require("../../content2/index.html").default;
 

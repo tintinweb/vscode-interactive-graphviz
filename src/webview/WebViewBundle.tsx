@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { Format } from "@hpcc-js/wasm/types/graphviz";
 import React, { useEffect, useState } from "react";
-import { IRenderCommunication, IRenderConfiguration } from "../IRenderConfiguration";
+import { IRenderCommunication, IRenderConfiguration } from "../types/IRenderConfiguration";
 import View from "../shared/View";
 
 import "../shared/webviewStyle.css";

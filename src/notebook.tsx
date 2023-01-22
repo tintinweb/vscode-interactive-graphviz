@@ -1,6 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable import/prefer-default-export */
-
 import "@vscode/codicons/dist/codicon.css";
 
 import errorOverlay from "vscode-notebook-error-overlay";

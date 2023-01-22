@@ -10,7 +10,7 @@ import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import saveFile from "./features/saveFile";
-import { IMessageSetConfiguration, IRenderCommunication } from "./IRenderConfiguration";
+import { IMessageSetConfiguration, IRenderCommunication } from "./types/IRenderConfiguration";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotDocumentFormatter from "./language/DocumentFormatter";

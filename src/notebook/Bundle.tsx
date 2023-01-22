@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { OutputItem, RendererContext } from "vscode-notebook-renderer";
 import DataSelector from "../shared/DataSelector";
-import { IRenderConfiguration, IMessageSetConfiguration, IRenderCommunication } from "../IRenderConfiguration";
+import { IRenderConfiguration, IMessageSetConfiguration, IRenderCommunication } from "../types/IRenderConfiguration";
 import View from "../shared/View";
 import { Format } from "@hpcc-js/wasm/types/graphviz";
 
