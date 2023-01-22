@@ -19,15 +19,15 @@ export default function View(
     saveFunction,
     onFinish,
     onError,
-  } : {
+  }: {
     source?: string,
     config?: IRenderConfiguration,
     saveFunction: (data: string, type: Format) => void,
     onFinish?: () => void,
     onError?: (err: any) => void,
   },
-) : JSX.Element {
-  const ref = React.useRef<{direction: Direction}>();
+): JSX.Element {
+  const ref = React.useRef<{ direction: Direction }>();
   const graphvizView = React.useRef();
   const [graph, setGraph] = React.useState("");
   const [searchResult, setSearchResult] = React.useState("");
@@ -54,7 +54,7 @@ export default function View(
 
   const streamSearch = (el: BaseType) => {
     if (!ref.current || !ref.current.direction) return undefined;
-    const downstream:BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Downstream")
+    const downstream: BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Downstream")
       ? (graphvizView.current as any).findLinkedFrom(el) : [];
     const upstream: BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Upstream")
       ? (graphvizView.current as any).findLinkedTo(el) : [];
@@ -62,7 +62,7 @@ export default function View(
     return uniq([...downstream, el, ...upstream]);
   };
 
-  const searchNodesForEdges = (el: BaseType):(BaseType|undefined)[] => {
+  const searchNodesForEdges = (el: BaseType): (BaseType | undefined)[] => {
     if (!graphvizView || !graphvizView.current) return [undefined, undefined];
 
     const { directory } = graphvizView.current as any;
@@ -78,21 +78,21 @@ export default function View(
     ];
   };
 
-  const search = (searchString:string, searchOptions: SearchOptions) => {
+  const search = (searchString: string, searchOptions: SearchOptions) => {
     if (!graphvizView || !graphvizView.current) return undefined;
 
     const { directory } = graphvizView.current as any;
     // eslint-disable-next-line no-unused-vars
-    let searchFunction:(str: string) => boolean;
+    let searchFunction: (str: string) => boolean;
     if (!searchOptions.regex) {
       if (searchOptions.caseSensitive) {
         searchFunction = (str: string) => str.trim().indexOf(searchString) !== -1;
       } else {
-        searchFunction = (str:string) => str.toUpperCase()
+        searchFunction = (str: string) => str.toUpperCase()
           .trim().indexOf(searchString.toUpperCase()) !== -1;
       }
     } else {
-      searchFunction = (str:string) => {
+      searchFunction = (str: string) => {
         const regex = new RegExp(searchString, (searchOptions.caseSensitive ? undefined : "i"));
         return !!str.trim().match(regex);
       };
@@ -140,7 +140,7 @@ export default function View(
           || !ref || !ref.current) {
           return;
         }
-        let h : BaseType[] = [];
+        let h: BaseType[] = [];
         if (res.nodes) {
           h = [...h, ...uniq(flatten(res.nodes.map((node) => streamSearch(node) || [])))];
         }
@@ -170,7 +170,7 @@ export default function View(
         }
         const res = search(searchString, searchOptions);
         if (!res) return;
-        const results:string[] = [];
+        const results: string[] = [];
         if (res.nodes && (searchOptions.nodeLabel || searchOptions.nodeName)) {
           results.push(`${res.nodes.length} node${res.nodes.length === 1 ? "" : "s"}`);
         }
@@ -186,11 +186,13 @@ export default function View(
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
     {source && <GraphvizD3
-      dot={source}
-      options={{
-        engine: engine as any || "dot",
-        tweenPaths: true,
+      ref={graphvizView}
+      config={config}
+      onClick={(el) => {
+        setHighlights(streamSearch(el) || []);
       }}
+      dot={source}
+      engine={engine}
       onError={(e: any) => {
         setError(e);
         if (onError)

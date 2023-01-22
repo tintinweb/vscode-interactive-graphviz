@@ -13,20 +13,20 @@ export default forwardRef(({
   onClick,
   config,
 }:
-{
-    dot:string,
+  {
+    dot: string,
     // eslint-disable-next-line no-unused-vars
-    onClick:(t:BaseType)=>void,
+    onClick: (t: BaseType) => void,
     config?: IRenderConfiguration
-}, parentRef) : JSX.Element => {
+  }, parentRef): JSX.Element => {
   const ref = React.useRef<HTMLDivElement>(null);
   // Inject SVG and setup Zoom
   const [zoomFunc, zoomArea, directory, originalTransform] = React.useMemo(() => {
     if (!ref.current || dot === "") return [undefined, undefined];
 
-    const nodesByName : {[name:string]:BaseType} = {};
-    const clustersByName : {[name:string]:BaseType} = {};
-    const edgesByName : {[name:string]:BaseType[]} = {};
+    const nodesByName: { [name: string]: BaseType } = {};
+    const clustersByName: { [name: string]: BaseType } = {};
+    const edgesByName: { [name: string]: BaseType[] } = {};
 
     // Render SVG
     select(ref.current).html(dot);
@@ -161,8 +161,8 @@ export default forwardRef(({
     node: BaseType,
     // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
-    ) => string|undefined,
-  ): {edges: BaseType[], nodeNames:string[]}|undefined => {
+    ) => string | undefined,
+  ): { edges: BaseType[], nodeNames: string[] } | undefined => {
     if (!directory || !directory.edges || !node) return undefined;
 
     const nodeName = select(node).attr("data-name");
@@ -189,12 +189,12 @@ export default forwardRef(({
     node: BaseType,
     // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
-      ) => string|undefined,
-  ) : BaseType[] => {
+    ) => string | undefined,
+  ): BaseType[] => {
     if (!directory || !directory.nodes) return [];
-    let searchNodes : BaseType[] = [node];
-    const nodes : BaseType[] = [node];
-    const edges : BaseType[] = [];
+    let searchNodes: BaseType[] = [node];
+    const nodes: BaseType[] = [node];
+    const edges: BaseType[] = [];
 
     while (searchNodes.length > 0) {
       const edgeResults = flatten(searchNodes.map((n) => findEdges(n, testEdge)));
@@ -222,7 +222,7 @@ export default forwardRef(({
 
   const findLinkedFrom = (node: BaseType) => findLinked(
     node,
-    (edgeName:string, nodeName: string):string|undefined => {
+    (edgeName: string, nodeName: string): string | undefined => {
       const other = undefined;
 
       const connection = edgeName.split("->");
@@ -235,7 +235,7 @@ export default forwardRef(({
 
   const findLinkedTo = (node: BaseType) => findLinked(
     node,
-    (edgeName:string, nodeName: string):string|undefined => {
+    (edgeName: string, nodeName: string): string | undefined => {
       const other = undefined;
 
       const connection = edgeName.split("->");
@@ -262,7 +262,7 @@ export default forwardRef(({
     overflow: "hidden",
     textAlign: "center",
   }}
-  className={config && config.themeColors ? "vscodeTheme" : ""}
-  ref={ref}
+    className={config && config.themeColors ? "vscodeTheme" : ""}
+    ref={ref}
   />;
 });
