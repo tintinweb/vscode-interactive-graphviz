@@ -4,6 +4,7 @@
  *
 * */
 import * as vscode from "vscode";
+import { IRenderCommunication } from "../IRenderConfiguration";
 import diagnosticCollection from "../language/diagnosticCollection";
 import * as settings from "../settings";
 
@@ -215,20 +216,13 @@ export default class PreviewPanel {
       }, () => new Promise((resolve) => {
         this.progressResolve = resolve;
         // Send the message to the renderer
-        this.panel.webview.postMessage({ command: "renderDot", value: dotSrc });
+        this.panel.webview.postMessage({ command: "renderDot", value: dotSrc } as IRenderCommunication);
       }));
     }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public handleMessage(message: {
-            command: any; value?: {
-                err: any; // save the latest content
-                // save the latest content
-                type: string;
-                data: string;
-            };
-        }) {
+  public handleMessage(message: IRenderCommunication) {
     /**
          * Dev: handle messages emitted by the graphviz view
          */
@@ -305,13 +299,13 @@ export default class PreviewPanel {
   public onPageLoaded() {
     this.initialized = true;
     this.panel.webview.postMessage({
-      command: "setConfig",
+      command: "setConfiguration",
       value: {
-        transitionDelay: settings.extensionConfig().get("view.transitionDelay"),
-        transitionaDuration: settings.extensionConfig().get("view.transitionDuration"),
-        themeColors: settings.extensionConfig().get("view.themeColors"),
+        transitionDelay: settings.extensionConfig().get<number>("view.transitionDelay"),
+        transitionDuration: settings.extensionConfig().get<number>("view.transitionDuration"),
+        themeColors: settings.extensionConfig().get<boolean>("view.themeColors"),
       },
-    });
+    } as IRenderCommunication);
     this.renderWaitingContent();
   }
 

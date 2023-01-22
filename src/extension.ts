@@ -10,7 +10,7 @@ import * as vscode from "vscode";
 import InteractiveWebviewGenerator from "./features/interactiveWebview";
 import PreviewPanel from "./features/previewPanel";
 import saveFile from "./features/saveFile";
-import { IMessageSetConfiguration } from "./IRenderConfiguration";
+import { IMessageSetConfiguration, IRenderCommunication } from "./IRenderConfiguration";
 import ColorProvider from "./language/ColorProvider";
 import DotCompletionItemProvider from "./language/CompletionItemProvider";
 import DotDocumentFormatter from "./language/DocumentFormatter";
@@ -147,9 +147,9 @@ function onActivate(context: vscode.ExtensionContext) {
   /* notebook messaging */
   const messageChannel: vscode.NotebookRendererMessaging = vscode.notebooks
     .createRendererMessaging(settings.notebookRendererId);
-  messageChannel.onDidReceiveMessage((e) => {
-    if (e.message.action === "saveFile") {
-      saveFile(e.message.payload.data, e.message.payload.type);
+  messageChannel.onDidReceiveMessage((e: {message: IRenderCommunication}) => {
+    if (e.message.command === "saveAs") {
+      saveFile(e.message.value.data, e.message.value.type);
     }
     if (e.message.command === "ready") {
       const msg : IMessageSetConfiguration = {
@@ -160,7 +160,7 @@ function onActivate(context: vscode.ExtensionContext) {
           themeColors: settings.extensionConfig().get("view.themeColors"),
         },
       };
-      messageChannel.postMessage(msg);
+      messageChannel.postMessage(msg as IRenderCommunication);
     }
   });
 

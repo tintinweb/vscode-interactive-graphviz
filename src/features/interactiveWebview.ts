@@ -11,6 +11,7 @@ import { isObject } from "lodash";
 import PreviewPanel from "./previewPanel";
 import prepareHTML from "../prepareHTML";
 import saveFile from "./saveFile";
+import { IRenderCommunication } from "../IRenderConfiguration";
 
 const webviewPanelContent = require("../../content2/index.html").default;
 
@@ -110,9 +111,7 @@ export default class InteractiveWebviewGenerator {
   // eslint-disable-next-line class-methods-use-this
   handleMessage(
     previewPanel: PreviewPanel,
-    message: {
-          command: string;
-          value: { err: any; type: string; data: string; }; },
+    message: IRenderCommunication,
   ) {
     console.log(`Message received from the webview: ${message.command}`);
 
@@ -120,10 +119,10 @@ export default class InteractiveWebviewGenerator {
     case "onRenderFinished":
       previewPanel.onRenderFinished(message.value.err);
       break;
-    case "onPageLoaded":
+    case "ready":
       previewPanel.onPageLoaded();
       break;
-    case "message":
+    /*case "message":
       if (message.value.type === "error") {
         vscode.window.showErrorMessage(message.value.data);
       } else {
@@ -139,7 +138,7 @@ export default class InteractiveWebviewGenerator {
       // not implemented
       // console.log("dblclick --> navigate to code location");
       previewPanel.handleMessage(message); // just forward the event for now
-      break;
+      break;*/
     case "saveAs":
       saveFile(message.value.data, message.value.type);
       break;

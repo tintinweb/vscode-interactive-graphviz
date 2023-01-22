@@ -124,16 +124,11 @@ export default function View(
           console.error("noting to save!");
           return;
         }
-        console.log(a);
-        console.log(source);
         if (a === "dot") {
-          console.log("save dot");
           saveFunction(source, a);
         } else if (a === "svg") {
-          console.log("save svg");
           Graphviz.load().then((gv) => {
             const d = gv.layout(source, undefined, engine);
-            console.log(d);
             saveFunction(d, a);
           });
         } else {

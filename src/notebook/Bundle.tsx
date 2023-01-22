@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { OutputItem, RendererContext } from "vscode-notebook-renderer";
 import DataSelector from "../shared/DataSelector";
-import { IRenderConfiguration, IMessageSetConfiguration } from "../IRenderConfiguration";
+import { IRenderConfiguration, IMessageSetConfiguration, IRenderCommunication } from "../IRenderConfiguration";
 import View from "../shared/View";
 import { Format } from "@hpcc-js/wasm/types/graphviz";
 
 export default function Bundle({
   context,
   outputItem,
-} : {
-    context: RendererContext<any>,
-    outputItem: OutputItem,
-}) : JSX.Element {
-  const [source, setSource] = useState<string|undefined>();
+}: {
+  context: RendererContext<any>,
+  outputItem: OutputItem,
+}): JSX.Element {
+  const [source, setSource] = useState<string | undefined>();
 
   const [configuration, setConfiguration] = useState<IRenderConfiguration>({
     themeColors: false,
@@ -27,24 +27,25 @@ export default function Bundle({
 
     if (context && context.postMessage) {
       context.postMessage({
-        action: "saveFile",
-        payload: {
+        command: "saveAs",
+        value: {
           type,
           data,
         },
-      });
+      } as IRenderCommunication);
     }
   };
 
   useEffect(() => {
-    // @ts-ignore
-    context.onDidReceiveMessage((e: IMessageSetConfiguration) => {
-      if (e.command === "setConfiguration") {
-        setConfiguration(e.value);
-      }
-    });
-    // @ts-ignore
-    context.postMessage({ command: "ready" });
+    if (!context) return;
+    if (context.onDidReceiveMessage)
+      context.onDidReceiveMessage((e: IRenderCommunication) => {
+        if (e.command === "setConfiguration") {
+          setConfiguration(e.value);
+        }
+      });
+    if (context.postMessage)
+      context.postMessage({ command: "ready" } as IRenderCommunication);
   }, []);
 
   return <>
