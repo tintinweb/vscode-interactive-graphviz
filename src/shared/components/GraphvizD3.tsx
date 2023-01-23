@@ -151,7 +151,7 @@ const GraphvizD3 = forwardRef(({
 
     // disable everything
     svg.select("g")
-      .selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon")
+      .selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon, .edge text")
       // eslint-disable-next-line func-names
       .each(function () {
         const opacity = select(this).attr("data-opacity") || 1;
