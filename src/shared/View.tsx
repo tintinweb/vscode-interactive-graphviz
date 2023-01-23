@@ -2,13 +2,15 @@ import React from "react";
 import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
+// eslint-disable-next-line import/no-unresolved
+import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
+import { Graphviz } from "@hpcc-js/wasm";
 import { InfoToolBar } from "./components/Toolbar";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
 import { IRenderConfiguration } from "../types/IRenderConfiguration";
 
-import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
+// eslint-disable-next-line import/no-named-as-default
 import GraphvizD3 from "./components/GraphvizD3";
-import { Graphviz } from "@hpcc-js/wasm";
 
 export default function View(
   {
@@ -20,8 +22,10 @@ export default function View(
   }: {
     source?: string,
     config?: IRenderConfiguration,
+    // eslint-disable-next-line no-unused-vars
     saveFunction: (data: string, type: Format) => void,
     onFinish?: () => void,
+    // eslint-disable-next-line no-unused-vars
     onError?: (err: any) => void,
   },
 ): JSX.Element {
@@ -40,7 +44,7 @@ export default function View(
 
   React.useEffect(() => {
     setError("");
-  }, [source, engine])
+  }, [source, engine]);
 
   React.useEffect(() => {
     if (graphvizView && graphvizView.current) {
@@ -198,8 +202,7 @@ export default function View(
       engine={engine}
       onError={(e: any) => {
         setError(e);
-        if (onError)
-          onError(e);
+        if (onError) { onError(e); }
       }}
       onFinish={onFinish}
     />}
