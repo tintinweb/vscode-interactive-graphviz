@@ -1,9 +1,14 @@
-import React, { useEffect, useMemo, forwardRef, useState, useImperativeHandle } from 'react';
-import { graphviz, GraphvizOptions } from 'd3-graphviz';
-import { BaseType, easeLinear, select, transition } from 'd3';
-import { flatten } from 'lodash';
-import { Engine } from '@hpcc-js/wasm/types/graphviz';
-import { IRenderConfiguration } from '../../types/IRenderConfiguration';
+import React, {
+  useEffect, useMemo, forwardRef, useState, useImperativeHandle,
+} from "react";
+import { graphviz, GraphvizOptions } from "d3-graphviz";
+import {
+  BaseType, easeLinear, select, transition,
+} from "d3";
+import { flatten } from "lodash";
+// eslint-disable-next-line import/no-unresolved
+import { Engine } from "@hpcc-js/wasm/types/graphviz";
+import { IRenderConfiguration } from "../../types/IRenderConfiguration";
 
 import "./vscodeTheme.css";
 
@@ -16,18 +21,16 @@ interface IGraphvizProps {
   /**
    * Options to pass to the Graphviz renderer.
    */
-  //options?: GraphvizOptions;
-  /**
-   * The classname to attach to this component for styling purposes.
-   */
-  className?: string;
+  // options?: GraphvizOptions;
 
   engine: Engine,
 
   config?: IRenderConfiguration,
 
   onFinish?: () => void,
+  // eslint-disable-next-line no-unused-vars
   onError?: (err: any) => void,
+  // eslint-disable-next-line no-unused-vars
   onClick: (t: BaseType) => void,
 }
 
@@ -42,15 +45,16 @@ let counter = 0;
 // eslint-disable-next-line no-plusplus
 const getId = () => `graphviz${counter++}`;
 
-const GraphvizD3 = forwardRef((
-  { dot, className, engine = "dot", onError, onFinish, onClick, config }: IGraphvizProps, parentRef) => {
+const GraphvizD3 = forwardRef(({
+  dot, engine = "dot", onError, onFinish, onClick, config,
+}: IGraphvizProps, parentRef) => {
   const id = useMemo(getId, []);
 
   const [directory, setDirectory] = useState<undefined | {
     nodes: { [name: string]: BaseType },
     clusters: { [name: string]: BaseType },
     edges: { [name: string]: BaseType[] },
-    resetView: () => any
+    resetView:() => any
   }>();
 
   useEffect(() => {
@@ -61,7 +65,7 @@ const GraphvizD3 = forwardRef((
     const process = graphviz(`#${id}`, {
       ...defaultOptions,
       ...{
-        engine: engine as any
+        engine: engine as any,
       },
     })
       .fade(true)
@@ -71,8 +75,7 @@ const GraphvizD3 = forwardRef((
       .tweenShapes(true)
       .renderDot(dot)
       .onerror((err) => {
-        if (onError)
-          onError(err)
+        if (onError) { onError(err); }
       })
       .on("end", () => {
         const nodesByName: { [name: string]: BaseType } = {};
@@ -81,6 +84,7 @@ const GraphvizD3 = forwardRef((
 
         const svg = select(`#${id} svg`);
         // Extract data
+        // eslint-disable-next-line func-names
         svg.selectAll("polygon,text,path").each(function () {
           const stroke = select(this).attr("stroke");
           const fill = select(this).attr("fill");
@@ -93,6 +97,7 @@ const GraphvizD3 = forwardRef((
         // Extract node data
         const nodes = svg.select("g").selectAll(".node");
         nodes.attr("pointer-events", "visible");
+        // eslint-disable-next-line func-names
         nodes.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -103,6 +108,7 @@ const GraphvizD3 = forwardRef((
 
         // Extract edge data
         const edges = svg.select("g").selectAll(".edge");
+        // eslint-disable-next-line func-names
         edges.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -114,6 +120,7 @@ const GraphvizD3 = forwardRef((
 
         // Extract cluster data
         const clusters = svg.select("g").selectAll(".cluster");
+        // eslint-disable-next-line func-names
         clusters.each(function () {
           let name = select(this).select("title").text();
           // remove any compass points:
@@ -123,14 +130,19 @@ const GraphvizD3 = forwardRef((
         });
 
         // Make Nodes clickable
+        // eslint-disable-next-line func-names
         nodes.on("click", function () {
           onClick(this);
         });
 
-        setDirectory({ nodes: nodesByName, edges: edgesByName, clusters: clustersByName, resetView: process.resetZoom.bind(process) });
+        setDirectory({
+          nodes: nodesByName,
+          edges: edgesByName,
+          clusters: clustersByName,
+          resetView: process.resetZoom.bind(process),
+        });
 
-        if (onFinish)
-          onFinish()
+        if (onFinish) { onFinish(); }
       });
   }, [dot, engine]);
 
@@ -157,6 +169,7 @@ const GraphvizD3 = forwardRef((
   };
 
   const resetSelection = () => {
+    // eslint-disable-next-line func-names
     select(`#${id} svg`).select("g").selectAll("ellipse, path, polygon, text").each(function () {
       const opacity = select(this).attr("data-opacity") || 1;
       select(this).style("opacity", opacity);
@@ -165,6 +178,7 @@ const GraphvizD3 = forwardRef((
 
   const findEdges = (
     node: BaseType,
+    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
     ) => string | undefined,
   ): { edges: BaseType[], nodeNames: string[] } | undefined => {
@@ -192,6 +206,7 @@ const GraphvizD3 = forwardRef((
 
   const findLinked = (
     node: BaseType,
+    // eslint-disable-next-line no-unused-vars
     testEdge: (edgeName: string, nodeName: string
     ) => string | undefined,
   ): BaseType[] => {
