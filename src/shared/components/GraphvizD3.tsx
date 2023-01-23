@@ -11,6 +11,7 @@ import { Engine } from "@hpcc-js/wasm/types/graphviz";
 import { IRenderConfiguration } from "../../types/IRenderConfiguration";
 
 import "./vscodeTheme.css";
+import filterGraphviz from "../filterGraphviz";
 
 interface IGraphvizProps {
   /**
@@ -146,6 +147,21 @@ const GraphvizD3 = forwardRef(({
       });
   }, [dot, engine]);
 
+  const extract = (elements: BaseType[]) => {
+    const nodes: string[] = elements.filter((el) => el
+      // @ts-ignore
+      // eslint-disable-next-line no-underscore-dangle
+      && el.__data__.attributes.class === "node").map((el) => el.__data__.key);
+    const edges : string[] = elements.filter((el) => el
+      // @ts-ignore
+      // eslint-disable-next-line no-underscore-dangle
+      && el.__data__.attributes.class === "edge").map((el) => el.__data__.key);
+    console.log(nodes);
+    console.log(edges);
+    console.log(filterGraphviz(dot, nodes, edges));
+  };
+
+  // eslint-disable-next-line no-unused-vars
   const highlight = (elements: BaseType[]) => {
     const svg = select(`#${id} svg`);
 
@@ -269,6 +285,7 @@ const GraphvizD3 = forwardRef(({
     reset: directory?.resetView,
     resetSelection,
     highlight,
+    extract,
     findLinked,
     findLinkedFrom,
     findLinkedTo,
