@@ -116,9 +116,16 @@ export default function View(
     return searchRes;
   };
 
+  const extract = () => {
+    (graphvizView.current as any).extract(highlights);
+  };
+
   return <>
     <GraphvizToolbar
       disabled={!source}
+      onExtract={
+        (highlights && highlights.length > 0) ? extract : undefined
+      }
       onSave={(a) => {
         if (!source) {
           console.error("noting to save!");

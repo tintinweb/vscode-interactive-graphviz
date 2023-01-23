@@ -4,10 +4,10 @@ import {
   VSCodeOption,
 } from "@vscode/webview-ui-toolkit/react";
 import { Overlay } from "react-overlays";
+import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import DropDown from "./components/DropDown";
 import Toolbar from "./components/Toolbar";
 import TextField from "./components/TextField";
-import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 
 export type Direction = "Bidirectional"| "Downstream"| "Upstream"| "Single";
 
@@ -29,6 +29,7 @@ const overlayStyle : React.CSSProperties = {
 export default function GraphvizToolbar({
   disableDirectionSelection,
   disableEngineSelection,
+  onExtract,
   onChange,
   onSave,
   onReset,
@@ -40,6 +41,7 @@ export default function GraphvizToolbar({
   disableSearch?: boolean,
   disableDirectionSelection?: boolean,
   disableEngineSelection?: boolean,
+  onExtract?: () => void,
   // eslint-disable-next-line no-unused-vars
   onChange?: (engine: Engine, direction: Direction) => void,
   // eslint-disable-next-line no-unused-vars
@@ -201,6 +203,13 @@ export default function GraphvizToolbar({
           )}
         </Overlay>
       </TextField>}
+      {onExtract && <VSCodeButton
+        disabled={disabled}
+        appearance="icon"
+        onClick={onExtract}
+      >
+        <span className="codicon codicon-save"></span>
+      </VSCodeButton>}
       {!disableDirectionSelection && <DropDown
         initial="Bidirectional"
         options={["Bidirectional", "Downstream", "Upstream", "Single"]}
