@@ -157,7 +157,11 @@ export default function View(
           console.error("unknown save function");
         }
       }}
-      onReset={() => graphvizView && graphvizView.current && (graphvizView.current as any).reset()}
+      onReset={() => {
+        if (!graphvizView || !graphvizView.current) return;
+        (graphvizView.current as any).reset();
+        (graphvizView.current as any).resetSelection();
+      }}
       onChange={(eng, dir) => {
         setEngine(eng);
         setDirection(dir);
