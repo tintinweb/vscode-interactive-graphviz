@@ -162,9 +162,8 @@ const GraphvizD3 = forwardRef(({
       // @ts-ignore
       // eslint-disable-next-line no-underscore-dangle
       && el.__data__.attributes.class === "edge").map((el) => el.__data__.key);
-    console.log(nodes);
-    console.log(edges);
-    console.log(filterGraphviz(dot, nodes, edges));
+
+    return filterGraphviz(dot, nodes, edges);
   };
 
   // eslint-disable-next-line no-unused-vars

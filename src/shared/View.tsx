@@ -115,7 +115,12 @@ export default function View(
   };
 
   const extract = () => {
-    (graphvizView.current as any).extract(highlights);
+    const extractedData = (graphvizView.current as any).extract(highlights);
+    if (!extractedData) return;
+    command({
+      command: "openNewWindow",
+      value: extractedData,
+    });
   };
 
   return <>

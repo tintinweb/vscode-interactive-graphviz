@@ -4,6 +4,7 @@ import {
   VSCodeOption,
 } from "@vscode/webview-ui-toolkit/react";
 import { Overlay } from "react-overlays";
+// eslint-disable-next-line import/no-unresolved
 import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import DropDown from "./components/DropDown";
 import Toolbar from "./components/Toolbar";
@@ -208,7 +209,7 @@ export default function GraphvizToolbar({
         appearance="icon"
         onClick={onExtract}
       >
-        <span className="codicon codicon-save"></span>
+        <span className="codicon codicon-combine"></span>
       </VSCodeButton>}
       {!disableDirectionSelection && <DropDown
         initial="Bidirectional"

@@ -12,6 +12,7 @@ import PreviewPanel from "./previewPanel";
 import prepareHTML from "./prepareHTML";
 import saveFile from "./saveFile";
 import { IRenderCommunication } from "../types/IRenderConfiguration";
+import { COMMANDSTRING, ICommand } from "../base";
 
 const webviewPanelContent = require("../../content/index.html").default;
 
@@ -122,7 +123,12 @@ export default class InteractiveWebviewGenerator {
     case "ready":
       previewPanel.onPageLoaded();
       break;
-    /*case "message":
+    case "openNewWindow":
+      vscode.commands.executeCommand(COMMANDSTRING, {
+        content: message.value,
+      } as ICommand);
+      break;
+    /* case "message":
       if (message.value.type === "error") {
         vscode.window.showErrorMessage(message.value.data);
       } else {
@@ -138,7 +144,7 @@ export default class InteractiveWebviewGenerator {
       // not implemented
       // console.log("dblclick --> navigate to code location");
       previewPanel.handleMessage(message); // just forward the event for now
-      break;*/
+      break; */
     case "saveAs":
       saveFile(message.value.data, message.value.type);
       break;

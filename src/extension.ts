@@ -17,12 +17,12 @@ import DotDocumentFormatter from "./language/DocumentFormatter";
 import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
+import { COMMANDSTRING, ICommand } from "./base";
 
 function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
   /* Document Events */
-
   vscode.workspace.onDidChangeTextDocument((event) => {
     if (event.document.languageId === settings.languageId
         || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
@@ -48,32 +48,18 @@ function onActivate(context: vscode.ExtensionContext) {
       if (doc.languageId !== settings.languageId) return;
       if (!settings.extensionConfig().get("openAutomatically")) return;
 
-      vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", {
+      vscode.commands.executeCommand(COMMANDSTRING, {
         document: doc,
       });
     }),
   );
 
   /* commands */
-
   context.subscriptions.push(
-    vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
+    vscode.commands.registerCommand(COMMANDSTRING, (a) => {
       // take document or string; default active editor if
       const args = a || {};
-      const options : {
-        document?: vscode.TextDocument,
-        uri?: vscode.Uri,
-        content?: string,
-        // eslint-disable-next-line no-unused-vars
-        callback?: (panel: PreviewPanel) => void,
-        allowMultiplePanels?: boolean,
-        title?: string,
-        search?: any,
-        displayColumn?: vscode.ViewColumn | {
-          viewColumn: vscode.ViewColumn;
-          preserveFocus?: boolean | undefined;
-        }
-      } = {
+      const options : ICommand = {
         document: args.document,
         uri: args.uri,
         content: args.content,
@@ -162,10 +148,14 @@ function onActivate(context: vscode.ExtensionContext) {
       };
       messageChannel.postMessage(msg as IRenderCommunication);
     }
+    if (e.message.command === "openNewWindow") {
+      vscode.commands.executeCommand(COMMANDSTRING, {
+        content: e.message.value,
+      } as ICommand);
+    }
   });
 
   /* add. providers */
-
   if (settings.extensionConfig().codeCompletion.enable as boolean) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
       [settings.languageId],

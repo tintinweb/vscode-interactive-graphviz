@@ -27,3 +27,7 @@ export type IRenderCommunication = {
     },
   }
   | { command: "onRenderFinished", value: { err?: string } }
+  | {
+    command: "openNewWindow",
+    value: string
+  }

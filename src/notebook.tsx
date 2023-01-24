@@ -20,6 +20,7 @@ import Bundle from "./notebook/Bundle";
 // rendering logic inside of the `render()` function.
 // ----------------------------------------------------------------------------
 
+// eslint-disable-next-line import/prefer-default-export
 export const activate: ActivationFunction = (context) => ({
 
   renderOutputItem(outputItem: OutputItem, element) {
