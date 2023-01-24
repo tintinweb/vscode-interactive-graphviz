@@ -7,7 +7,7 @@ import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
 import { Graphviz } from "@hpcc-js/wasm";
 import { InfoToolBar } from "./components/Toolbar";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
-import { IRenderConfiguration } from "../types/IRenderConfiguration";
+import { IRenderCommunication, IRenderConfiguration } from "../types/IRenderConfiguration";
 
 // eslint-disable-next-line import/no-named-as-default
 import GraphvizD3 from "./components/GraphvizD3";
@@ -16,14 +16,12 @@ export default function View(
   {
     source,
     config,
-    saveFunction,
-    onFinish,
-    onError,
+    command,
   }: {
+    // eslint-disable-next-line no-unused-vars
+    command: (data: IRenderCommunication) => void,
     source?: string,
     config?: IRenderConfiguration,
-    // eslint-disable-next-line no-unused-vars
-    saveFunction: (data: string, type: Format) => void,
     onFinish?: () => void,
     // eslint-disable-next-line no-unused-vars
     onError?: (err: any) => void,
@@ -132,11 +130,23 @@ export default function View(
           return;
         }
         if (a === "dot") {
-          saveFunction(source, a);
+          command({
+            command: "saveAs",
+            value: {
+              data: source,
+              type: a,
+            },
+          });
         } else if (a === "svg") {
           Graphviz.load().then((gv) => {
             const d = gv.layout(source, undefined, engine);
-            saveFunction(d, a);
+            command({
+              command: "saveAs",
+              value: {
+                data: d,
+                type: a,
+              },
+            });
           });
         } else {
           console.error("unknown save function");
@@ -207,11 +217,10 @@ export default function View(
       }}
       dot={source}
       engine={engine}
+      command={command}
       onError={(e: any) => {
         setError(e);
-        if (onError) { onError(e); }
       }}
-      onFinish={onFinish}
     />}
   </>;
 }

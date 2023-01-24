@@ -8,7 +8,7 @@ import {
 import { flatten } from "lodash";
 // eslint-disable-next-line import/no-unresolved
 import { Engine } from "@hpcc-js/wasm/types/graphviz";
-import { IRenderConfiguration } from "../../types/IRenderConfiguration";
+import { IRenderCommunication, IRenderConfiguration } from "../../types/IRenderConfiguration";
 
 import "./vscodeTheme.css";
 import filterGraphviz from "../filterGraphviz";
@@ -28,7 +28,8 @@ interface IGraphvizProps {
 
   config?: IRenderConfiguration,
 
-  onFinish?: () => void,
+  // eslint-disable-next-line no-unused-vars
+  command: (d: IRenderCommunication) => void,
   // eslint-disable-next-line no-unused-vars
   onError?: (err: any) => void,
   // eslint-disable-next-line no-unused-vars
@@ -47,7 +48,7 @@ let counter = 0;
 const getId = () => `graphviz${counter++}`;
 
 const GraphvizD3 = forwardRef(({
-  dot, engine = "dot", onError, onFinish, onClick, config,
+  dot, engine = "dot", config, onClick, command, onError,
 }: IGraphvizProps, parentRef) => {
   const id = useMemo(getId, []);
 
@@ -143,7 +144,12 @@ const GraphvizD3 = forwardRef(({
           resetView: process.resetZoom.bind(process),
         });
 
-        if (onFinish) { onFinish(); }
+        command({
+          command: "onRenderFinished",
+          value: {
+            err: undefined,
+          },
+        });
       });
   }, [dot, engine]);
 

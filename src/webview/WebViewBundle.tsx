@@ -12,7 +12,7 @@ const vscode = acquireVsCodeApi();
 
 export default function WebViewBundle() {
   const [dot, setDot] = useState<undefined | string>();
-  const [config, setConfig] = useState<undefined | IRenderConfiguration>()
+  const [config, setConfig] = useState<undefined | IRenderConfiguration>();
 
   useEffect(() => {
     const receivedMessage = (a: { data: IRenderCommunication }) => {
@@ -41,24 +41,15 @@ export default function WebViewBundle() {
       value: {
         data,
         type,
-      }
+      },
     } as IRenderCommunication);
-  };
-
-  const onFinish = () => {
-    vscode.postMessage({ command: "onRenderFinished", value: {} } as IRenderCommunication);
-  };
-  const onError = (err: string) => {
-    vscode.postMessage({ command: "onRenderFinished", value: { err } } as IRenderCommunication);
   };
 
   if (!dot) return <></>;
 
   return <View
+    command={vscode.postMessage}
     config={config}
     source={dot}
-    saveFunction={saveFunction}
-    onFinish={onFinish}
-    onError={onError}
   />;
 }

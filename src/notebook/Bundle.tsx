@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { OutputItem, RendererContext } from "vscode-notebook-renderer";
-import DataSelector from "../shared/DataSelector";
-import { IRenderConfiguration, IMessageSetConfiguration, IRenderCommunication } from "../types/IRenderConfiguration";
-import View from "../shared/View";
+// eslint-disable-next-line import/no-unresolved
 import { Format } from "@hpcc-js/wasm/types/graphviz";
+import DataSelector from "../shared/DataSelector";
+import { IRenderConfiguration, IRenderCommunication } from "../types/IRenderConfiguration";
+import View from "../shared/View";
 
 export default function Bundle({
   context,
@@ -38,18 +39,22 @@ export default function Bundle({
 
   useEffect(() => {
     if (!context) return;
-    if (context.onDidReceiveMessage)
+    if (context.onDidReceiveMessage) {
       context.onDidReceiveMessage((e: IRenderCommunication) => {
         if (e.command === "setConfiguration") {
           setConfiguration(e.value);
         }
       });
-    if (context.postMessage)
-      context.postMessage({ command: "ready" } as IRenderCommunication);
+    }
+    if (context.postMessage) context.postMessage({ command: "ready" } as IRenderCommunication);
   }, []);
 
   return <>
     <DataSelector data={outputItem} onUpdate={setSource} />
-    {<View source={source} config={configuration} saveFunction={saveFunction} />}
+    {<View
+      command={context.postMessage as any}
+      source={source}
+      config={configuration}
+    />}
   </>;
 }
