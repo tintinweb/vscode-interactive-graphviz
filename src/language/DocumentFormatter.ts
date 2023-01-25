@@ -103,7 +103,7 @@ class Compiler {
         }
         acc.lastLine = cur.location.end.line;
         if ((cur.type === "edge")) {
-          acc.lastLine = cur.location.start.line;
+          acc.lastLine = cur.location.end.line;
         } else if ((cur.type === "comment" && cur.kind === "slash")) {
           acc.lastLine = cur.location.start.line + cur.value.split("\n").length - 1;
         }
