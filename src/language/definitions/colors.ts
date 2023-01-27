@@ -1,4 +1,7 @@
 const colors = `silver#c0c0c0
+black#000000
+cyan#00ffff
+magenta#ff00ff
 gray#808080
 white#ffffff
 maroon#800000

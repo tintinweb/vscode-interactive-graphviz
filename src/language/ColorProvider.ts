@@ -61,7 +61,7 @@ export default class ColorProvider implements vscode.DocumentColorProvider {
         Promise<vscode.ColorInformation[]> {
     const co:vscode.ColorInformation[] = [];
 
-    const re = /((color|fillcolor|bgcolor)\s*=\s*)("(.*)"|\w+)/g;
+    const re = /((color|fillcolor|bgcolor)\s*=\s*)("([a-zA-Z0-9:#]*)"|\w+)/g;
 
     for (let line = 0; line < document.lineCount; line += 1) {
       const t = document.lineAt(line).text;
@@ -73,6 +73,7 @@ export default class ColorProvider implements vscode.DocumentColorProvider {
         if (match[4]) {
           offset += 1;
           match[4].split(":").forEach((i) => {
+            console.log(i);
             const range = new vscode.Range(
               new vscode.Position(line, offset),
               new vscode.Position(line, offset + i.length),
