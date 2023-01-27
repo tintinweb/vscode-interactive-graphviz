@@ -1,12 +1,11 @@
-import { toDot, fromDot } from "ts-graphviz";
 import {
   ClusterStatementASTNode,
   DotASTNode,
   EdgeTargetASTNode,
-  fromModel,
   GraphASTNode,
   NodeASTNode,
-  toModel,
+  parse,
+  stringify,
   // eslint-disable-next-line import/no-unresolved
 } from "ts-graphviz/ast";
 
@@ -16,6 +15,9 @@ function filterAstNode(
   edges: string[],
 )
   : GraphASTNode | ClusterStatementASTNode | DotASTNode | undefined {
+  if (node.type === "AttributeList" || node.type === "Attribute") {
+    return node;
+  }
   if (node.type === "Node") {
     if (nodes.includes(node.id.value)) {
       return node;
@@ -50,6 +52,10 @@ function filterAstNode(
     .map((child) => filterAstNode(child, nodes, edges))
     .filter((i) => !!i) as ClusterStatementASTNode[];
 
+  if (node.children.every((child) => child.type === "AttributeList" || child.type === "Attribute")) {
+    return undefined;
+  }
+
   if (node.children.length > 0) return node;
 
   return undefined;
@@ -60,13 +66,12 @@ export default function filterGraphviz(
   nodes: string[],
   edges: string[],
 ): string | undefined {
-  const d = fromModel(fromDot(dot));
-
+  const d = parse(dot);
   const f = filterAstNode(d, nodes, edges);
 
   if (!f) {
     return undefined;
   }
 
-  return toDot(toModel(f as any));
+  return stringify(f as any);
 }
