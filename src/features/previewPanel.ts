@@ -194,6 +194,8 @@ export default class PreviewPanel {
       this.timeoutForRendering = setTimeout(
         () => {
           console.log("unlocking rendering bcs. of timeout");
+          this.onRenderFinished();
+          this.startedRenders = 0;
           this.restartRender();
           vscode.window.showWarningMessage("Graphviz render lock timed out! Maybe change the settings.", "Settings").then((answer) => {
             if (answer === "Settings") {
@@ -224,17 +226,17 @@ export default class PreviewPanel {
   // eslint-disable-next-line class-methods-use-this
   public handleMessage(message: IRenderCommunication) {
     /**
-         * Dev: handle messages emitted by the graphviz view
-         */
+     * Dev: handle messages emitted by the graphviz view
+     */
     switch (message.command) {
     /*
-            case 'onClick':
-               //do something
-                break;
-            case 'onDblClick':
-                //do something
-                break;
-            */
+      case 'onClick':
+          //do something
+          break;
+      case 'onDblClick':
+          //do something
+          break;
+      */
     default:
       console.warn(`Unexpected command: ${JSON.stringify(message)}`);
     }
@@ -284,7 +286,9 @@ export default class PreviewPanel {
 
     // Decrease startedRenders counter
     this.startedRenders -= 1;
-    if(this.startedRenders<0) this.startedRenders=0; // should not happen, but just in case (e.g. if onRenderFinished is called twice
+    // should not happen, but just in case (e.g. if onRenderFinished is called twice
+    if (this.startedRenders < 0) this.startedRenders = 0;
+
     console.log(`started renders:${this.startedRenders}`);
     // Hide progress bar after all renders have been finished
     if (this.progressResolve && this.startedRenders === 0) {
