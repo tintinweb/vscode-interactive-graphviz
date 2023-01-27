@@ -194,6 +194,13 @@ function onActivate(context: vscode.ExtensionContext) {
     [settings.languageId],
     new DotDocumentFormatter(),
   ));
+
+  // Open preview automatically on extension activation if the setting is enabled
+  if (vscode.window.activeTextEditor?.document.languageId !== settings.languageId) return;
+  if (!settings.extensionConfig().get("openAutomatically")) return;
+  vscode.commands.executeCommand(COMMANDSTRING, {
+    document: vscode.window.activeTextEditor.document,
+  });
 }
 
 /* exports */
