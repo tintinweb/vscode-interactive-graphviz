@@ -147,6 +147,12 @@ module.exports = (env, argv) => [
     target: "web",
     library: "module",
   }),
+  makeConfig(argv, {
+    entry: "./src/markdown.tsx",
+    out: "./dist/markdown.js",
+    target: "web",
+    library: "module",
+  }),
 
   /* makeConfig(argv, {
     entry: "./src/extension/extension.ts",

@@ -167,7 +167,11 @@
                     "description": "Show the preview in VS Code's Theme Colors. (Experimental)"
                 }
             }
-        }
+        },
+        "markdown.previewScripts": [
+            "./dist/markdown.js"
+        ],
+        "markdown.markdownItPlugins": true
     },
     "devDependencies": {
         "@types/d3": "^7.4.0",

@@ -33,7 +33,7 @@ interface IGraphvizProps {
   // eslint-disable-next-line no-unused-vars
   onError?: (err: any) => void,
   // eslint-disable-next-line no-unused-vars
-  onClick: (t: BaseType) => void,
+  onClick?: (t: BaseType) => void,
 }
 
 const defaultOptions: GraphvizOptions = {
@@ -134,7 +134,7 @@ const GraphvizD3 = forwardRef(({
         // Make Nodes clickable
         // eslint-disable-next-line func-names
         nodes.on("click", function () {
-          onClick(this);
+          if (onClick) onClick(this);
         });
 
         setDirectory({
@@ -304,5 +304,5 @@ const GraphvizD3 = forwardRef(({
   />;
 });
 
-export { GraphvizD3, IGraphvizProps };
+export { IGraphvizProps };
 export default GraphvizD3;
