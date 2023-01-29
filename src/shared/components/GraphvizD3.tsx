@@ -29,7 +29,7 @@ interface IGraphvizProps {
   config?: IRenderConfiguration,
 
   // eslint-disable-next-line no-unused-vars
-  command: (d: IRenderCommunication) => void,
+  command?: (d: IRenderCommunication) => void,
   // eslint-disable-next-line no-unused-vars
   onError?: (err: any) => void,
   // eslint-disable-next-line no-unused-vars
@@ -143,13 +143,14 @@ const GraphvizD3 = forwardRef(({
           clusters: clustersByName,
           resetView: process.resetZoom.bind(process),
         });
-
-        command({
-          command: "onRenderFinished",
-          value: {
-            err: undefined,
-          },
-        });
+        if (command) {
+          command({
+            command: "onRenderFinished",
+            value: {
+              err: undefined,
+            },
+          });
+        }
       });
   }, [dot, engine]);
 

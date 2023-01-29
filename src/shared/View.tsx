@@ -3,7 +3,7 @@ import { BaseType, select } from "d3";
 import { flatten, uniq } from "lodash";
 
 // eslint-disable-next-line import/no-unresolved
-import { Engine, Format } from "@hpcc-js/wasm/types/graphviz";
+import { Engine } from "@hpcc-js/wasm/types/graphviz";
 import { Graphviz } from "@hpcc-js/wasm";
 import { InfoToolBar } from "./components/Toolbar";
 import GraphvizToolbar, { Direction, SearchOptions } from "./GraphvizToolbar";
@@ -19,7 +19,7 @@ export default function View(
     command,
   }: {
     // eslint-disable-next-line no-unused-vars
-    command: (data: IRenderCommunication) => void,
+    command?: (data: IRenderCommunication) => void,
     source?: string,
     config?: IRenderConfiguration,
     onFinish?: () => void,
@@ -117,10 +117,12 @@ export default function View(
   const extract = () => {
     const extractedData = (graphvizView.current as any).extract(highlights);
     if (!extractedData) return;
-    command({
-      command: "openNewWindow",
-      value: extractedData,
-    });
+    if (command) {
+      command({
+        command: "openNewWindow",
+        value: extractedData,
+      });
+    }
   };
 
   return <>
@@ -135,23 +137,27 @@ export default function View(
           return;
         }
         if (a === "dot") {
-          command({
-            command: "saveAs",
-            value: {
-              data: source,
-              type: a,
-            },
-          });
-        } else if (a === "svg") {
-          Graphviz.load().then((gv) => {
-            const d = gv.layout(source, undefined, engine);
+          if (command) {
             command({
               command: "saveAs",
               value: {
-                data: d,
+                data: source,
                 type: a,
               },
             });
+          }
+        } else if (a === "svg") {
+          Graphviz.load().then((gv) => {
+            const d = gv.layout(source, undefined, engine);
+            if (command) {
+              command({
+                command: "saveAs",
+                value: {
+                  data: d,
+                  type: a,
+                },
+              });
+            }
           });
         } else {
           console.error("unknown save function");
