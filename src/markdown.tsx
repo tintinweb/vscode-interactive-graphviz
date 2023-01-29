@@ -2,8 +2,7 @@ import "@vscode/codicons/dist/codicon.css";
 
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
-// eslint-disable-next-line import/no-named-as-default
-import GraphvizD3 from "./shared/components/GraphvizD3";
+import View from "./shared/View";
 
 let roots : Root[] = [];
 
@@ -42,9 +41,9 @@ function contentLoaded() {
     // eslint-disable-next-line no-continue
     if (!source) continue;
 
-    root.render(<GraphvizD3
-      dot={source}
-      engine="dot"
+    root.render(<View
+      source={source}
+      disableToolbar
     />);
   }
 

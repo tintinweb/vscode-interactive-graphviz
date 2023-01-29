@@ -17,6 +17,7 @@ export default function View(
     source,
     config,
     command,
+    disableToolbar,
   }: {
     // eslint-disable-next-line no-unused-vars
     command?: (data: IRenderCommunication) => void,
@@ -25,6 +26,8 @@ export default function View(
     onFinish?: () => void,
     // eslint-disable-next-line no-unused-vars
     onError?: (err: any) => void,
+
+    disableToolbar?: boolean,
   },
 ): JSX.Element {
   const ref = React.useRef<{ direction: Direction }>();
@@ -126,7 +129,7 @@ export default function View(
   };
 
   return <>
-    <GraphvizToolbar
+    {!disableToolbar && <GraphvizToolbar
       disabled={!source}
       onExtract={
         (highlights && highlights.length > 0) ? extract : undefined
@@ -221,7 +224,7 @@ export default function View(
         }
         setSearchResult(`found ${results.join(", ")}`);
       }}
-    />
+    />}
     <InfoToolBar type="search" text={searchResult} />
     <InfoToolBar type="error" text={error} />
     {source && <GraphvizD3
