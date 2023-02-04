@@ -47,6 +47,14 @@
                     "text/x-graphviz",
                     "text/x-dot"
                 ]
+            },
+            {
+                "id": "graphviz-interactive-preview.markdown-it",
+                "displayName": "Markdown it Graphviz renderer",
+                "entrypoint": {
+                    "extends": "vscode.markdown-it-renderer",
+                    "path": "./dist/nodebook-markdown.js"
+                }
             }
         ],
         "languages": [
@@ -175,6 +183,7 @@
     },
     "devDependencies": {
         "@types/d3": "^7.4.0",
+        "@types/markdown-it": "^12.2.3",
         "@types/react-overlays": "^3.1.0",
         "@types/text-encoding": "^0.0.36",
         "@types/vscode-notebook-renderer": "^1.60.0",
@@ -216,6 +225,7 @@
         "jquery-color": "^2.2.0",
         "jquery-mousewheel": "^3.1.13",
         "lodash": "^4.17.21",
+        "markdown-it-container": "^3.0.0",
         "mocha": "^10.2.0",
         "npm": "^9.3.1",
         "react": "^18.0.0",
