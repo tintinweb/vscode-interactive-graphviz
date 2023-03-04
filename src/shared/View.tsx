@@ -50,11 +50,12 @@ export default function View(
     }
   }, [highlights]);
 
-  const streamSearch = (el: BaseType) => {
-    if (!ref.current || !ref.current.direction) return undefined;
-    const downstream: BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Downstream")
+  const streamSearch = (el: BaseType, searchDirection?: string) => {
+    const dir = (searchDirection) || ref?.current?.direction;
+    if (!dir) return undefined;
+    const downstream: BaseType[] = (dir === "Bidirectional" || dir === "Downstream")
       ? (graphvizView.current as any).findLinkedFrom(el) : [];
-    const upstream: BaseType[] = (ref.current.direction === "Bidirectional" || ref.current.direction === "Upstream")
+    const upstream: BaseType[] = (dir === "Bidirectional" || dir === "Upstream")
       ? (graphvizView.current as any).findLinkedTo(el) : [];
 
     return uniq([...downstream, el, ...upstream]);
@@ -191,11 +192,11 @@ export default function View(
           res.edges.forEach((edge) => {
             const [upStreamNode, downStreamNode] = searchNodesForEdges(edge);
             if ((ref.current?.direction === "Bidirectional" || ref.current?.direction === "Downstream") && downStreamNode) {
-              const r = streamSearch(downStreamNode) || [];
+              const r = streamSearch(downStreamNode, "Downstream") || [];
               h = [...h, ...r];
             }
             if ((ref.current?.direction === "Bidirectional" || ref.current?.direction === "Upstream") && upStreamNode) {
-              const r = streamSearch(upStreamNode) || [];
+              const r = streamSearch(upStreamNode, "Upstream") || [];
               h = [...h, ...r];
             }
           });
