@@ -134,7 +134,7 @@ export default function View(
       }
       onSave={(a) => {
         if (!source) {
-          console.error("noting to save!");
+          console.error("nothing to save!");
           return;
         }
         if (a === "dot") {
@@ -228,8 +228,13 @@ export default function View(
     {source && <GraphvizD3
       ref={graphvizView}
       config={config}
-      onClick={(el) => {
-        setHighlights(streamSearch(el) || []);
+      onClick={(el, clickEvent) => {
+        const searchRes = streamSearch(el) || [];
+        if (clickEvent?.ctrlKey || clickEvent?.metaKey || clickEvent?.shiftKey) {
+          setHighlights((prevHighlights) => [...prevHighlights, ...searchRes]);
+        } else {
+          setHighlights(searchRes);
+        }
       }}
       dot={source}
       engine={engine}
