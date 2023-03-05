@@ -50,6 +50,20 @@ export default function View(
     }
   }, [highlights]);
 
+  React.useEffect(() => {
+    const handlerFunction = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setHighlights([]);
+      }
+    };
+
+    document.addEventListener("keydown", handlerFunction);
+
+    return () => {
+      document.removeEventListener("keydown", handlerFunction);
+    };
+  }, []);
+
   const streamSearch = (el: BaseType, searchDirection?: string) => {
     const dir = (searchDirection) || ref?.current?.direction;
     if (!dir) return undefined;

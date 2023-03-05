@@ -177,7 +177,11 @@ const GraphvizD3 = forwardRef(({
       // eslint-disable-next-line func-names
       .each(function () {
         const opacity = select(this).attr("data-opacity") || 1;
-        select(this).style("opacity", 0.2 * (opacity as number));
+        if (elements.length === 0) {
+          select(this).style("opacity", opacity as number);
+        } else {
+          select(this).style("opacity", 0.2 * (opacity as number));
+        }
       });
 
     // enable all highlights
