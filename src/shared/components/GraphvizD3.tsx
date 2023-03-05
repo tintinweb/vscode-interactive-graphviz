@@ -137,6 +137,18 @@ const GraphvizD3 = forwardRef(({
           onClick(this, clickEvent);
         });
 
+        // Make Edges clickable
+        // eslint-disable-next-line func-names
+        edges.on("click", function (clickEvent: PointerEvent) {
+          onClick(this, clickEvent);
+        });
+
+        // Make Clusters clickable
+        // eslint-disable-next-line func-names
+        clusters.on("click", function (clickEvent: PointerEvent) {
+          onClick(this, clickEvent);
+        });
+
         setDirectory({
           nodes: nodesByName,
           edges: edgesByName,
@@ -173,15 +185,11 @@ const GraphvizD3 = forwardRef(({
 
     // disable everything
     svg.select("g")
-      .selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon, .edge text")
+      .selectAll(".node ellipse, .edge path, .edge polygon, .node text, .edge polygon, .edge text, .cluster polygon, .cluster text, .cluster ellipse")
       // eslint-disable-next-line func-names
       .each(function () {
         const opacity = select(this).attr("data-opacity") || 1;
-        if (elements.length === 0) {
-          select(this).style("opacity", opacity as number);
-        } else {
-          select(this).style("opacity", 0.2 * (opacity as number));
-        }
+        select(this).style("opacity", 0.2 * (opacity as number));
       });
 
     // enable all highlights

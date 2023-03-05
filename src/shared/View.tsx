@@ -46,7 +46,11 @@ export default function View(
 
   React.useEffect(() => {
     if (graphvizView && graphvizView.current) {
-      (graphvizView.current as any).highlight(highlights);
+      if (highlights.length === 0) {
+        (graphvizView.current as any).resetSelection();
+      } else {
+        (graphvizView.current as any).highlight(highlights);
+      }
     }
   }, [highlights]);
 
