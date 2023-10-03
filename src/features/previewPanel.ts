@@ -103,6 +103,10 @@ export default class PreviewPanel {
     return this.panel;
   }
 
+  public isVisible() {
+    return this.panel.visible;
+  }
+
   // the following functions do not use any locking/synchronization mechanisms,
   // so it may behave weirdly in edge cases
 
