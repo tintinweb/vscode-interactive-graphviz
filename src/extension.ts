@@ -25,7 +25,7 @@ function onActivate(context: vscode.ExtensionContext) {
     if (event.document.languageId === settings.languageId
         || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(event.document.uri);
-      if (panel) {
+      if (panel && panel.isVisible()) {
         panel.requestRender(event.document.getText());
       }
     }
@@ -35,7 +35,7 @@ function onActivate(context: vscode.ExtensionContext) {
     if (doc.languageId === settings.languageId
         || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(doc.uri);
-      if (panel) {
+      if (panel && panel.isVisible()) {
         panel.requestRender(doc.getText());
       }
     }
