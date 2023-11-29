@@ -20,18 +20,6 @@ let previousActiveUri: string | null = null;
 let isGraphViewActive = false;
 let dotFileUri: string | null = null;
 let lastProcessedDocUri: string | null = null;
-let isProgrammaticOpen = false;
-
-function removeGitAndAfter(str: string | null) {
-  if (!str) {
-    return str;
-  }
-  const gitIndex = str.indexOf('.git');
-  if (gitIndex !== -1) {
-    return str.substring(0, gitIndex);
-  }
-  return str;
-}
 
 function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
@@ -60,34 +48,22 @@ function onActivate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((doc) => {
-      if (isProgrammaticOpen) {
-        return;
-      }
-      console.log("------------------------------------------------------------------")
-      if (removeGitAndAfter(doc.uri.toString()) === removeGitAndAfter(lastProcessedDocUri)) {
-        console.log("AVOIDED OPENING SAME DOC TWICE")
+      if (doc.uri.toString() === lastProcessedDocUri) {
         // Avoid processing the same document again immediately
         return;
       }
-      console.log("Opened document: " + removeGitAndAfter(doc.uri.toString()));
-      console.log(doc.uri.path);
-      console.log("Last Open: " + removeGitAndAfter(lastProcessedDocUri))
-
-      lastProcessedDocUri = removeGitAndAfter(doc.uri.toString());
+      lastProcessedDocUri = doc.uri.toString();
 
       if (doc.uri.path.endsWith('.dot.git')) {
         // Change the language ID to 'dot' for files ending with '.dot.git'
         vscode.languages.setTextDocumentLanguage(doc, 'dot').then((updatedDoc) => {
-          console.log("Changed language ID to 'dot' for file ending with '.dot.git'")
-          console.log(doc.uri.path);
+          console.log("onDidOpenTextDocument", updatedDoc);
           // Additional logic after setting the language
           handleDotDocument(updatedDoc);
         });
       } else {
         // Handle regular dot documents
         handleDotDocument(doc);
-        console.log("No changed language ID to 'dot' for file ending with '.dot.git'")
-        console.log(doc.uri.path);
       }
     })
   );
@@ -96,9 +72,7 @@ function onActivate(context: vscode.ExtensionContext) {
     if (doc.languageId !== settings.languageId || !settings.extensionConfig().get("openAutomatically")) {
       return;
     }
-    isProgrammaticOpen = true;
     vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", { document: doc });
-    isProgrammaticOpen = false;
   }
 
   context.subscriptions.push(
@@ -114,8 +88,6 @@ function onActivate(context: vscode.ExtensionContext) {
   /* commands */
   context.subscriptions.push(
     vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", async (a) => {
-
-      isProgrammaticOpen = false;
       // Implement the logic to render the preview of the DOT file
       // and open it in the current tab. This might involve creating a temporary file
       // or using a webview, depending on how your rendering logic works.
@@ -142,26 +114,20 @@ function onActivate(context: vscode.ExtensionContext) {
             }
           });
       };
+      console.log("preview.beside");
       const args = a || {};
-      // isProgrammaticOpen = true;
+
       if (isGraphViewActive) {
         // Logic to revert back to the DOT file
-        vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+        await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
         if (dotFileUri) {
-          vscode.window.showTextDocument(vscode.Uri.parse(dotFileUri), { preview: false });
-
-          lastProcessedDocUri = removeGitAndAfter(dotFileUri.toString());
+          await vscode.window.showTextDocument(vscode.Uri.parse(dotFileUri), { preview: false });
         }
         isGraphViewActive = false;
         vscode.commands.executeCommand('setContext', 'isGraphvizInteractivePreviewActive', false);
-
-        // const activeEditor = vscode.window.activeTextEditor;
-        // if (!activeEditor) {
-        //   vscode.window.showInformationMessage("No active DOT file editor.");
-        //   return;
-        // }
-        // lastProcessedDocUri = activeEditor.document.uri.toString();
       } else {
+        console.log("----------------")
+        console.log(vscode.window.activeTextEditor)
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
           vscode.window.showInformationMessage("No active DOT file editor.");
