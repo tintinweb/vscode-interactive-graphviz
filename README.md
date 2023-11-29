@@ -3,9 +3,6 @@
 [[  🌐  ](https://diligence.consensys.net)  [  📩  ](mailto:diligence@consensys.net)  [  🔥  ](https://consensys.github.io/diligence/)]
 </sup><br/><br/>
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/tintinweb.graphviz-interactive-preview.svg)](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)](https://vsmarketplacebadge.apphb.com/rating/tintinweb.graphviz-interactive-preview.svg)
 
 # Graphviz Interactive Preview (Visual Studio Code Extension)
 
@@ -119,7 +116,6 @@ see [AUTHORS](AUTHORS) for a list contributors.
 ## Credits
 
 * graph engine: [d3-graphviz](https://github.com/magjac/d3-graphviz)
-* edge tracking: [jquery.graphviz.svg](https://github.com/mountainstorm/jquery.graphviz.svg/)
 * webview handling: [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/)
 * dot language support, syntax highlighting, snippets: taken from [vscode-graphviz](https://github.com/joaompinto/vscode-graphviz/) with permission from the author [@joaompinto](https://github.com/joaompinto)
 

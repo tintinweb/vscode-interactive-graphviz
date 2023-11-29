@@ -1,7 +1,7 @@
 {
-    "name": "graphviz-interactive-preview",
-    "displayName": "Graphviz Interactive Preview",
-    "description": "Graphviz (dot) Interactive Preview",
+    "name": "james-graphviz-interactive-preview",
+    "displayName": "James's Graphviz Interactive Preview",
+    "description": "Graphviz (dot) Interactive Preview by James",
     "version": "0.3.5",
     "keywords": [
         "dot",
@@ -75,14 +75,14 @@
                 {
                     "command": "graphviz-interactive-preview.preview.beside",
                     "group": "graphviz",
-                    "when": "resourceLangId == dot"
+                    "when": "resourceLangId == dot || isGraphvizInteractivePreviewActive"
                 }
             ],
             "editor/title": [
                 {
                     "command": "graphviz-interactive-preview.preview.beside",
                     "group": "navigation@-99",
-                    "when": "resourceLangId == dot"
+                    "when": "resourceLangId == dot || isGraphvizInteractivePreviewActive"
                 }
             ]
         },

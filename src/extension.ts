@@ -16,6 +16,23 @@ import DotHoverProvider from "./language/HoverProvider";
 import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
 
+let previousActiveUri: string | null = null;
+let isGraphViewActive = false;
+let dotFileUri: string | null = null;
+let lastProcessedDocUri: string | null = null;
+let isProgrammaticOpen = false;
+
+function removeGitAndAfter(str: string | null) {
+  if (!str) {
+    return str;
+  }
+  const gitIndex = str.indexOf('.git');
+  if (gitIndex !== -1) {
+    return str.substring(0, gitIndex);
+  }
+  return str;
+}
+
 function onActivate(context: vscode.ExtensionContext) {
   const graphvizView = new InteractiveWebviewGenerator(context);
 
@@ -23,7 +40,7 @@ function onActivate(context: vscode.ExtensionContext) {
 
   vscode.workspace.onDidChangeTextDocument((event) => {
     if (event.document.languageId === settings.languageId
-        || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
+      || event.document.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(event.document.uri);
       if (panel) {
         panel.requestRender(event.document.getText());
@@ -33,7 +50,7 @@ function onActivate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => {
     if (doc.languageId === settings.languageId
-        || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
+      || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
       const panel = graphvizView.getPanel(doc.uri);
       if (panel) {
         panel.requestRender(doc.getText());
@@ -43,70 +60,73 @@ function onActivate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((doc) => {
-      if (doc.languageId !== settings.languageId) return;
-      if (!settings.extensionConfig().get("openAutomatically")) return;
+      if (isProgrammaticOpen) {
+        return;
+      }
+      console.log("------------------------------------------------------------------")
+      if (removeGitAndAfter(doc.uri.toString()) === removeGitAndAfter(lastProcessedDocUri)) {
+        console.log("AVOIDED OPENING SAME DOC TWICE")
+        // Avoid processing the same document again immediately
+        return;
+      }
+      console.log("Opened document: " + removeGitAndAfter(doc.uri.toString()));
+      console.log(doc.uri.path);
+      console.log("Last Open: " + removeGitAndAfter(lastProcessedDocUri))
 
-      vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", {
-        document: doc,
-      });
-    }),
+      lastProcessedDocUri = removeGitAndAfter(doc.uri.toString());
+
+      if (doc.uri.path.endsWith('.dot.git')) {
+        // Change the language ID to 'dot' for files ending with '.dot.git'
+        vscode.languages.setTextDocumentLanguage(doc, 'dot').then((updatedDoc) => {
+          console.log("Changed language ID to 'dot' for file ending with '.dot.git'")
+          console.log(doc.uri.path);
+          // Additional logic after setting the language
+          handleDotDocument(updatedDoc);
+        });
+      } else {
+        // Handle regular dot documents
+        handleDotDocument(doc);
+        console.log("No changed language ID to 'dot' for file ending with '.dot.git'")
+        console.log(doc.uri.path);
+      }
+    })
   );
 
-  /* commands */
+  function handleDotDocument(doc: vscode.TextDocument) {
+    if (doc.languageId !== settings.languageId || !settings.extensionConfig().get("openAutomatically")) {
+      return;
+    }
+    isProgrammaticOpen = true;
+    vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", { document: doc });
+    isProgrammaticOpen = false;
+  }
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", (a) => {
-      // take document or string; default active editor if
-      const args = a || {};
-      const options : {
-        document?: vscode.TextDocument,
-        uri?: vscode.Uri,
-        content?: string,
-        // eslint-disable-next-line no-unused-vars
-        callback?: (panel: PreviewPanel) => void,
-        allowMultiplePanels?: boolean,
-        title?: string,
-        search?: any,
-        displayColumn?: vscode.ViewColumn | {
-          viewColumn: vscode.ViewColumn;
-          preserveFocus?: boolean | undefined;
-        }
-      } = {
-        document: args.document,
-        uri: args.uri,
-        content: args.content,
-        callback: args.callback,
-        allowMultiplePanels: args.allowMultiplePanels,
-        title: args.title,
-        search: args.search,
-        displayColumn: args.displayColumn || {
-          viewColumn: vscode.ViewColumn.Beside,
-          preserveFocus: settings.extensionConfig().get("preserveFocus"),
-        },
-      };
+    vscode.workspace.onDidCloseTextDocument((doc) => {
+      if (doc.uri.toString() === dotFileUri) {
+        isGraphViewActive = false;
+        vscode.commands.executeCommand('setContext', 'isGraphvizInteractivePreviewActive', false);
 
-      if (!options.content
-        && !options.document
-        && !options.uri
-        && vscode.window.activeTextEditor?.document) {
-        options.document = vscode.window.activeTextEditor.document;
+        lastProcessedDocUri = null;
       }
+    }
+    ));
+  /* commands */
+  context.subscriptions.push(
+    vscode.commands.registerCommand("graphviz-interactive-preview.preview.beside", async (a) => {
 
-      if (!options.uri && options.document) {
-        options.uri = options.document.uri;
-      }
+      isProgrammaticOpen = false;
+      // Implement the logic to render the preview of the DOT file
+      // and open it in the current tab. This might involve creating a temporary file
+      // or using a webview, depending on how your rendering logic works.
+      const execute = (o: any) => {
 
-      if (typeof options.displayColumn === "object" && options.displayColumn.preserveFocus === undefined) {
-        options.displayColumn.preserveFocus = settings.extensionConfig().get("preserveFocus"); // default to user settings
-      }
-
-      const execute = (o:any) => {
         graphvizView.revealOrCreatePreview(
           o.displayColumn,
           o.uri,
           o,
         )
-          .then((webpanel : PreviewPanel) => {
+          .then((webpanel: PreviewPanel) => {
             // trigger dot render on page load success
             // just in case webpanel takes longer to load, wait for page
             // to ping back and perform action
@@ -122,25 +142,81 @@ function onActivate(context: vscode.ExtensionContext) {
             }
           });
       };
+      const args = a || {};
+      // isProgrammaticOpen = true;
+      if (isGraphViewActive) {
+        // Logic to revert back to the DOT file
+        vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+        if (dotFileUri) {
+          vscode.window.showTextDocument(vscode.Uri.parse(dotFileUri), { preview: false });
 
-      if (!options.content) {
-        if (options.document) {
+          lastProcessedDocUri = removeGitAndAfter(dotFileUri.toString());
+        }
+        isGraphViewActive = false;
+        vscode.commands.executeCommand('setContext', 'isGraphvizInteractivePreviewActive', false);
+
+        // const activeEditor = vscode.window.activeTextEditor;
+        // if (!activeEditor) {
+        //   vscode.window.showInformationMessage("No active DOT file editor.");
+        //   return;
+        // }
+        // lastProcessedDocUri = activeEditor.document.uri.toString();
+      } else {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (!activeEditor) {
+          vscode.window.showInformationMessage("No active DOT file editor.");
+          return;
+        }
+
+        // const dotEditors = vscode.window.visibleTextEditors.filter(editor => editor.document.languageId === 'dot');
+        // if (dotEditors.length === 0) {
+        //   vscode.window.showInformationMessage("No open DOT file editor.");
+        //   return;
+        // }
+        // const activeEditor = dotEditors[0];
+        // Save the current DOT file Uri and open the graph view
+        dotFileUri = activeEditor.document.uri.toString();
+        isGraphViewActive = true;
+        vscode.commands.executeCommand('setContext', 'isGraphvizInteractivePreviewActive', true);
+
+        // Define options for opening the preview
+        const options = {
+          document: args.document || activeEditor.document,
+          uri: args.uri || activeEditor.document.uri,
+          content: args.content,
+          callback: args.callback,
+          allowMultiplePanels: args.allowMultiplePanels || false,
+          title: args.title,
+          search: args.search,
+          displayColumn: args.displayColumn || {
+            viewColumn: vscode.ViewColumn.Active,
+            preserveFocus: settings.extensionConfig().get("preserveFocus"),
+          },
+        };
+
+
+
+        if (!options.content && options.document) {
           options.content = options.document.getText();
-        } else if (options.uri) {
+        }
+
+        if (!options.content && options.uri) {
           vscode.workspace.fs.readFile(options.uri)
             .then((data) => {
               const td = new TextDecoder();
               options.content = td.decode(data);
               execute(options);
             });
-          return;
+        } else if (options.content) {
+          execute(options);
         } else {
           vscode.window.showErrorMessage("No content for previewing!");
         }
+
       }
-      execute(options);
-    }),
+    })
   );
+
 
   /* add. providers */
 
