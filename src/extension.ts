@@ -77,7 +77,7 @@ function onActivate(context: vscode.ExtensionContext) {
 
       const filePath = doc.uri.fsPath; // Normalize file path
       console.log("filePath: ", filePath);
-      if (filePath.endsWith('.dot')) {
+      if (filePath.endsWith('.dot.git')) {
         console.log("-------------- this is a dot file: ", filePath);
         vscode.languages.setTextDocumentLanguage(doc, 'dot');
         //const isAlreadyOpen = openDotFiles.has(filePath);
