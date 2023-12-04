@@ -42,6 +42,7 @@ function onActivate(context: vscode.ExtensionContext) {
   }, null, context.subscriptions);
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => {
+    console.log("onDidSaveTextDocument");
     // if (doc.languageId === settings.languageId
     //   || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
     //   const panel = graphvizView.getPanel(doc.uri);
