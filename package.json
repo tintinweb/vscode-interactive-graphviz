@@ -27,10 +27,7 @@
     },
     "main": "./dist/extension.js",
     "browser": "./dist/extension.js",
-    "activationEvents": [
-        "onCommand:graphviz-interactive-preview.preview.beside",
-        "onLanguage:dot"
-    ],
+    "activationEvents": [],
     "contributes": {
         "languages": [
             {
@@ -111,7 +108,7 @@
                 },
                 "graphviz-interactive-preview.preserveFocus": {
                     "type": "boolean",
-                    "default": true,
+                    "default": false,
                     "description": "Keep the focus on the currently active window."
                 },
                 "graphviz-interactive-preview.debouncingInterval": {
