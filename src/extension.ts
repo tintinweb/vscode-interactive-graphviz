@@ -17,7 +17,7 @@ import SymbolProvider from "./language/SymbolProvider";
 import * as settings from "./settings";
 import { time } from "console";
 import { TIMEOUT } from "dns";
-import { endsWith } from "lodash";
+import { endsWith, isLength } from "lodash";
 
 let previousActiveUri: string | null = null;
 let isGraphViewActive = false;
@@ -42,7 +42,6 @@ function onActivate(context: vscode.ExtensionContext) {
   }, null, context.subscriptions);
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument((doc) => {
-    console.log("onDidSaveTextDocument");
     // if (doc.languageId === settings.languageId
     //   || doc.fileName.trim().toLowerCase().endsWith(settings.fileExtension)) {
     //   const panel = graphvizView.getPanel(doc.uri);
@@ -54,70 +53,65 @@ function onActivate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(async (doc) => {
-      let isAlreadyOpen = false;
+      console.log("lastProcessedDocUri: ", lastProcessedDocUri);
+      if (doc.uri.toString() == lastProcessedDocUri + '.git') {
+        console.log("Already processed this doc");
+        return;
+      }
+      let filename = doc.uri.path.substring(doc.uri.path.lastIndexOf('/') + 1).replace('.git', '');
+      let isDotOpen = false;
+      let isGraphOpen = false;
+      vscode.window.tabGroups.activeTabGroup.tabs.forEach(tab => {
+        console.log('Comparing: ', tab.label)
+        console.log('To: ', doc.uri.path);
+        if (tab.label == filename) {
+          console.log('Matched: ', filename)
+          isDotOpen = true;
+        }
+        if (tab.label == "Preview: '" + filename + "'") {
+          console.log('Matched: ', "Preview: '" + filename + "'")
+          isGraphOpen = true;
+        }
+      })
 
       console.log("onDidOpenTextDocument");
       dotFileUri = doc.uri.toString();
       console.log(dotFileUri)
-      // if (doc.uri.path.endsWith('.git')) {
-      //   const timeout = 1000;
-      //   setTimeout(() => {
-      //     vscode.window.tabGroups.activeTabGroup.tabs.forEach(tab => {
-      //       if (tab.label.endsWith('.git')) {
-      //         vscode.window.tabGroups.close(tab);
-      //       }
-      //     })
-      //   }, timeout);
-      // }
-
-      //const filePath = doc.uri.fsPath.replace(/\.git$/, ''); // Normalize file path
-      if (doc.uri.toString() == lastProcessedDocUri) {
-        return;
+      if (doc.uri.path.endsWith('.git')) {
+        const timeout = 500;
+        setTimeout(() => {
+          vscode.window.tabGroups.activeTabGroup.tabs.forEach(tab => {
+            if (tab.label.endsWith('.git')) {
+              vscode.window.tabGroups.close(tab);
+            }
+          })
+        }, timeout);
       }
 
-      const filePath = doc.uri.fsPath; // Normalize file path
+      const filePath = doc.uri.fsPath.replace(/\.git$/, ''); // Normalize file path
+
+      // const filePath = doc.uri.fsPath; // Normalize file path
       console.log("filePath: ", filePath);
-      if (filePath.endsWith('.dot.git')) {
-        console.log("-------------- this is a dot file: ", filePath);
+      if (filePath.endsWith('.dot')) {
         vscode.languages.setTextDocumentLanguage(doc, 'dot');
         //const isAlreadyOpen = openDotFiles.has(filePath);
 
-
-        vscode.window.tabGroups.activeTabGroup.tabs.forEach(tab => {
-          if (doc.fileName == tab.label) {
-
-            isAlreadyOpen = true;
-            return;
-          }
-        })
-
-        if (!isAlreadyOpen) {
+        if (!isDotOpen || !isGraphOpen) {
           console.log(`Opened new document: ${filePath}`);
           openDotFiles.add(filePath);
           handleDotDocument(doc);
         }
-
-        if (isAlreadyOpen) {
-          vscode.languages.setTextDocumentLanguage(doc, 'dot');
-          // Focus on the newly opened or switched .dot document
-          await vscode.window.showTextDocument(doc, { preview: false });
-          console.log(`Focused on new or switched document: ${filePath}`);
-        }
-        lastProcessedDocUri = doc.uri.toString();
-
-        console.log("Opened file:", doc.uri.fsPath);
-        console.log("Current openDotFiles:", Array.from(openDotFiles));
       }
 
-
-
+      console.log("Opened file:", doc.uri.fsPath);
+      console.log("Current openDotFiles:", Array.from(openDotFiles));
     })
   );
 
   function handleDotDocument(doc: vscode.TextDocument) {
-    // if (doc.languageId !== settings.languageId || !settings.extensionConfig().get("openAutomatically")) {
-    //   return;
-    // }
+    if (doc.languageId !== settings.languageId || !settings.extensionConfig().get("openAutomatically")) {
+      return;
+    }
     vscode.languages.setTextDocumentLanguage(doc, 'dot');
     vscode.commands.executeCommand("graphviz-interactive-preview.preview.beside", { document: doc });
   }
