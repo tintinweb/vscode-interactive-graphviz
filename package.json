@@ -1,8 +1,8 @@
 {
     "name": "james-graphviz-interactive-preview",
     "displayName": "James's Graphviz Interactive Preview",
-    "description": "Graphviz (dot) Interactive Preview by James",
-    "version": "0.3.5",
+    "description": "Graphviz (dot) Interactive Preview",
+    "version": "0.3.5.2",
     "keywords": [
         "dot",
         "graphviz",
@@ -23,7 +23,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/tintinweb/vscode-interactive-graphviz"
+        "url": "https://github.com/tintinweb/https://github.com/jamesung97/vscode-interactive-graphviz-interactive-graphviz"
     },
     "main": "./dist/extension.js",
     "browser": "./dist/extension.js",
